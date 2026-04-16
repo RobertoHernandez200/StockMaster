@@ -8,6 +8,7 @@ import com.example.stockmaster.ui.screens.auth.login.LoginScreen
 
 @Composable
 fun NavGraph() {
+
     val navController = rememberNavController()
 
     NavHost(
@@ -17,7 +18,7 @@ fun NavGraph() {
 
         // 🔹 Splash
         composable("splash") {
-            splashscreen(
+            SplashScreen(
                 onStartClick = {
                     navController.navigate("role_selection")
                 }
@@ -26,22 +27,29 @@ fun NavGraph() {
 
         // 🔹 Selección de rol
         composable("role_selection") {
-            roleselectionscreen(
+            RoleSelectionScreen(
                 onClienteClick = {
-                    navController.navigate("login")
+                    navController.navigate("login/cliente")
                 },
                 onTiendaClick = {
-                    navController.navigate("login")
+                    navController.navigate("login/tienda")
                 }
             )
         }
 
-        // 🔥 LOGIN (nuevo)
-        composable("login") {
-            loginscreen(
+        // 🔥 Login con role
+        composable("login/{role}") { backStackEntry ->
+
+            val role = backStackEntry.arguments?.getString("role") ?: "cliente"
+
+            LoginScreen(
+                role = role,
                 onLoginSuccess = {
-                    // luego aquí puedes mandar a home
-                    // navController.navigate("home")
+                    if (role == "cliente") {
+                        // navController.navigate("home_cliente")
+                    } else {
+                        // navController.navigate("home_tienda")
+                    }
                 }
             )
         }
