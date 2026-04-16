@@ -21,14 +21,14 @@ fun NavGraph() {
         startDestination = "splash"
     ) {
 
-        // 🔹 Splash
+        // 🔹 SPLASH
         composable("splash") {
             SplashScreen {
                 navController.navigate("role_selection")
             }
         }
 
-        // 🔹 Selección de rol
+        // 🔹 ROLE SELECTION
         composable("role_selection") {
             RoleSelectionScreen(
                 onClienteClick = { navController.navigate("login/cliente") },
@@ -63,7 +63,7 @@ fun NavGraph() {
             )
         }
 
-        // 🔹 REGISTER
+        // 🔹 REGISTER (🔥 AQUÍ ESTÁ EL CAMBIO IMPORTANTE)
         composable("register/{role}") { backStackEntry ->
 
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -71,7 +71,15 @@ fun NavGraph() {
             RegisterScreen(
                 role = role,
                 onRegisterSuccess = {
-                    navController.popBackStack() // vuelve al login
+                    if (role == "cliente") {
+                        navController.navigate("home_cliente") {
+                            popUpTo("register/{role}") { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate("home_tienda") {
+                            popUpTo("register/{role}") { inclusive = true }
+                        }
+                    }
                 },
                 onBack = {
                     navController.popBackStack()
