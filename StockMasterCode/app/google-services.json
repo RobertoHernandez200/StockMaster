@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "75049471839",
+    "project_id": "bdstockmaster-ba483",
+    "storage_bucket": "bdstockmaster-ba483.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:75049471839:android:1e4075697b941d7ad3f0ea",
+        "android_client_info": {
+          "package_name": "com.example.stockmaster"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANd5LUBONvkEgAeEwAWhHa9kR7da-YShU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
