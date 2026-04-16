@@ -30,9 +30,7 @@ fun RegisterScreen(
     val db = FirebaseFirestore.getInstance()
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
+        modifier = Modifier.fillMaxSize().padding(24.dp)
     ) {
 
         BackButton(onClick = onBack)
@@ -69,29 +67,35 @@ fun RegisterScreen(
                 }
 
                 auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
+                    .addOnSuccessListener {
 
-                        if (task.isSuccessful) {
+                        val userId = auth.currentUser?.uid
 
-                            val userId = auth.currentUser?.uid
+                        val user = hashMapOf(
+                            "email" to email,
+                            "nombre" to nombre,
+                            "tipo" to role
+                        )
 
-                            val user = hashMapOf(
-                                "email" to email,
-                                "nombre" to nombre,
-                                "tipo" to role
-                            )
+                        if (userId != null) {
+                            db.collection("usuarios")
+                                .document(userId)
+                                .set(user)
+                                .addOnSuccessListener {
 
-                            if (userId != null) {
-                                db.collection("usuarios").document(userId).set(user)
-                                    .addOnSuccessListener {
-                                        Toast.makeText(context, "Cuenta creada", Toast.LENGTH_SHORT).show()
-                                        onRegisterSuccess()
-                                    }
-                            }
+                                    Toast.makeText(context, "Cuenta creada", Toast.LENGTH_SHORT).show()
 
-                        } else {
-                            errorMessage = "Error al registrar"
+                                    // 🔥 AQUÍ NAVEGA
+                                    onRegisterSuccess()
+                                }
+                                .addOnFailureListener {
+                                    errorMessage = "Error guardando datos en Firestore"
+                                }
                         }
+
+                    }
+                    .addOnFailureListener {
+                        errorMessage = "Error en registro"
                     }
             }
         )

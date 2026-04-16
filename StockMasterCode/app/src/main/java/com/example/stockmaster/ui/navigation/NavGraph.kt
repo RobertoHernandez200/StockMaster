@@ -16,14 +16,19 @@ fun NavGraph() {
 
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "splash") {
+    NavHost(
+        navController = navController,
+        startDestination = "splash"
+    ) {
 
+        // 🔹 Splash
         composable("splash") {
             SplashScreen {
                 navController.navigate("role_selection")
             }
         }
 
+        // 🔹 Selección de rol
         composable("role_selection") {
             RoleSelectionScreen(
                 onClienteClick = { navController.navigate("login/cliente") },
@@ -31,6 +36,7 @@ fun NavGraph() {
             )
         }
 
+        // 🔹 LOGIN
         composable("login/{role}") { backStackEntry ->
 
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -39,9 +45,13 @@ fun NavGraph() {
                 role = role,
                 onLoginSuccess = {
                     if (role == "cliente") {
-                        navController.navigate("home_cliente")
+                        navController.navigate("home_cliente") {
+                            popUpTo("login/{role}") { inclusive = true }
+                        }
                     } else {
-                        navController.navigate("home_tienda")
+                        navController.navigate("home_tienda") {
+                            popUpTo("login/{role}") { inclusive = true }
+                        }
                     }
                 },
                 onGoToRegister = {
@@ -53,6 +63,7 @@ fun NavGraph() {
             )
         }
 
+        // 🔹 REGISTER
         composable("register/{role}") { backStackEntry ->
 
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -60,7 +71,7 @@ fun NavGraph() {
             RegisterScreen(
                 role = role,
                 onRegisterSuccess = {
-                    navController.popBackStack()
+                    navController.popBackStack() // vuelve al login
                 },
                 onBack = {
                     navController.popBackStack()
@@ -68,10 +79,12 @@ fun NavGraph() {
             )
         }
 
+        // 🔹 HOME CLIENTE
         composable("home_cliente") {
             HomeClienteScreen()
         }
 
+        // 🔹 HOME TIENDA
         composable("home_tienda") {
             HomeTiendaScreen(
                 onAddProduct = {
@@ -80,6 +93,7 @@ fun NavGraph() {
             )
         }
 
+        // 🔹 PRODUCTOS
         composable("productos") {
             ProductScreen()
         }

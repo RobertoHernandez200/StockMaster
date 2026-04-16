@@ -39,35 +39,57 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Email") })
+        OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email") }
+        )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Password") })
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Password") }
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         PrimaryButton(
             text = "Ingresar",
             onClick = {
+
+                if (email.isEmpty() || password.isEmpty()) {
+                    errorMessage = "Completa todos los campos"
+                    return@PrimaryButton
+                }
+
                 auth.signInWithEmailAndPassword(email, password)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            val userId = auth.currentUser?.uid
-                            if (userId != null) {
-                                db.collection("usuarios").document(userId).get()
-                                    .addOnSuccessListener { document ->
-                                        val tipo = document.getString("tipo")
-                                        if (tipo == role) {
-                                            onLoginSuccess()
-                                        } else {
-                                            errorMessage = "Tipo incorrecto"
-                                        }
+                    .addOnSuccessListener {
+
+                        val userId = auth.currentUser?.uid
+
+                        if (userId != null) {
+                            db.collection("usuarios")
+                                .document(userId)
+                                .get()
+                                .addOnSuccessListener { document ->
+
+                                    val tipo = document.getString("tipo")
+
+                                    if (tipo == role) {
+                                        onLoginSuccess()
+                                    } else {
+                                        errorMessage = "Este usuario no es $role"
                                     }
-                            }
-                        } else {
-                            errorMessage = "Credenciales incorrectas"
+                                }
+                                .addOnFailureListener {
+                                    errorMessage = "Error al obtener datos"
+                                }
                         }
+                    }
+                    .addOnFailureListener {
+                        errorMessage = "Credenciales incorrectas"
                     }
             }
         )
@@ -81,6 +103,9 @@ fun LoginScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+        Text(
+            text = errorMessage,
+            color = MaterialTheme.colorScheme.error
+        )
     }
 }
