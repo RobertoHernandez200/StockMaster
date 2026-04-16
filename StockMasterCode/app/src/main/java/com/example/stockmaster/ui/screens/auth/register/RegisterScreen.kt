@@ -43,35 +43,16 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") }
-        )
-
+        OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Email") })
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = nombre,
-            onValueChange = { nombre = it },
-            label = { Text("Nombre") }
-        )
-
+        OutlinedTextField(value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre") })
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Contraseña") }
-        )
-
+        OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Contraseña") })
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirmar contraseña") }
-        )
+        OutlinedTextField(value = confirmPassword, onValueChange = { confirmPassword = it }, label = { Text("Confirmar contraseña") })
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -89,36 +70,28 @@ fun RegisterScreen(
                     return@PrimaryButton
                 }
 
+                // 🔥 1. CREA USUARIO
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnSuccessListener {
 
                         val userId = auth.currentUser?.uid
 
-                        if (userId == null) {
-                            errorMessage = "Error creando usuario"
-                            return@addOnSuccessListener
-                        }
-
+                        // 🔥 2. GUARDA EN FIRESTORE
                         val user = hashMapOf(
                             "email" to email,
                             "nombre" to nombre,
                             "tipo" to role
                         )
 
-                        db.collection("usuarios")
-                            .document(userId)
-                            .set(user)
-                            .addOnSuccessListener {
+                        if (userId != null) {
+                            db.collection("usuarios")
+                                .document(userId)
+                                .set(user)
+                        }
 
-                                Toast.makeText(context, "Cuenta creada", Toast.LENGTH_SHORT).show()
-
-                                // 🔥 AQUÍ NAVEGA SIEMPRE
-                                onRegisterSuccess()
-                            }
-                            .addOnFailureListener {
-                                errorMessage = "Error guardando datos"
-                            }
-
+                        // 🔥 3. NAVEGA SIEMPRE (CLAVE)
+                        Toast.makeText(context, "Cuenta creada", Toast.LENGTH_SHORT).show()
+                        onRegisterSuccess()
                     }
                     .addOnFailureListener {
                         errorMessage = "Error en registro"
@@ -128,9 +101,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Text(
-            text = errorMessage,
-            color = MaterialTheme.colorScheme.error
-        )
+        Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
     }
 }
