@@ -5,6 +5,7 @@ import androidx.navigation.compose.*
 import com.example.stockmaster.ui.screens.splash.SplashScreen
 import com.example.stockmaster.ui.screens.role_selection.RoleSelectionScreen
 import com.example.stockmaster.ui.screens.auth.login.LoginScreen
+import com.example.stockmaster.ui.screens.auth.register.RegisterScreen
 
 @Composable
 fun NavGraph() {
@@ -37,7 +38,7 @@ fun NavGraph() {
             )
         }
 
-        // 🔥 Login con role
+        // 🔥 LOGIN con role
         composable("login/{role}") { backStackEntry ->
 
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -45,11 +46,28 @@ fun NavGraph() {
             LoginScreen(
                 role = role,
                 onLoginSuccess = {
-                    if (role == "cliente") {
-                        // navController.navigate("home_cliente")
-                    } else {
-                        // navController.navigate("home_tienda")
-                    }
+                    // luego puedes redirigir según rol
+                    // if (role == "cliente") {
+                    //     navController.navigate("home_cliente")
+                    // } else {
+                    //     navController.navigate("home_tienda")
+                    // }
+                },
+                onGoToRegister = {
+                    navController.navigate("register/$role")
+                }
+            )
+        }
+
+        // 🔥 REGISTER con role
+        composable("register/{role}") { backStackEntry ->
+
+            val role = backStackEntry.arguments?.getString("role") ?: "cliente"
+
+            RegisterScreen(
+                role = role,
+                onRegisterSuccess = {
+                    navController.navigate("login/$role")
                 }
             )
         }

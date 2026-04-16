@@ -11,7 +11,8 @@ import com.example.stockmaster.ui.components.PrimaryButton
 @Composable
 fun LoginScreen(
     role: String,
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: () -> Unit,
+    onGoToRegister: () -> Unit
 ) {
 
     var email by remember { mutableStateOf("") }
@@ -58,6 +59,13 @@ fun LoginScreen(
                         }
                     }
             }
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        PrimaryButton(
+            text = "Ir a registro",
+            onClick = onGoToRegister
         )
     }
 }
