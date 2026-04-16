@@ -6,27 +6,22 @@ import com.example.stockmaster.ui.screens.splash.SplashScreen
 import com.example.stockmaster.ui.screens.role_selection.RoleSelectionScreen
 import com.example.stockmaster.ui.screens.auth.login.LoginScreen
 import com.example.stockmaster.ui.screens.auth.register.RegisterScreen
+import com.example.stockmaster.ui.screens.home_cliente.HomeClienteScreen
+import com.example.stockmaster.ui.screens.home_tienda.HomeTiendaScreen
 
 @Composable
 fun NavGraph() {
 
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = "splash"
-    ) {
+    NavHost(navController = navController, startDestination = "splash") {
 
-        // 🔹 Splash
         composable("splash") {
-            SplashScreen(
-                onStartClick = {
-                    navController.navigate("role_selection")
-                }
-            )
+            SplashScreen {
+                navController.navigate("role_selection")
+            }
         }
 
-        // 🔹 Selección de rol
         composable("role_selection") {
             RoleSelectionScreen(
                 onClienteClick = {
@@ -38,7 +33,6 @@ fun NavGraph() {
             )
         }
 
-        // 🔥 LOGIN con role
         composable("login/{role}") { backStackEntry ->
 
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -46,12 +40,11 @@ fun NavGraph() {
             LoginScreen(
                 role = role,
                 onLoginSuccess = {
-                    // luego puedes redirigir según rol
-                    // if (role == "cliente") {
-                    //     navController.navigate("home_cliente")
-                    // } else {
-                    //     navController.navigate("home_tienda")
-                    // }
+                    if (role == "cliente") {
+                        navController.navigate("home_cliente")
+                    } else {
+                        navController.navigate("home_tienda")
+                    }
                 },
                 onGoToRegister = {
                     navController.navigate("register/$role")
@@ -59,7 +52,6 @@ fun NavGraph() {
             )
         }
 
-        // 🔥 REGISTER con role
         composable("register/{role}") { backStackEntry ->
 
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -67,9 +59,21 @@ fun NavGraph() {
             RegisterScreen(
                 role = role,
                 onRegisterSuccess = {
-                    navController.navigate("login/$role")
+                    if (role == "cliente") {
+                        navController.navigate("home_cliente")
+                    } else {
+                        navController.navigate("home_tienda")
+                    }
                 }
             )
+        }
+
+        composable("home_cliente") {
+            HomeClienteScreen()
+        }
+
+        composable("home_tienda") {
+            HomeTiendaScreen()
         }
     }
 }

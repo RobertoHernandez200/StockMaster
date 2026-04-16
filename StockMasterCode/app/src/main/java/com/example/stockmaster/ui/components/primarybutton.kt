@@ -18,6 +18,7 @@ fun PrimaryButton(
     text: String,
     onClick: () -> Unit
 ) {
+
     val gradient = Brush.horizontalGradient(
         colors = listOf(
             Color(0xFF6A5AE0),
