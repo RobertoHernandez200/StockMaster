@@ -1,5 +1,6 @@
 package com.example.stockmaster.ui.screens.auth.register
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -37,20 +38,17 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Crear cuenta")
+        Text("Crear cuenta")
 
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Email") })
-
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(value = nombre, onValueChange = { nombre = it }, label = { Text("Nombre") })
-
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Contraseña") })
-
         Spacer(modifier = Modifier.height(12.dp))
 
         OutlinedTextField(value = confirmPassword, onValueChange = { confirmPassword = it }, label = { Text("Confirmar contraseña") })
@@ -60,6 +58,11 @@ fun RegisterScreen(
         PrimaryButton(
             text = "Crear cuenta",
             onClick = {
+
+                if (nombre.isEmpty()) {
+                    errorMessage = "Ingresa tu nombre"
+                    return@PrimaryButton
+                }
 
                 if (password != confirmPassword) {
                     errorMessage = "Las contraseñas no coinciden"
@@ -71,30 +74,42 @@ fun RegisterScreen(
 
                         val userId = auth.currentUser?.uid
 
+                        Log.d("REGISTER", "UID: $userId")
+
+                        if (userId == null) {
+                            errorMessage = "Error obteniendo usuario"
+                            return@addOnSuccessListener
+                        }
+
                         val user = hashMapOf(
                             "email" to email,
                             "nombre" to nombre,
                             "tipo" to role
                         )
 
-                        if (userId != null) {
-                            db.collection("usuarios")
-                                .document(userId)
-                                .set(user)
-                                .addOnSuccessListener {
+                        db.collection("usuarios")
+                            .document(userId)
+                            .set(user)
+                            .addOnSuccessListener {
 
-                                    Toast.makeText(context, "Cuenta creada", Toast.LENGTH_SHORT).show()
+                                Log.d("REGISTER", "GUARDADO EN FIRESTORE")
 
-                                    // 🔥 AQUÍ NAVEGA
-                                    onRegisterSuccess()
-                                }
-                                .addOnFailureListener {
-                                    errorMessage = "Error guardando datos en Firestore"
-                                }
-                        }
+                                Toast.makeText(context, "Cuenta creada", Toast.LENGTH_SHORT).show()
+
+                                onRegisterSuccess()
+                            }
+                            .addOnFailureListener { e ->
+
+                                Log.e("REGISTER", "ERROR FIRESTORE", e)
+
+                                errorMessage = "Error guardando en Firestore"
+                            }
 
                     }
-                    .addOnFailureListener {
+                    .addOnFailureListener { e ->
+
+                        Log.e("REGISTER", "ERROR AUTH", e)
+
                         errorMessage = "Error en registro"
                     }
             }
@@ -102,6 +117,6 @@ fun RegisterScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
+        Text(errorMessage, color = MaterialTheme.colorScheme.error)
     }
 }
