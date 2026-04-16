@@ -18,24 +18,35 @@ fun LoginScreen(
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
 
     val auth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(24.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
         verticalArrangement = Arrangement.Center
     ) {
 
-        Text(text = if (role == "tienda") "Login Tienda" else "Login Cliente")
+        Text(text = "Login $role")
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Email") })
+        OutlinedTextField(
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("Email") }
+        )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Password") })
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Password") }
+        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -51,7 +62,9 @@ fun LoginScreen(
                             val userId = auth.currentUser?.uid
 
                             if (userId != null) {
-                                db.collection("usuarios").document(userId).get()
+                                db.collection("usuarios")
+                                    .document(userId)
+                                    .get()
                                     .addOnSuccessListener { document ->
 
                                         val tipo = document.getString("tipo")
@@ -59,10 +72,16 @@ fun LoginScreen(
                                         if (tipo == role) {
                                             onLoginSuccess()
                                         } else {
-                                            println("❌ Tipo incorrecto")
+                                            errorMessage = "Este usuario no es $role"
                                         }
                                     }
+                                    .addOnFailureListener {
+                                        errorMessage = "Error al obtener datos"
+                                    }
                             }
+
+                        } else {
+                            errorMessage = "Credenciales incorrectas"
                         }
                     }
             }
@@ -71,8 +90,15 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         PrimaryButton(
-            text = "Registrarse",
+            text = "Ir a registro",
             onClick = onGoToRegister
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = errorMessage,
+            color = MaterialTheme.colorScheme.error
         )
     }
 }

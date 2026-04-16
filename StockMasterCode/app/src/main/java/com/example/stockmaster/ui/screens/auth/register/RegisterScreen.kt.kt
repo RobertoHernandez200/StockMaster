@@ -17,6 +17,7 @@ fun RegisterScreen(
 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf("") }
 
     val auth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
@@ -28,9 +29,7 @@ fun RegisterScreen(
         verticalArrangement = Arrangement.Center
     ) {
 
-        Text(
-            text = if (role == "tienda") "Registro Tienda" else "Registro Cliente"
-        )
+        Text(text = "Registro $role")
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -73,10 +72,23 @@ fun RegisterScreen(
                                     .addOnSuccessListener {
                                         onRegisterSuccess()
                                     }
+                                    .addOnFailureListener {
+                                        errorMessage = "Error guardando datos"
+                                    }
                             }
+
+                        } else {
+                            errorMessage = "No se pudo registrar"
                         }
                     }
             }
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        Text(
+            text = errorMessage,
+            color = MaterialTheme.colorScheme.error
         )
     }
 }
