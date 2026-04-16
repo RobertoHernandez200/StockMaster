@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.example.stockmaster.ui.navigation.NavGraph
+import com.example.stockmaster.ui.theme.StockMasterTheme
 
 class MainActivity : ComponentActivity() {
 
@@ -11,7 +12,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            NavGraph()
+            StockMasterTheme {
+                NavGraph()
+            }
         }
     }
 }

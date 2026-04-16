@@ -8,12 +8,14 @@ import androidx.compose.ui.unit.dp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.example.stockmaster.ui.components.PrimaryButton
+import com.example.stockmaster.ui.components.BackButton
 
 @Composable
 fun LoginScreen(
     role: String,
     onLoginSuccess: () -> Unit,
-    onGoToRegister: () -> Unit
+    onGoToRegister: () -> Unit,
+    onBack: () -> Unit
 ) {
 
     var email by remember { mutableStateOf("") }
@@ -26,60 +28,43 @@ fun LoginScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp),
-        verticalArrangement = Arrangement.Center
+            .padding(24.dp)
     ) {
+
+        BackButton(onClick = onBack)
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         Text(text = "Login $role")
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") }
-        )
+        OutlinedTextField(value = email, onValueChange = { email = it }, label = { Text("Email") })
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") }
-        )
+        OutlinedTextField(value = password, onValueChange = { password = it }, label = { Text("Password") })
 
         Spacer(modifier = Modifier.height(20.dp))
 
         PrimaryButton(
             text = "Ingresar",
             onClick = {
-
                 auth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
-
                         if (task.isSuccessful) {
-
                             val userId = auth.currentUser?.uid
-
                             if (userId != null) {
-                                db.collection("usuarios")
-                                    .document(userId)
-                                    .get()
+                                db.collection("usuarios").document(userId).get()
                                     .addOnSuccessListener { document ->
-
                                         val tipo = document.getString("tipo")
-
                                         if (tipo == role) {
                                             onLoginSuccess()
                                         } else {
-                                            errorMessage = "Este usuario no es $role"
+                                            errorMessage = "Tipo incorrecto"
                                         }
                                     }
-                                    .addOnFailureListener {
-                                        errorMessage = "Error al obtener datos"
-                                    }
                             }
-
                         } else {
                             errorMessage = "Credenciales incorrectas"
                         }
@@ -90,15 +75,12 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         PrimaryButton(
-            text = "Ir a registro",
+            text = "Registrarse",
             onClick = onGoToRegister
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        Text(
-            text = errorMessage,
-            color = MaterialTheme.colorScheme.error
-        )
+        Text(text = errorMessage, color = MaterialTheme.colorScheme.error)
     }
 }

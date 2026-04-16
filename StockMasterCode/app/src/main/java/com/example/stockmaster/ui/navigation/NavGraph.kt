@@ -1,9 +1,7 @@
 package com.example.stockmaster.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 
 import com.example.stockmaster.ui.screens.splash.SplashScreen
 import com.example.stockmaster.ui.screens.role_selection.RoleSelectionScreen
@@ -18,33 +16,21 @@ fun NavGraph() {
 
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = "splash"
-    ) {
+    NavHost(navController = navController, startDestination = "splash") {
 
-        // 🔹 Splash
         composable("splash") {
-            SplashScreen(
-                onStartClick = {
-                    navController.navigate("role_selection")
-                }
-            )
+            SplashScreen {
+                navController.navigate("role_selection")
+            }
         }
 
-        // 🔹 Selección de rol
         composable("role_selection") {
             RoleSelectionScreen(
-                onClienteClick = {
-                    navController.navigate("login/cliente")
-                },
-                onTiendaClick = {
-                    navController.navigate("login/tienda")
-                }
+                onClienteClick = { navController.navigate("login/cliente") },
+                onTiendaClick = { navController.navigate("login/tienda") }
             )
         }
 
-        // 🔹 Login
         composable("login/{role}") { backStackEntry ->
 
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -60,11 +46,13 @@ fun NavGraph() {
                 },
                 onGoToRegister = {
                     navController.navigate("register/$role")
+                },
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }
 
-        // 🔹 Register
         composable("register/{role}") { backStackEntry ->
 
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -72,21 +60,18 @@ fun NavGraph() {
             RegisterScreen(
                 role = role,
                 onRegisterSuccess = {
-                    if (role == "cliente") {
-                        navController.navigate("home_cliente")
-                    } else {
-                        navController.navigate("home_tienda")
-                    }
+                    navController.popBackStack()
+                },
+                onBack = {
+                    navController.popBackStack()
                 }
             )
         }
 
-        // 🔹 Home Cliente
         composable("home_cliente") {
             HomeClienteScreen()
         }
 
-        // 🔹 Home Tienda (con botón funcional)
         composable("home_tienda") {
             HomeTiendaScreen(
                 onAddProduct = {
@@ -95,7 +80,6 @@ fun NavGraph() {
             )
         }
 
-        // 🔹 Pantalla Productos
         composable("productos") {
             ProductScreen()
         }
