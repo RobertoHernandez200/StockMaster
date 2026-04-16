@@ -60,7 +60,7 @@ fun LoginScreen(
             onClick = {
 
                 if (email.isEmpty() || password.isEmpty()) {
-                    errorMessage = "Completa todos los campos"
+                    errorMessage = "Completa todos los campos."
                     return@PrimaryButton
                 }
 
