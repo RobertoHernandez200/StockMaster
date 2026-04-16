@@ -4,6 +4,11 @@ plugins {
     id("com.google.gms.google-services")
 }
 
+dependencies {
+    implementation("com.google.firebase:firebase-auth:22.3.1")
+    implementation("com.google.firebase:firebase-firestore:24.10.1")
+}
+
 android {
     namespace = "com.example.stockmaster"
     compileSdk {
