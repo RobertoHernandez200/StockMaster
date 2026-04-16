@@ -1,7 +1,9 @@
 package com.example.stockmaster.ui.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 import com.example.stockmaster.ui.screens.splash.SplashScreen
 import com.example.stockmaster.ui.screens.role_selection.RoleSelectionScreen
@@ -16,21 +18,33 @@ fun NavGraph() {
 
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "splash") {
+    NavHost(
+        navController = navController,
+        startDestination = "splash"
+    ) {
 
+        // 🔹 SPLASH
         composable("splash") {
-            SplashScreen {
-                navController.navigate("role_selection")
-            }
-        }
-
-        composable("role_selection") {
-            RoleSelectionScreen(
-                onClienteClick = { navController.navigate("login/cliente") },
-                onTiendaClick = { navController.navigate("login/tienda") }
+            SplashScreen(
+                onStartClick = {
+                    navController.navigate("role_selection")
+                }
             )
         }
 
+        // 🔹 SELECCIÓN DE ROL
+        composable("role_selection") {
+            RoleSelectionScreen(
+                onClienteClick = {
+                    navController.navigate("login/cliente")
+                },
+                onTiendaClick = {
+                    navController.navigate("login/tienda")
+                }
+            )
+        }
+
+        // 🔹 LOGIN
         composable("login/{role}") { backStackEntry ->
 
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -39,9 +53,13 @@ fun NavGraph() {
                 role = role,
                 onLoginSuccess = {
                     if (role == "cliente") {
-                        navController.navigate("home_cliente")
+                        navController.navigate("home_cliente") {
+                            popUpTo("login/{role}") { inclusive = true }
+                        }
                     } else {
-                        navController.navigate("home_tienda")
+                        navController.navigate("home_tienda") {
+                            popUpTo("login/{role}") { inclusive = true }
+                        }
                     }
                 },
                 onGoToRegister = {
@@ -53,6 +71,7 @@ fun NavGraph() {
             )
         }
 
+        // 🔹 REGISTER (🔥 AQUÍ NAVEGA AL HOME)
         composable("register/{role}") { backStackEntry ->
 
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -61,9 +80,13 @@ fun NavGraph() {
                 role = role,
                 onRegisterSuccess = {
                     if (role == "cliente") {
-                        navController.navigate("home_cliente")
+                        navController.navigate("home_cliente") {
+                            popUpTo("register/{role}") { inclusive = true }
+                        }
                     } else {
-                        navController.navigate("home_tienda")
+                        navController.navigate("home_tienda") {
+                            popUpTo("register/{role}") { inclusive = true }
+                        }
                     }
                 },
                 onBack = {
@@ -72,10 +95,12 @@ fun NavGraph() {
             )
         }
 
+        // 🔹 HOME CLIENTE
         composable("home_cliente") {
             HomeClienteScreen()
         }
 
+        // 🔹 HOME TIENDA
         composable("home_tienda") {
             HomeTiendaScreen(
                 onAddProduct = {
@@ -84,6 +109,7 @@ fun NavGraph() {
             )
         }
 
+        // 🔹 PRODUCTOS
         composable("productos") {
             ProductScreen()
         }
