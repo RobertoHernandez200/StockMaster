@@ -71,7 +71,7 @@ fun NavGraph() {
             )
         }
 
-        // 🔹 REGISTER (🔥 AQUÍ NAVEGA AL HOME)
+        // 🔹 REGISTER
         composable("register/{role}") { backStackEntry ->
 
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -111,7 +111,11 @@ fun NavGraph() {
 
         // 🔹 PRODUCTOS
         composable("productos") {
-            ProductScreen()
+            ProductScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }
