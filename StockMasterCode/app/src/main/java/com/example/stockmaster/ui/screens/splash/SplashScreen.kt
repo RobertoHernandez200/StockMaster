@@ -30,11 +30,7 @@ fun SplashScreen(
 
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-            Image(
-                painter = painterResource(id = R.drawable.logo),
-                contentDescription = "logo",
-                modifier = Modifier.size(100.dp)
-            )
+
 
             Spacer(modifier = Modifier.height(12.dp))
 

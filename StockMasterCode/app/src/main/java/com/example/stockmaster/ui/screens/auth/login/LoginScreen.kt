@@ -64,29 +64,41 @@ fun LoginScreen(
                     return@PrimaryButton
                 }
 
+                errorMessage = "Cargando..." // 👈 para ver que sí hace algo
+
                 auth.signInWithEmailAndPassword(email, password)
                     .addOnSuccessListener {
 
                         val userId = auth.currentUser?.uid
 
-                        if (userId != null) {
-                            db.collection("usuarios")
-                                .document(userId)
-                                .get()
-                                .addOnSuccessListener { document ->
+                        if (userId == null) {
+                            errorMessage = "Error obteniendo usuario"
+                            return@addOnSuccessListener
+                        }
 
-                                    val tipo = document.getString("tipo")
+                        db.collection("usuarios")
+                            .document(userId)
+                            .get()
+                            .addOnSuccessListener { document ->
+
+                                if (document.exists()) {
+
+                                    val tipo = document.getString("role")
 
                                     if (tipo == role) {
+                                        errorMessage = ""
                                         onLoginSuccess()
                                     } else {
                                         errorMessage = "Este usuario no es $role"
                                     }
+
+                                } else {
+                                    errorMessage = "No se encontraron datos del usuario"
                                 }
-                                .addOnFailureListener {
-                                    errorMessage = "Error al obtener datos"
-                                }
-                        }
+                            }
+                            .addOnFailureListener {
+                                errorMessage = "Error al obtener datos"
+                            }
                     }
                     .addOnFailureListener {
                         errorMessage = "Credenciales incorrectas"
