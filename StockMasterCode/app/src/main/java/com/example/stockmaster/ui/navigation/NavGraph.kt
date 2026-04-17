@@ -105,6 +105,11 @@ fun NavGraph() {
             HomeTiendaScreen(
                 onAddProduct = {
                     navController.navigate("productos")
+                },
+                onLogout = {
+                    navController.navigate("login") {
+                        popUpTo(0) // 🔥 limpia toda la navegación
+                    }
                 }
             )
         }
