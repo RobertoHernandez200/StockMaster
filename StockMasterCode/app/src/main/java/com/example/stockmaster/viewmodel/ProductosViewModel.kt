@@ -1,14 +1,19 @@
 package com.example.stockmaster.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.stockmaster.model.Producto
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 class ProductosViewModel : ViewModel() {
 
+    // 🔥 Firebase
+    private val auth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
+
+    // 🔹 Estados UI
     private val _nombre = MutableStateFlow("")
     val nombre: StateFlow<String> = _nombre
 
@@ -23,6 +28,30 @@ class ProductosViewModel : ViewModel() {
 
     private var productoId: String? = null
 
+    // 🔥 Se ejecuta al entrar a la pantalla
+    init {
+        cargarProductos()
+    }
+
+    // 🔥 CARGAR PRODUCTOS DEL USUARIO
+    private fun cargarProductos() {
+        val userId = auth.currentUser?.uid ?: return
+
+        db.collection("usuarios")
+            .document(userId)
+            .collection("productos")
+            .addSnapshotListener { snapshot, _ ->
+
+                if (snapshot != null) {
+                    val lista = snapshot.documents.mapNotNull {
+                        it.toObject(Producto::class.java)?.copy(id = it.id)
+                    }
+                    _productos.value = lista
+                }
+            }
+    }
+
+    // 🔹 Inputs
     fun onNombreChange(value: String) {
         _nombre.value = value
     }
@@ -35,6 +64,7 @@ class ProductosViewModel : ViewModel() {
         _stock.value = value
     }
 
+    // 🔹 Cargar producto para editar
     fun cargarProducto(producto: Producto) {
         productoId = producto.id
         _nombre.value = producto.nombre
@@ -42,51 +72,60 @@ class ProductosViewModel : ViewModel() {
         _stock.value = producto.stock.toString()
     }
 
+    // 🔥 CREAR O EDITAR PRODUCTO
     fun crearProducto() {
-        viewModelScope.launch {
 
-            val valorDouble = _valor.value.toDoubleOrNull()
-            val stockInt = _stock.value.toIntOrNull()
+        val userId = auth.currentUser?.uid ?: return
 
-            if (_nombre.value.isBlank() || valorDouble == null || stockInt == null) {
-                return@launch
-            }
+        val valorDouble = _valor.value.toDoubleOrNull()
+        val stockInt = _stock.value.toIntOrNull()
 
-            if (productoId == null) {
-
-                val nuevo = Producto(
-                    id = System.currentTimeMillis().toString(),
-                    nombre = _nombre.value,
-                    valor = valorDouble,
-                    stock = stockInt
-                )
-
-                _productos.value = _productos.value + nuevo
-
-            } else {
-
-                _productos.value = _productos.value.map {
-                    if (it.id == productoId) {
-                        it.copy(
-                            nombre = _nombre.value,
-                            valor = valorDouble,
-                            stock = stockInt
-                        )
-                    } else it
-                }
-
-                productoId = null
-            }
-
-            _nombre.value = ""
-            _valor.value = ""
-            _stock.value = ""
+        if (_nombre.value.isBlank() || valorDouble == null || stockInt == null) {
+            return
         }
+
+        val producto = hashMapOf(
+            "nombre" to _nombre.value,
+            "valor" to valorDouble,
+            "stock" to stockInt
+        )
+
+        if (productoId == null) {
+            // 🔥 CREAR
+            db.collection("usuarios")
+                .document(userId)
+                .collection("productos")
+                .add(producto)
+
+        } else {
+            // 🔥 EDITAR
+            db.collection("usuarios")
+                .document(userId)
+                .collection("productos")
+                .document(productoId!!)
+                .set(producto)
+
+            productoId = null
+        }
+
+        limpiarCampos()
     }
 
+    // 🔥 ELIMINAR
     fun eliminarProducto(id: String) {
-        viewModelScope.launch {
-            _productos.value = _productos.value.filterNot { it.id == id }
-        }
+        val userId = auth.currentUser?.uid ?: return
+
+        db.collection("usuarios")
+            .document(userId)
+            .collection("productos")
+            .document(id)
+            .delete()
+    }
+
+    // 🔹 Limpiar inputs
+    private fun limpiarCampos() {
+        _nombre.value = ""
+        _valor.value = ""
+        _stock.value = ""
     }
 }
