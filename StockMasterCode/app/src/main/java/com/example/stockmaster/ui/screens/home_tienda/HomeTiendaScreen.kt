@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 @Composable
 fun HomeTiendaScreen(
     onAddProduct: () -> Unit,
+    onUsuarios: () -> Unit,
     onLogout: () -> Unit
 ) {
 
@@ -33,7 +34,7 @@ fun HomeTiendaScreen(
             .padding(16.dp)
     ) {
 
-        // 🔥 HEADER con botón salir
+        // 🔥 HEADER
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -48,8 +49,8 @@ fun HomeTiendaScreen(
 
             TextButton(
                 onClick = {
-                    auth.signOut()   // 🔥 cerrar sesión
-                    onLogout()      // 🔥 navegar al login
+                    auth.signOut()
+                    onLogout()
                 }
             ) {
                 Text("Salir", color = Color.White)
@@ -58,13 +59,30 @@ fun HomeTiendaScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        CardBox("Productos", "Añadir producto", onAddProduct)
+        // 🔹 PRODUCTOS
+        CardBox(
+            title = "Productos",
+            buttonText = "Añadir producto",
+            onClick = onAddProduct
+        )
+
         Spacer(modifier = Modifier.height(16.dp))
 
-        CardBox("Usuarios", "Agregar usuario") {}
+        // 🔹 USUARIOS (🔥 ARREGLADO)
+        CardBox(
+            title = "Usuarios",
+            buttonText = "Agregar usuario",
+            onClick = onUsuarios
+        )
+
         Spacer(modifier = Modifier.height(16.dp))
 
-        CardBox("Proveedores", "Agregar contacto") {}
+        // 🔹 PROVEEDORES
+        CardBox(
+            title = "Proveedores",
+            buttonText = "Agregar contacto",
+            onClick = { /* futuro */ }
+        )
     }
 }
 
