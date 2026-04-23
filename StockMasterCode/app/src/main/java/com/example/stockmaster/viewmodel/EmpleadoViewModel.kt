@@ -18,17 +18,25 @@ class EmpleadoViewModel : ViewModel() {
         onError: (String) -> Unit
     ) {
 
-        val adminId = auth.currentUser?.uid
+        val adminUser = auth.currentUser
 
-        if (adminId == null) {
+        if (adminUser == null) {
             onError("Admin no autenticado")
             return
         }
 
+        val adminId = adminUser.uid
+        val adminEmail = adminUser.email ?: ""
+
         auth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { result ->
 
-                val empleadoId = result.user?.uid ?: return@addOnSuccessListener
+                val empleadoId = result.user?.uid
+
+                if (empleadoId == null) {
+                    onError("Error creando usuario")
+                    return@addOnSuccessListener
+                }
 
                 val empleado = hashMapOf(
                     "nombre" to nombre,
@@ -42,14 +50,24 @@ class EmpleadoViewModel : ViewModel() {
                     .document(empleadoId)
                     .set(empleado)
                     .addOnSuccessListener {
-                        onSuccess()
+
+                        // ⚠️ SOLO PARA PRUEBAS
+                        val adminPassword = "123456"
+
+                        auth.signInWithEmailAndPassword(adminEmail, adminPassword)
+                            .addOnSuccessListener {
+                                onSuccess()
+                            }
+                            .addOnFailureListener {
+                                onError("Error re-autenticando admin")
+                            }
                     }
                     .addOnFailureListener {
                         onError("Error guardando datos")
                     }
             }
-            .addOnFailureListener {
-                onError("Error: ${it.message}")
+            .addOnFailureListener { exception ->
+                onError(exception.message ?: "Error desconocido")
             }
     }
 }
