@@ -49,7 +49,6 @@ fun EmpleadoDetalleScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // 🔙 VOLVER
         TextButton(
             onClick = { navController.popBackStack() },
             modifier = Modifier.align(Alignment.Start)
@@ -59,7 +58,6 @@ fun EmpleadoDetalleScreen(
 
         Spacer(Modifier.height(10.dp))
 
-        // 🔵 AVATAR
         Box(
             modifier = Modifier
                 .size(120.dp)
@@ -81,7 +79,6 @@ fun EmpleadoDetalleScreen(
 
         Spacer(Modifier.height(30.dp))
 
-        // 🔹 NOMBRE
         CampoEditable(
             value = nombre,
             editing = editNombre,
@@ -89,7 +86,6 @@ fun EmpleadoDetalleScreen(
             onValueChange = { nombre = it }
         )
 
-        // 🔹 EMAIL
         CampoEditable(
             value = email,
             editing = editEmail,
@@ -99,7 +95,6 @@ fun EmpleadoDetalleScreen(
 
         Spacer(Modifier.height(20.dp))
 
-        // 🔐 CONTRASEÑA
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
@@ -118,22 +113,28 @@ fun EmpleadoDetalleScreen(
 
         Spacer(Modifier.height(20.dp))
 
-        // 🔘 CONFIRMAR
+        // 🔥 BOTÓN CONFIRMAR (ARREGLADO)
         Button(
             onClick = {
-                if (password == confirmPassword || password.isEmpty()) {
 
-                    db.collection("usuarios")
-                        .document(usuarioId)
-                        .update(
-                            mapOf(
-                                "nombre" to nombre,
-                                "email" to email
-                            )
+                if (password != confirmPassword) return@Button
+
+                db.collection("usuarios")
+                    .document(usuarioId)
+                    .update(
+                        mapOf(
+                            "nombre" to nombre,
+                            "email" to email
                         )
+                    )
+                    .addOnSuccessListener {
+                        // 🔥 REGRESA A LISTA
+                        navController.navigate("usuarios") {
+                            popUpTo("usuarios") { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    }
 
-                    // ⚠️ NOTA: cambiar contraseña en Firebase Auth es más complejo
-                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -142,7 +143,6 @@ fun EmpleadoDetalleScreen(
 
         Spacer(Modifier.height(10.dp))
 
-        // 🗑 BOTÓN ELIMINAR
         Button(
             onClick = { showDialog = true },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
@@ -152,7 +152,7 @@ fun EmpleadoDetalleScreen(
         }
     }
 
-    // ⚠️ DIÁLOGO CONFIRMACIÓN
+    // 🔥 DIÁLOGO ARREGLADO
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -162,10 +162,14 @@ fun EmpleadoDetalleScreen(
                         db.collection("usuarios")
                             .document(usuarioId)
                             .delete()
+                            .addOnSuccessListener {
 
-                        navController.navigate("home_tienda") {
-                            popUpTo(0)
-                        }
+                                // 🔥 REGRESA A USUARIOS
+                                navController.navigate("usuarios") {
+                                    popUpTo("usuarios") { inclusive = false }
+                                    launchSingleTop = true
+                                }
+                            }
                     }
                 ) {
                     Text("Sí, eliminar")
