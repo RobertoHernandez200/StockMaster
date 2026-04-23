@@ -1,12 +1,24 @@
 package com.example.stockmaster.ui.screens.auth.register
 
+import android.util.Patterns
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
-import com.example.stockmaster.ui.components.PrimaryButton
-import com.example.stockmaster.ui.components.BackButton
+import androidx.compose.ui.unit.sp
+import com.example.stockmaster.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -22,129 +34,224 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
+    var passwordVisible by remember { mutableStateOf(false) }
+    var confirmPasswordVisible by remember { mutableStateOf(false) }
+
     var errorMessage by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
 
     val auth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color(0xFFF5F5F5))
             .padding(24.dp)
     ) {
 
-        BackButton(onClick = onBack)
+        Column(modifier = Modifier.fillMaxSize()) {
 
-        Spacer(modifier = Modifier.height(16.dp))
+            TextButton(onClick = onBack) {
+                Text("← Crear cuenta")
+            }
 
-        Text("Crear cuenta")
+            Spacer(modifier = Modifier.height(20.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") }
-        )
+                // 🔷 Avatar
+                Image(
+                    painter = painterResource(id = R.drawable.avatar),
+                    contentDescription = "Perfil",
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(CircleShape)
+                )
 
-        Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
-            value = nombre,
-            onValueChange = { nombre = it },
-            label = { Text("Nombre") }
-        )
+                Text("Crear cuenta", fontSize = 22.sp)
 
-        Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(24.dp))
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") }
-        )
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = {
+                        email = it
+                        errorMessage = ""
+                    },
+                    label = { Text("Email") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-        Spacer(modifier = Modifier.height(12.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirmar Password") }
-        )
+                OutlinedTextField(
+                    value = nombre,
+                    onValueChange = {
+                        nombre = it
+                        errorMessage = ""
+                    },
+                    label = { Text("Nombre") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-        Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-        // 🔴 Mostrar errores
-        if (errorMessage.isNotEmpty()) {
-            Text(
-                text = errorMessage,
-                color = MaterialTheme.colorScheme.error
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
+                // 🔐 PASSWORD
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = {
+                        password = it
+                        errorMessage = ""
+                    },
+                    label = { Text("Contraseña") },
+                    singleLine = true,
+                    visualTransformation = if (passwordVisible)
+                        VisualTransformation.None
+                    else
+                        PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            passwordVisible = !passwordVisible
+                        }) {
+                            Icon(
+                                imageVector = if (passwordVisible)
+                                    Icons.Default.Visibility
+                                else
+                                    Icons.Default.VisibilityOff,
+                                contentDescription = ""
+                            )
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-        PrimaryButton(
-            text = if (loading) "Registrando..." else "Registrar cuenta",
-            onClick = {
+                // 🔐 CONFIRM PASSWORD
+                OutlinedTextField(
+                    value = confirmPassword,
+                    onValueChange = {
+                        confirmPassword = it
+                        errorMessage = ""
+                    },
+                    label = { Text("Confirmar contraseña") },
+                    singleLine = true,
+                    visualTransformation = if (confirmPasswordVisible)
+                        VisualTransformation.None
+                    else
+                        PasswordVisualTransformation(),
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            confirmPasswordVisible = !confirmPasswordVisible
+                        }) {
+                            Icon(
+                                imageVector = if (confirmPasswordVisible)
+                                    Icons.Default.Visibility
+                                else
+                                    Icons.Default.VisibilityOff,
+                                contentDescription = ""
+                            )
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                // 🔥 VALIDACIONES
-                when {
-                    email.isEmpty() || nombre.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() -> {
-                        errorMessage = "Todos los campos son obligatorios"
-                        return@PrimaryButton
-                    }
+                Spacer(modifier = Modifier.height(12.dp))
 
-                    !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
-                        errorMessage = "Correo inválido"
-                        return@PrimaryButton
-                    }
+                Text("*Mínimo 6 caracteres", fontSize = 12.sp)
 
-                    password.length < 6 -> {
-                        errorMessage = "La contraseña debe tener al menos 6 caracteres"
-                        return@PrimaryButton
-                    }
+                Spacer(modifier = Modifier.height(8.dp))
 
-                    password != confirmPassword -> {
-                        errorMessage = "Las contraseñas no coinciden"
-                        return@PrimaryButton
-                    }
+                // 🔴 ERROR
+                if (errorMessage.isNotEmpty()) {
+                    Text(
+                        text = errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 13.sp
+                    )
                 }
+            }
 
-                // limpiar error y activar loading
-                errorMessage = ""
-                loading = true
+            Spacer(modifier = Modifier.weight(1f))
 
-                // 🔥 FIREBASE AUTH
-                auth.createUserWithEmailAndPassword(email, password)
-                    .addOnSuccessListener { result ->
+            Button(
+                onClick = {
 
-                        val userId = result.user?.uid
-
-                        if (userId == null) {
-                            errorMessage = "Error creando usuario"
-                            return@addOnSuccessListener
+                    when {
+                        email.isBlank() || nombre.isBlank() ||
+                                password.isBlank() || confirmPassword.isBlank() -> {
+                            errorMessage = "Todos los campos son obligatorios"
+                            return@Button
                         }
 
-                        val user = hashMapOf(
-                            "email" to email,
-                            "nombre" to nombre,
-                            "role" to role
-                        )
+                        !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                            errorMessage = "Correo inválido"
+                            return@Button
+                        }
 
-                        db.collection("usuarios")
-                            .document(userId)
-                            .set(user)
-                            .addOnSuccessListener {
-                                onRegisterSuccess() // 🔥 SOLO aquí
-                            }
-                            .addOnFailureListener {
-                                errorMessage = "Error guardando en Firestore: ${it.message}"
-                            }
+                        password.length < 6 -> {
+                            errorMessage = "Mínimo 6 caracteres"
+                            return@Button
+                        }
+
+                        password != confirmPassword -> {
+                            errorMessage = "Las contraseñas no coinciden"
+                            return@Button
+                        }
                     }
-                    .addOnFailureListener {
-                        errorMessage = "Error en Auth: ${it.message}"
-                    }
+
+                    loading = true
+                    errorMessage = ""
+
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .addOnSuccessListener { result ->
+
+                            val userId = result.user?.uid
+
+                            if (userId == null) {
+                                loading = false
+                                errorMessage = "Error creando usuario"
+                                return@addOnSuccessListener
+                            }
+
+                            val user = hashMapOf(
+                                "email" to email,
+                                "nombre" to nombre,
+                                "role" to role
+                            )
+
+                            db.collection("usuarios")
+                                .document(userId)
+                                .set(user)
+                                .addOnSuccessListener {
+                                    loading = false
+                                    onRegisterSuccess()
+                                }
+                                .addOnFailureListener {
+                                    loading = false
+                                    errorMessage = "Error guardando datos"
+                                }
+                        }
+                        .addOnFailureListener {
+                            loading = false
+                            errorMessage = "Error: ${it.message}"
+                        }
+                },
+                enabled = !loading,
+                shape = RoundedCornerShape(50),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF6A5AE0)
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
+            ) {
+                Text(if (loading) "Registrando..." else "Registrarse")
             }
-        )
+        }
     }
 }
