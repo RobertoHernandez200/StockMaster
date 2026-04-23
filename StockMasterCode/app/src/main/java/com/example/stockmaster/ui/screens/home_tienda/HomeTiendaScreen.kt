@@ -29,7 +29,7 @@ fun HomeTiendaScreen(
             .background(Color(0xFFF5F5F5))
     ) {
 
-        // 🔹 HEADER
+        // HEADER
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -50,7 +50,7 @@ fun HomeTiendaScreen(
             }
         }
 
-        // 🔹 RESUMEN
+        // RESUMEN
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -68,7 +68,7 @@ fun HomeTiendaScreen(
             Text("Código: PDF417", fontSize = 14.sp)
         }
 
-        // 🔥 CONTENEDOR MORADO
+        // CONTENEDOR MORADO
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -137,7 +137,7 @@ fun CardBox(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            // 🔲 ICONO (placeholder por ahora)
+            // ICONO
             Box(
                 modifier = Modifier
                     .size(70.dp)

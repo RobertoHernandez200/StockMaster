@@ -25,7 +25,7 @@ fun ProductScreen(
 
     Scaffold(
 
-        // 🔥 BARRA SUPERIOR
+        // BARRA SUPERIOR
         topBar = {
             TopAppBar(
                 title = { Text("Inventario") },

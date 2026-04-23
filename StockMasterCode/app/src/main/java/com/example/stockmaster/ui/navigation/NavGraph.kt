@@ -132,7 +132,7 @@ fun NavGraph() {
             HomeClienteScreen()
         }
 
-        // 🔥 HOME TIENDA
+        // HOME TIENDA
         composable("home_tienda") {
             HomeTiendaScreen(
                 onAddProduct = {
@@ -155,7 +155,7 @@ fun NavGraph() {
             }
         }
 
-        // 🔥 LISTA DE USUARIOS
+        // LISTA DE USUARIOS
         composable("usuarios") {
             UsuariosScreen(
                 navController = navController,
@@ -173,7 +173,7 @@ fun NavGraph() {
             )
         }
 
-        // 🔥 DETALLE USUARIO (EDITAR / ELIMINAR)
+        // DETALLE USUARIO (EDITAR / ELIMINAR)
         composable("detalle_usuario/{id}") { backStack ->
             val id = backStack.arguments?.getString("id")!!
 

@@ -53,12 +53,12 @@ fun RegisterScreen(
             .padding(24.dp)
     ) {
 
-        // 🔹 HEADER
+        // HEADER
         TextButton(onClick = onBack) {
             Text("← Crear cuenta")
         }
 
-        // 🔹 CONTENIDO CENTRADO
+        // CONTENIDO CENTRADO
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -84,7 +84,7 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 🔥 INPUTS TIPO LÍNEA
+            // INPUTS TIPO LÍNEA
             LineTextField(
                 value = email,
                 onValueChange = {
@@ -149,7 +149,7 @@ fun RegisterScreen(
             }
         }
 
-        // 🔘 BOTÓN
+        // BOTÓN
         PrimaryButton(
             text = if (loading) "Registrando..." else "Registrarse",
             onClick = {

@@ -40,7 +40,7 @@ fun RoleSelectionScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            // 🔷 TÍTULO CON DEGRADADO
+            // TÍTULO CON DEGRADADO
             Image(
                 painter = painterResource(id = R.drawable.ic_logo),
                 contentDescription = "Logo",
@@ -68,7 +68,7 @@ fun RoleSelectionScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // 🔘 BOTONES (usan tu estilo global)
+            // BOTONES (usan tu estilo global)
             PrimaryButton(
                 text = "Tienda",
                 onClick = onTiendaClick,

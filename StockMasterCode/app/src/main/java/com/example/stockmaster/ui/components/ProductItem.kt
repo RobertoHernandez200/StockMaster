@@ -23,8 +23,8 @@ fun ProductItem(
         Column(modifier = Modifier.padding(16.dp)) {
 
             Text(producto.nombre)
-            Text("💰 ${producto.valor}")
-            Text("📦 ${producto.stock}")
+            Text(" ${producto.valor}")
+            Text(" ${producto.stock}")
 
             Spacer(modifier = Modifier.height(8.dp))
 

@@ -35,14 +35,14 @@ fun PasswordEmpleadoScreen(
             .padding(24.dp)
     ) {
 
-        // 🔙 Volver
+        // Volver
         TextButton(onClick = onBack) {
             Text("← Contraseña")
         }
 
         Spacer(modifier = Modifier.height(40.dp))
 
-        // 🔐 Contraseña
+        // Contraseña
         OutlinedTextField(
             value = password,
             onValueChange = {
@@ -65,7 +65,7 @@ fun PasswordEmpleadoScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 🔐 Confirmar contraseña
+        // Confirmar contraseña
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = {
@@ -87,7 +87,7 @@ fun PasswordEmpleadoScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // ❌ Error
+        // Error
         if (error) {
             Text(
                 text = "Las contraseñas no coinciden",
@@ -97,7 +97,7 @@ fun PasswordEmpleadoScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // 🔘 Botón
+        // Botón
         Button(
             onClick = {
                 if (password != confirmPassword || password.isEmpty()) {

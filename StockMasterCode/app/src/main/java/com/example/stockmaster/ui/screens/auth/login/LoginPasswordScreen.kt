@@ -36,12 +36,12 @@ fun LoginPasswordScreen(
             .padding(24.dp)
     ) {
 
-        // 🔹 HEADER
+        // HEADER
         TextButton(onClick = onBack) {
             Text("← Contraseña")
         }
 
-        // 🔹 CONTENIDO CENTRADO
+        // CONTENIDO CENTRADO
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -68,7 +68,7 @@ fun LoginPasswordScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // 🔥 INPUT MODERNO
+            // INPUT MODERNO
             LineTextField(
                 value = password,
                 onValueChange = {
@@ -91,7 +91,7 @@ fun LoginPasswordScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            // 🔴 ERROR
+            // ERROR
             if (errorMessage.isNotEmpty()) {
                 Text(
                     text = errorMessage,

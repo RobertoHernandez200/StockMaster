@@ -45,7 +45,7 @@ fun EntryTiendaScreen(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f), // 👈 ocupa espacio y permite centrar
+                    .weight(1f), // ocupa espacio y permite centrar
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -67,7 +67,7 @@ fun EntryTiendaScreen(
 
                 Spacer(modifier = Modifier.height(50.dp))
 
-                // 🔘 INGRESAR
+                // INGRESAR
                 PrimaryButton(
                     text = "Ingresar",
                     onClick = onLoginClick,
@@ -88,7 +88,7 @@ fun EntryTiendaScreen(
                 Spacer(modifier = Modifier.height(16.dp))
             }
 
-            // 🔹 FOOTER
+            // FOOTER
             Text(
                 text = "Al crear una cuenta, aceptas los Términos de Uso y la Política de Privacidad",
                 fontSize = 12.sp,

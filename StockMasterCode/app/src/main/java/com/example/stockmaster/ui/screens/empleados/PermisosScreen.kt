@@ -32,7 +32,7 @@ fun PermisosScreen(
 
         Spacer(Modifier.height(24.dp))
 
-        // 👇 Permisos
+        // Permisos
         PermisoItem(
             titulo = "Registrar o alterar productos",
             checked = productos,

@@ -31,10 +31,10 @@ fun LoginScreen(
             .padding(24.dp)
     ) {
 
-        // 🔹 HEADER
+        // HEADER
         BackButton(onClick = onBack)
 
-        // 🔹 CONTENIDO CENTRADO
+        // CONTENIDO CENTRADO
         Column(
             modifier = Modifier
                 .fillMaxSize(),

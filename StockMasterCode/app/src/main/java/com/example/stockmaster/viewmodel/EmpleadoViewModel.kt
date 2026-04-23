@@ -51,7 +51,7 @@ class EmpleadoViewModel : ViewModel() {
                     .set(empleado)
                     .addOnSuccessListener {
 
-                        // ⚠️ SOLO PARA PRUEBAS
+                        // SOLO PARA PRUEBAS
                         val adminPassword = "123456"
 
                         auth.signInWithEmailAndPassword(adminEmail, adminPassword)

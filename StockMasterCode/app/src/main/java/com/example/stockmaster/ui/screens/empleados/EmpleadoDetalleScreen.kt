@@ -113,7 +113,7 @@ fun EmpleadoDetalleScreen(
 
         Spacer(Modifier.height(20.dp))
 
-        // 🔥 BOTÓN CONFIRMAR (ARREGLADO)
+        // BOTÓN CONFIRMAR (ARREGLADO)
         Button(
             onClick = {
 
@@ -128,7 +128,7 @@ fun EmpleadoDetalleScreen(
                         )
                     )
                     .addOnSuccessListener {
-                        // 🔥 REGRESA A LISTA
+                        // REGRESA A LISTA
                         navController.navigate("usuarios") {
                             popUpTo("usuarios") { inclusive = false }
                             launchSingleTop = true
@@ -152,7 +152,7 @@ fun EmpleadoDetalleScreen(
         }
     }
 
-    // 🔥 DIÁLOGO ARREGLADO
+    // DIÁLOGO ARREGLADO
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -164,7 +164,7 @@ fun EmpleadoDetalleScreen(
                             .delete()
                             .addOnSuccessListener {
 
-                                // 🔥 REGRESA A USUARIOS
+                                // REGRESA A USUARIOS
                                 navController.navigate("usuarios") {
                                     popUpTo("usuarios") { inclusive = false }
                                     launchSingleTop = true

@@ -15,7 +15,7 @@ fun HomeClienteScreen() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Inicio Cliente 👤",
+            text = "Inicio Cliente",
             fontSize = 22.sp
         )
     }

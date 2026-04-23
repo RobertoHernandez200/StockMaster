@@ -18,7 +18,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import androidx.compose.foundation.background
 
-// 🔥 MODELO UNIFICADO
+// MODELO UNIFICADO
 data class Usuario(
     val id: String = "",
     val nombre: String = "",
@@ -40,7 +40,7 @@ fun UsuariosScreen(
     var usuarios by remember { mutableStateOf<List<Usuario>>(emptyList()) }
     var searchText by remember { mutableStateOf("") }
 
-    // 🔥 CARGA DE DATOS
+    // CARGA DE DATOS
     LaunchedEffect(Unit) {
         db.collection("usuarios")
             .get()
@@ -56,7 +56,7 @@ fun UsuariosScreen(
                     )
                 }
 
-                // 🔥 SOLO MÍOS + YO MISMO
+                // SOLO MÍOS + YO MISMO
                 usuarios = lista
                     .filter {
                         it.createdBy == currentUserId || it.id == currentUserId
@@ -65,7 +65,7 @@ fun UsuariosScreen(
             }
     }
 
-    // 🔍 BUSCADOR (NO SE BORRA)
+    // BUSCADOR (NO SE BORRA)
     val filtrados = usuarios.filter {
         it.nombre.contains(searchText, ignoreCase = true) ||
                 it.email.contains(searchText, ignoreCase = true)
@@ -77,7 +77,7 @@ fun UsuariosScreen(
             .background(Color(0xFFF5F5F5))
     ) {
 
-        // 🔝 HEADER (COMBINADO)
+        // HEADER (COMBINADO)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -100,7 +100,7 @@ fun UsuariosScreen(
             }
         }
 
-        // 🔍 SEARCH UI
+        // SEARCH UI
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -127,7 +127,7 @@ fun UsuariosScreen(
 
         Spacer(Modifier.height(16.dp))
 
-        // 📋 LISTA
+        // LISTA
         LazyColumn {
             items(filtrados) { usuario ->
                 UsuarioItem(
