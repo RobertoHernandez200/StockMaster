@@ -13,11 +13,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import androidx.compose.foundation.background
 
+// 🔥 MODELO UNIFICADO
 data class Usuario(
+    val id: String = "",
     val nombre: String = "",
     val email: String = "",
     val role: String = "",
@@ -26,15 +29,18 @@ data class Usuario(
 
 @Composable
 fun UsuariosScreen(
+    navController: NavController,
     onAddUser: () -> Unit,
     onBack: () -> Unit
 ) {
+
     val db = FirebaseFirestore.getInstance()
     val currentUserId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
 
     var usuarios by remember { mutableStateOf<List<Usuario>>(emptyList()) }
     var searchText by remember { mutableStateOf("") }
 
+    // 🔥 CARGA DE DATOS
     LaunchedEffect(Unit) {
         db.collection("usuarios")
             .get()
@@ -42,6 +48,7 @@ fun UsuariosScreen(
 
                 val lista = result.map {
                     Usuario(
+                        id = it.id,
                         nombre = it.getString("nombre") ?: "",
                         email = it.getString("email") ?: "",
                         role = it.getString("role") ?: "",
@@ -49,19 +56,17 @@ fun UsuariosScreen(
                     )
                 }
 
-                // 🔥 1. Filtrar solo míos o creados por mí
-                val filtrados = lista.filter {
-                    it.createdBy == currentUserId || it.email == FirebaseAuth.getInstance().currentUser?.email
-                }
-                    .distinctBy { it.email }
-
-                // 🔥 2. Quitar duplicados por email
-                usuarios = filtrados.distinctBy { it.email }
+                // 🔥 SOLO MÍOS + YO MISMO
+                usuarios = lista
+                    .filter {
+                        it.createdBy == currentUserId || it.id == currentUserId
+                    }
+                    .distinctBy { it.id }
             }
     }
 
-    // 🔎 filtro de búsqueda
-    val usuariosFiltrados = usuarios.filter {
+    // 🔍 BUSCADOR (NO SE BORRA)
+    val filtrados = usuarios.filter {
         it.nombre.contains(searchText, ignoreCase = true) ||
                 it.email.contains(searchText, ignoreCase = true)
     }
@@ -72,7 +77,7 @@ fun UsuariosScreen(
             .background(Color(0xFFF5F5F5))
     ) {
 
-        // 🔝 Header con back
+        // 🔝 HEADER (COMBINADO)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -83,7 +88,11 @@ fun UsuariosScreen(
                 IconButton(onClick = onBack) {
                     Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
                 }
-                Text("Usuarios", style = MaterialTheme.typography.titleLarge)
+
+                Text(
+                    "Usuarios",
+                    style = MaterialTheme.typography.titleLarge
+                )
             }
 
             IconButton(onClick = onAddUser) {
@@ -91,7 +100,7 @@ fun UsuariosScreen(
             }
         }
 
-        // 🔍 Buscador funcional
+        // 🔍 SEARCH UI
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -118,20 +127,29 @@ fun UsuariosScreen(
 
         Spacer(Modifier.height(16.dp))
 
+        // 📋 LISTA
         LazyColumn {
-            items(usuariosFiltrados) { usuario ->
-                UsuarioItem(usuario)
+            items(filtrados) { usuario ->
+                UsuarioItem(
+                    usuario = usuario,
+                    onClick = {
+                        navController.navigate("detalle_usuario/${usuario.id}")
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-fun UsuarioItem(usuario: Usuario) {
+fun UsuarioItem(
+    usuario: Usuario,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { }
+            .clickable { onClick() }
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
