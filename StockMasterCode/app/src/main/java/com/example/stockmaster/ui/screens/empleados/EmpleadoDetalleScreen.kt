@@ -24,18 +24,20 @@ fun EmpleadoDetalleScreen(
 
     var nombre by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
-    var telefono by remember { mutableStateOf("") }
+
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
 
     var editNombre by remember { mutableStateOf(false) }
     var editEmail by remember { mutableStateOf(false) }
-    var editTelefono by remember { mutableStateOf(false) }
+
+    var showDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         db.collection("usuarios").document(usuarioId).get()
             .addOnSuccessListener {
                 nombre = it.getString("nombre") ?: ""
                 email = it.getString("email") ?: ""
-                telefono = it.getString("telefono") ?: ""
             }
     }
 
@@ -57,7 +59,7 @@ fun EmpleadoDetalleScreen(
 
         Spacer(Modifier.height(10.dp))
 
-        // 🔵 FOTO (INICIALES)
+        // 🔵 AVATAR
         Box(
             modifier = Modifier
                 .size(120.dp)
@@ -81,7 +83,7 @@ fun EmpleadoDetalleScreen(
 
         // 🔹 NOMBRE
         CampoEditable(
-            label = nombre,
+            value = nombre,
             editing = editNombre,
             onEdit = { editNombre = true },
             onValueChange = { nombre = it }
@@ -89,18 +91,29 @@ fun EmpleadoDetalleScreen(
 
         // 🔹 EMAIL
         CampoEditable(
-            label = email,
+            value = email,
             editing = editEmail,
             onEdit = { editEmail = true },
             onValueChange = { email = it }
         )
 
-        // 🔹 TELÉFONO
-        CampoEditable(
-            label = telefono.ifEmpty { "Agregar teléfono" },
-            editing = editTelefono,
-            onEdit = { editTelefono = true },
-            onValueChange = { telefono = it }
+        Spacer(Modifier.height(20.dp))
+
+        // 🔐 CONTRASEÑA
+        OutlinedTextField(
+            value = password,
+            onValueChange = { password = it },
+            label = { Text("Nueva contraseña") },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(10.dp))
+
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = { confirmPassword = it },
+            label = { Text("Confirmar contraseña") },
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(Modifier.height(20.dp))
@@ -108,15 +121,19 @@ fun EmpleadoDetalleScreen(
         // 🔘 CONFIRMAR
         Button(
             onClick = {
-                db.collection("usuarios")
-                    .document(usuarioId)
-                    .update(
-                        mapOf(
-                            "nombre" to nombre,
-                            "email" to email,
-                            "telefono" to telefono
+                if (password == confirmPassword || password.isEmpty()) {
+
+                    db.collection("usuarios")
+                        .document(usuarioId)
+                        .update(
+                            mapOf(
+                                "nombre" to nombre,
+                                "email" to email
+                            )
                         )
-                    )
+
+                    // ⚠️ NOTA: cambiar contraseña en Firebase Auth es más complejo
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -125,28 +142,49 @@ fun EmpleadoDetalleScreen(
 
         Spacer(Modifier.height(10.dp))
 
-        // 🗑 ELIMINAR
+        // 🗑 BOTÓN ELIMINAR
         Button(
-            onClick = {
-                db.collection("usuarios")
-                    .document(usuarioId)
-                    .delete()
-
-                navController.navigate("home_tienda") {
-                    popUpTo(0)
-                }
-            },
+            onClick = { showDialog = true },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Red),
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Eliminar usuario")
         }
     }
+
+    // ⚠️ DIÁLOGO CONFIRMACIÓN
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        db.collection("usuarios")
+                            .document(usuarioId)
+                            .delete()
+
+                        navController.navigate("home_tienda") {
+                            popUpTo(0)
+                        }
+                    }
+                ) {
+                    Text("Sí, eliminar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Cancelar")
+                }
+            },
+            title = { Text("Eliminar usuario") },
+            text = { Text("¿Seguro que quieres eliminar este usuario?") }
+        )
+    }
 }
 
 @Composable
 fun CampoEditable(
-    label: String,
+    value: String,
     editing: Boolean,
     onEdit: () -> Unit,
     onValueChange: (String) -> Unit
@@ -162,12 +200,12 @@ fun CampoEditable(
 
         if (editing) {
             OutlinedTextField(
-                value = label,
+                value = value,
                 onValueChange = onValueChange,
                 modifier = Modifier.weight(1f)
             )
         } else {
-            Text(label)
+            Text(value)
         }
 
         TextButton(onClick = onEdit) {
