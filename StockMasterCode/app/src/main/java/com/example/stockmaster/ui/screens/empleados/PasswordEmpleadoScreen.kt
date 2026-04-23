@@ -9,7 +9,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -34,12 +35,14 @@ fun PasswordEmpleadoScreen(
             .padding(24.dp)
     ) {
 
+        // 🔙 Volver
         TextButton(onClick = onBack) {
             Text("← Contraseña")
         }
 
         Spacer(modifier = Modifier.height(40.dp))
 
+        // 🔐 Contraseña
         OutlinedTextField(
             value = password,
             onValueChange = {
@@ -62,6 +65,7 @@ fun PasswordEmpleadoScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
+        // 🔐 Confirmar contraseña
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = {
@@ -83,6 +87,7 @@ fun PasswordEmpleadoScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
+        // ❌ Mensaje error
         if (error) {
             Text(
                 text = "Las contraseñas no coinciden",
@@ -92,6 +97,7 @@ fun PasswordEmpleadoScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
+        // 🔘 Botón
         Button(
             onClick = {
                 if (password != confirmPassword || password.isEmpty()) {
@@ -107,8 +113,8 @@ fun PasswordEmpleadoScreen(
         ) {
             if (loading) {
                 CircularProgressIndicator(
-                    strokeWidth = 2.dp,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp
                 )
             } else {
                 Text("Crear usuario")
