@@ -1,15 +1,26 @@
 package com.example.stockmaster.ui.screens.role_selection
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.*
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.stockmaster.R
+import com.example.stockmaster.ui.components.PrimaryButton
+import com.example.stockmaster.ui.theme.BackgroundColor
+import com.example.stockmaster.ui.theme.LightGrayText
+import com.example.stockmaster.ui.theme.Poppins
+import com.example.stockmaster.ui.theme.PurpleEnd
+import com.example.stockmaster.ui.theme.PurpleStart
 
 @Composable
 fun RoleSelectionScreen(
@@ -20,72 +31,61 @@ fun RoleSelectionScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
-            .padding(24.dp)
+            .background(BackgroundColor)
+            .padding(horizontal = 24.dp, vertical = 32.dp),
+        contentAlignment = Alignment.Center
     ) {
 
         Column(
-            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Spacer(modifier = Modifier.height(60.dp))
-
-            // 🔷 "LOGO"
-            Text(
-                text = "StockMaster",
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF3F51B5)
+            // 🔷 TÍTULO CON DEGRADADO
+            Image(
+                painter = painterResource(id = R.drawable.ic_logo),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .fillMaxWidth(0.75f)
+                    .aspectRatio(1f)
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(2.dp))
 
             Text(
                 text = "Gestiona tu inventario fácil y rápido",
-                fontSize = 16.sp,
-                color = Color.DarkGray
+                fontFamily = Poppins,
+                fontSize = 14.sp,
+                color = LightGrayText
             )
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
             Text(
                 text = "Selecciona tu tipo de acceso",
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                fontFamily = Poppins
             )
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // 🔥 BOTÓN TIENDA
-            Button(
+            // 🔘 BOTONES (usan tu estilo global)
+            PrimaryButton(
+                text = "Tienda",
                 onClick = onTiendaClick,
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6A5AE0)
-                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp)
-            ) {
-                Text("Tienda", fontSize = 16.sp)
-            }
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // 🔥 BOTÓN CLIENTE
-            Button(
+            PrimaryButton(
+                text = "Cliente",
                 onClick = onClienteClick,
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6A5AE0)
-                ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(55.dp)
-            ) {
-                Text("Cliente", fontSize = 16.sp)
-            }
+            )
         }
     }
 }

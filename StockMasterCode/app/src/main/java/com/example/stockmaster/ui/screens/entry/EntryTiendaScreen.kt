@@ -1,5 +1,6 @@
 package com.example.stockmaster.ui.screens.entry
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -7,9 +8,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.stockmaster.R
+import com.example.stockmaster.ui.components.PrimaryButton
+import com.example.stockmaster.ui.theme.LightGrayText
+import com.example.stockmaster.ui.theme.Poppins
 
 @Composable
 fun EntryTiendaScreen(
@@ -29,74 +36,65 @@ fun EntryTiendaScreen(
             modifier = Modifier.fillMaxSize()
         ) {
 
-            // 🔙 Botón atrás
+            // 🔹 HEADER
             TextButton(onClick = onBack) {
                 Text("←", fontSize = 20.sp)
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
-
+            // 🔹 CONTENIDO CENTRADO
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f), // 👈 ocupa espacio y permite centrar
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
-                // 🔷 LOGO (puedes cambiar por Image después)
-                Text(
-                    text = "StockMaster",
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF3F51B5)
+                Image(
+                    painter = painterResource(id = R.drawable.ic_logo),
+                    contentDescription = "Logo",
+                    modifier = Modifier
+                        .fillMaxWidth(0.75f)
+                        .aspectRatio(1f)
                 )
-
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(2.dp))
 
                 Text(
                     text = "Gestiona tu inventario fácil y rápido",
-                    fontSize = 16.sp,
-                    color = Color.DarkGray
+                    fontFamily = Poppins,
+                    fontSize = 14.sp,
+                    color = LightGrayText
                 )
 
-                Spacer(modifier = Modifier.height(60.dp))
+                Spacer(modifier = Modifier.height(50.dp))
 
-                //  BOTÓN INGRESAR
-                Button(
+                // 🔘 INGRESAR
+                PrimaryButton(
+                    text = "Ingresar",
                     onClick = onLoginClick,
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF6A5AE0)
-                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(55.dp)
-                ) {
-                    Text("Ingresar", fontSize = 16.sp)
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                //  BOTÓN REGISTRARSE
-                Button(
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                //Registrarse
+                PrimaryButton(
+                    text = "Registrarse",
                     onClick = onRegisterClick,
-                    shape = RoundedCornerShape(50),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF6A5AE0)
-                    ),
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(55.dp)
-                ) {
-                    Text("Registrarse", fontSize = 16.sp)
-                }
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
             }
 
-            Spacer(modifier = Modifier.weight(1f))
-
-            // 🔹 Texto legal abajo
+            // 🔹 FOOTER
             Text(
                 text = "Al crear una cuenta, aceptas los Términos de Uso y la Política de Privacidad",
                 fontSize = 12.sp,
-                color = Color.Gray
+                color = Color.Gray,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
