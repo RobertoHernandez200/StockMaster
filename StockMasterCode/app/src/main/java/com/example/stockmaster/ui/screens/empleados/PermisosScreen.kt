@@ -20,15 +20,30 @@ fun PermisosScreen(
     var stock by remember { mutableStateOf(true) }
 
     Column(
-        Modifier.fillMaxSize().background(Color(0xFFF5F5F5)).padding(24.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF5F5F5))
+            .padding(24.dp)
     ) {
 
-        TextButton(onClick = onBack) { Text("← Permisos") }
+        TextButton(onClick = onBack) {
+            Text("← Permisos")
+        }
 
         Spacer(Modifier.height(24.dp))
 
-        Row { Text("Productos"); Switch(productos, { productos = it }) }
-        Row { Text("Stock"); Switch(stock, { stock = it }) }
+        // 👇 Permisos
+        PermisoItem(
+            titulo = "Registrar o alterar productos",
+            checked = productos,
+            onCheckedChange = { productos = it }
+        )
+
+        PermisoItem(
+            titulo = "Gestionar stock",
+            checked = stock,
+            onCheckedChange = { stock = it }
+        )
 
         Spacer(Modifier.weight(1f))
 
@@ -44,6 +59,35 @@ fun PermisosScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Avanzar")
+        }
+    }
+}
+
+@Composable
+fun PermisoItem(
+    titulo: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 6.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(0.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(titulo)
+            Switch(
+                checked = checked,
+                onCheckedChange = onCheckedChange
+            )
         }
     }
 }
