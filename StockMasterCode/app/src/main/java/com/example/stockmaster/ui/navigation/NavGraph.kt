@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-
+import com.example.stockmaster.ui.screens.empleados.UsuariosScreen
 import com.example.stockmaster.ui.screens.splash.SplashScreen
 import com.example.stockmaster.ui.screens.role_selection.RoleSelectionScreen
 import com.example.stockmaster.ui.screens.entry.EntryTiendaScreen
@@ -19,10 +19,8 @@ import com.example.stockmaster.ui.screens.empleados.PermisosScreen
 import com.example.stockmaster.ui.screens.empleados.PasswordEmpleadoScreen
 import com.example.stockmaster.ui.screens.empleados.LoadingScreen
 import com.example.stockmaster.ui.screens.empleados.SuccessScreen
-// 🔹 ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.stockmaster.viewmodel.EmpleadoViewModel
-
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -35,7 +33,6 @@ fun NavGraph() {
         startDestination = "splash"
     ) {
 
-        // 🔹 SPLASH
         composable("splash") {
             SplashScreen(
                 onStartClick = {
@@ -44,7 +41,6 @@ fun NavGraph() {
             )
         }
 
-        // 🔹 SELECCIÓN DE ROL
         composable("role_selection") {
             RoleSelectionScreen(
                 onClienteClick = {
@@ -56,9 +52,7 @@ fun NavGraph() {
             )
         }
 
-        // 🔹 ENTRADA DE TIENDA
         composable("entry/{role}") { backStackEntry ->
-
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
             EntryTiendaScreen(
@@ -74,9 +68,7 @@ fun NavGraph() {
             )
         }
 
-        // 🔹 LOGIN CORREO
         composable("login_email/{role}") { backStackEntry ->
-
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
             LoginEmailScreen(
@@ -87,9 +79,7 @@ fun NavGraph() {
             )
         }
 
-        // 🔹 LOGIN CONTRASEÑA
         composable("login_password/{email}/{role}") { backStackEntry ->
-
             val email = backStackEntry.arguments?.getString("email") ?: ""
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
@@ -114,7 +104,6 @@ fun NavGraph() {
                             }
                         }
                         .addOnFailureListener {
-
                             callback(false, "Correo o contraseña incorrectos")
                         }
                 },
@@ -124,9 +113,7 @@ fun NavGraph() {
             )
         }
 
-        // 🔹 REGISTER
         composable("register/{role}") { backStackEntry ->
-
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
             RegisterScreen(
@@ -148,32 +135,41 @@ fun NavGraph() {
             )
         }
 
-        // 🔹 HOME CLIENTE
         composable("home_cliente") {
             HomeClienteScreen()
         }
 
-        // 🔹 HOME TIENDA
+        // 🔥 HOME TIENDA (AQUÍ ESTÁ EL FIX)
         composable("home_tienda") {
             HomeTiendaScreen(
                 onAddProduct = {
                     navController.navigate("productos")
-
                 },
                 onUsuarios = {
-                    navController.navigate("crear_usuario")
+                    navController.navigate("usuarios") // 🔥 AQUÍ ESTÁ EL CAMBIO IMPORTANTE
                 },
                 onLogout = {
                     navController.navigate("role_selection") {
-                        popUpTo(0) // 🔥 limpia toda la navegación
+                        popUpTo(0)
                     }
                 }
             )
         }
 
-        // 🔹 PRODUCTOS
         composable("productos") {
             ProductScreen(
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // 🔥 NUEVA PANTALLA USUARIOS
+        composable("usuarios") {
+            UsuariosScreen(
+                onAddUser = {
+                    navController.navigate("crear_usuario")
+                },
                 onBack = {
                     navController.popBackStack()
                 }
