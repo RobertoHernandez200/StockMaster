@@ -13,6 +13,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.google.firebase.firestore.FirebaseFirestore
+import androidx.compose.foundation.background
 
 data class Usuario(
     val nombre: String = "",
