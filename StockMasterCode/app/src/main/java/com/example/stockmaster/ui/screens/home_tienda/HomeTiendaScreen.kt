@@ -21,31 +21,24 @@ fun HomeTiendaScreen(
     onLogout: () -> Unit
 ) {
 
-    val gradient = Brush.verticalGradient(
-        colors = listOf(Color(0xFF6A5AE0), Color(0xFF8E7CFF))
-    )
-
     val auth = FirebaseAuth.getInstance()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(gradient)
-            .padding(16.dp)
+            .background(Color(0xFFF5F5F5))
     ) {
 
-        // 🔥 HEADER
+        // 🔹 HEADER
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Text(
-                text = "Inicio",
-                color = Color.White,
-                fontSize = 22.sp
-            )
+            Text("Inicio", fontSize = 20.sp)
 
             TextButton(
                 onClick = {
@@ -53,42 +46,82 @@ fun HomeTiendaScreen(
                     onLogout()
                 }
             ) {
-                Text("Salir", color = Color.White)
+                Text("Salir")
             }
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        // 🔹 RESUMEN
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-        // 🔹 PRODUCTOS
-        CardBox(
-            title = "Productos",
-            buttonText = "Añadir producto",
-            onClick = onAddProduct
-        )
+            Text("HOY", fontSize = 14.sp)
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "$0.00",
+                fontSize = 32.sp
+            )
 
-        // 🔹 USUARIOS (🔥 ARREGLADO)
-        CardBox(
-            title = "Usuarios",
-            buttonText = "Agregar usuario",
-            onClick = onUsuarios
-        )
+            Text("Código: PDF417", fontSize = 14.sp)
+        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // 🔥 CONTENEDOR MORADO
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF6A5AE0),
+                            Color(0xFF8E7CFF)
+                        )
+                    ),
+                    shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
+                )
+        ) {
 
-        // 🔹 PROVEEDORES
-        CardBox(
-            title = "Proveedores",
-            buttonText = "Agregar contacto",
-            onClick = { /* futuro */ }
-        )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp)
+            ) {
+
+                CardBox(
+                    title = "Productos",
+                    subtitle = "Agregar nuevo producto",
+                    buttonText = "Añadir producto",
+                    onClick = onAddProduct
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                CardBox(
+                    title = "Usuarios",
+                    subtitle = "Crear nuevo usuario",
+                    buttonText = "Agregar usuario",
+                    onClick = onUsuarios
+                )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                CardBox(
+                    title = "Proveedores",
+                    subtitle = "Añadir nuevo contacto",
+                    buttonText = "Agregar contacto",
+                    onClick = { }
+                )
+            }
+        }
     }
 }
 
 @Composable
 fun CardBox(
     title: String,
+    subtitle: String,
     buttonText: String,
     onClick: () -> Unit
 ) {
@@ -97,21 +130,39 @@ fun CardBox(
         shape = RoundedCornerShape(20.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
+
+        Row(
+            modifier = Modifier
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Text(
-                text = title,
-                fontSize = 18.sp
+            // 🔲 ICONO (placeholder por ahora)
+            Box(
+                modifier = Modifier
+                    .size(70.dp)
+                    .background(Color.LightGray, RoundedCornerShape(12.dp))
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.width(16.dp))
 
-            PrimaryButton(
-                text = buttonText,
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+
+                Text(title, fontSize = 18.sp)
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(subtitle, fontSize = 14.sp, color = Color.Gray)
+            }
+
+            Button(
                 onClick = onClick,
-            )
+                shape = RoundedCornerShape(50)
+            ) {
+                Text("+ $buttonText")
+            }
         }
     }
 }
