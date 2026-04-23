@@ -7,7 +7,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
@@ -19,100 +19,36 @@ fun PasswordEmpleadoScreen(
 ) {
 
     var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-
     var visible by remember { mutableStateOf(false) }
-    var visibleConfirm by remember { mutableStateOf(false) }
-
-    var error by remember { mutableStateOf(false) }
-    var loading by remember { mutableStateOf(false) }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF5F5F5))
-            .padding(24.dp)
+        Modifier.fillMaxSize().background(Color(0xFFF5F5F5)).padding(24.dp)
     ) {
 
-        TextButton(onClick = onBack) {
-            Text("← Contraseña")
-        }
+        TextButton(onClick = onBack) { Text("← Contraseña") }
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(Modifier.height(40.dp))
 
         OutlinedTextField(
             value = password,
-            onValueChange = {
-                password = it
-                error = false
-            },
+            onValueChange = { password = it },
             label = { Text("Contraseña") },
             singleLine = true,
             visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = { visible = !visible }) {
                     Icon(
-                        imageVector = if (visible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        if (visible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = null
                     )
                 }
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = {
-                confirmPassword = it
-                error = false
-            },
-            label = { Text("Confirmar contraseña") },
-            singleLine = true,
-            isError = error,
-            visualTransformation = if (visibleConfirm) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(onClick = { visibleConfirm = !visibleConfirm }) {
-                    Icon(
-                        imageVector = if (visibleConfirm) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = null
-                    )
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        if (error) {
-            Text(
-                text = "Las contraseñas no coinciden",
-                color = MaterialTheme.colorScheme.error
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(
-            onClick = {
-                if (password != confirmPassword || password.isEmpty()) {
-                    error = true
-                    return@Button
-                }
-
-                loading = true
-                onCreate(password)
-            },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !loading
-        ) {
-            if (loading) {
-                CircularProgressIndicator(
-                    strokeWidth = 2.dp,
-                    modifier = Modifier.size(20.dp)
-                )
-            } else {
-                Text("Crear usuario")
             }
+        )
+
+        Spacer(Modifier.weight(1f))
+
+        Button(onClick = { onCreate(password) }, modifier = Modifier.fillMaxWidth()) {
+            Text("Crear usuario")
         }
     }
 }
