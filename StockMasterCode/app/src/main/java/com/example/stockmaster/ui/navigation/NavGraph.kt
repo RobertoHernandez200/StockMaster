@@ -1,251 +1,123 @@
-package com.example.stockmaster.ui.navigation
+package com.example.stockmaster.ui.screens.empleados
 
-import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-
-import com.example.stockmaster.ui.screens.splash.SplashScreen
-import com.example.stockmaster.ui.screens.role_selection.RoleSelectionScreen
-import com.example.stockmaster.ui.screens.entry.EntryTiendaScreen
-import com.example.stockmaster.ui.screens.auth.login.LoginEmailScreen
-import com.example.stockmaster.ui.screens.auth.login.LoginPasswordScreen
-import com.example.stockmaster.ui.screens.auth.register.RegisterScreen
-import com.example.stockmaster.ui.screens.home_cliente.HomeClienteScreen
-import com.example.stockmaster.ui.screens.home_tienda.HomeTiendaScreen
-import com.example.stockmaster.ui.screens.products.ProductScreen
-import com.example.stockmaster.ui.screens.empleados.CrearUsuarioScreen
-import com.example.stockmaster.ui.screens.empleados.PermisosScreen
-import com.example.stockmaster.ui.screens.empleados.PasswordEmpleadoScreen
-import com.example.stockmaster.ui.screens.empleados.LoadingScreen
-import com.example.stockmaster.ui.screens.empleados.SuccessScreen
-// 🔹 ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.stockmaster.viewmodel.EmpleadoViewModel
-
-import com.google.firebase.auth.FirebaseAuth
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.*
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.*
+import androidx.compose.ui.unit.dp
 
 @Composable
-fun NavGraph() {
+fun PasswordEmpleadoScreen(
+    onCreate: (String) -> Unit,
+    onBack: () -> Unit
+) {
 
-    val navController = rememberNavController()
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
 
-    NavHost(
-        navController = navController,
-        startDestination = "splash"
+    var visible by remember { mutableStateOf(false) }
+    var visibleConfirm by remember { mutableStateOf(false) }
+
+    var error by remember { mutableStateOf(false) }
+    var loading by remember { mutableStateOf(false) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF5F5F5))
+            .padding(24.dp)
     ) {
 
-        // 🔹 SPLASH
-        composable("splash") {
-            SplashScreen(
-                onStartClick = {
-                    navController.navigate("role_selection")
-                }
-            )
+        // 🔙 Botón volver
+        TextButton(onClick = onBack) {
+            Text("← Contraseña")
         }
 
-        // 🔹 SELECCIÓN DE ROL
-        composable("role_selection") {
-            RoleSelectionScreen(
-                onClienteClick = {
-                    navController.navigate("entry/cliente")
-                },
-                onTiendaClick = {
-                    navController.navigate("entry/tienda")
-                }
-            )
-        }
+        Spacer(Modifier.height(40.dp))
 
-        // 🔹 ENTRADA DE TIENDA
-        composable("entry/{role}") { backStackEntry ->
-
-            val role = backStackEntry.arguments?.getString("role") ?: "cliente"
-
-            EntryTiendaScreen(
-                onLoginClick = {
-                    navController.navigate("login_email/$role")
-                },
-                onRegisterClick = {
-                    navController.navigate("register/$role")
-                },
-                onBack = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-        // 🔹 LOGIN CORREO
-        composable("login_email/{role}") { backStackEntry ->
-
-            val role = backStackEntry.arguments?.getString("role") ?: "cliente"
-
-            LoginEmailScreen(
-                onNext = { email ->
-                    navController.navigate("login_password/$email/$role")
-                },
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        // 🔹 LOGIN CONTRASEÑA
-        composable("login_password/{email}/{role}") { backStackEntry ->
-
-            val email = backStackEntry.arguments?.getString("email") ?: ""
-            val role = backStackEntry.arguments?.getString("role") ?: "cliente"
-
-            LoginPasswordScreen(
-                email = email,
-                onLogin = { password, callback ->
-
-                    FirebaseAuth.getInstance()
-                        .signInWithEmailAndPassword(email, password)
-                        .addOnSuccessListener {
-
-                            callback(true, null)
-
-                            if (role == "cliente") {
-                                navController.navigate("home_cliente") {
-                                    popUpTo(0)
-                                }
-                            } else {
-                                navController.navigate("home_tienda") {
-                                    popUpTo(0)
-                                }
-                            }
-                        }
-                        .addOnFailureListener {
-
-                            callback(false, "Correo o contraseña incorrectos")
-                        }
-                },
-                onBack = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-        // 🔹 REGISTER
-        composable("register/{role}") { backStackEntry ->
-
-            val role = backStackEntry.arguments?.getString("role") ?: "cliente"
-
-            RegisterScreen(
-                role = role,
-                onRegisterSuccess = {
-                    if (role == "cliente") {
-                        navController.navigate("home_cliente") {
-                            popUpTo("register/{role}") { inclusive = true }
-                        }
-                    } else {
-                        navController.navigate("home_tienda") {
-                            popUpTo("register/{role}") { inclusive = true }
-                        }
-                    }
-                },
-                onBack = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-        // 🔹 HOME CLIENTE
-        composable("home_cliente") {
-            HomeClienteScreen()
-        }
-
-        // 🔹 HOME TIENDA
-        composable("home_tienda") {
-            HomeTiendaScreen(
-                onAddProduct = {
-                    navController.navigate("productos")
-
-                },
-                onUsuarios = {
-                    navController.navigate("crear_usuario")
-                },
-                onLogout = {
-                    navController.navigate("role_selection") {
-                        popUpTo(0) // 🔥 limpia toda la navegación
-                    }
-                }
-            )
-        }
-
-        // 🔹 PRODUCTOS
-        composable("productos") {
-            ProductScreen(
-                onBack = {
-                    navController.popBackStack()
-                }
-            )
-        }
-
-        composable("crear_usuario") {
-            CrearUsuarioScreen(
-                onNext = { nombre, email ->
-                    navController.navigate("permisos/$nombre/$email")
-                },
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable("permisos/{nombre}/{email}") { backStack ->
-            val nombre = backStack.arguments?.getString("nombre")!!
-            val email = backStack.arguments?.getString("email")!!
-
-            PermisosScreen(
-                nombre,
-                email,
-                onNext = { permisos ->
-                    navController.currentBackStackEntry
-                        ?.savedStateHandle
-                        ?.set("permisos", permisos)
-
-                    navController.navigate("password/$nombre/$email")
-                },
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable("password/{nombre}/{email}") { backStack ->
-
-            val nombre = backStack.arguments?.getString("nombre")!!
-            val email = backStack.arguments?.getString("email")!!
-            val permisos = navController.previousBackStackEntry
-                ?.savedStateHandle
-                ?.get<Map<String, Boolean>>("permisos") ?: emptyMap()
-
-            val viewModel: EmpleadoViewModel = viewModel()
-
-            PasswordEmpleadoScreen(
-                onCreate = { password ->
-
-                    navController.navigate("loading")
-
-                    viewModel.crearEmpleado(
-                        nombre,
-                        email,
-                        password,
-                        permisos,
-                        onSuccess = {
-                            navController.navigate("success") {
-                                popUpTo("crear_usuario") { inclusive = true }
-                            }
-                        },
-                        onError = {
-                            navController.popBackStack()
-                        }
+        // 🔐 Campo contraseña
+        OutlinedTextField(
+            value = password,
+            onValueChange = {
+                password = it
+                error = false
+            },
+            label = { Text("Contraseña") },
+            singleLine = true,
+            visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { visible = !visible }) {
+                    Icon(
+                        imageVector = if (visible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = null
                     )
-                },
-                onBack = { navController.popBackStack() }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        Spacer(Modifier.height(16.dp))
+
+        // 🔐 Campo confirmar contraseña
+        OutlinedTextField(
+            value = confirmPassword,
+            onValueChange = {
+                confirmPassword = it
+                error = false
+            },
+            label = { Text("Confirmar contraseña") },
+            singleLine = true,
+            isError = error,
+            visualTransformation = if (visibleConfirm) VisualTransformation.None else PasswordVisualTransformation(),
+            trailingIcon = {
+                IconButton(onClick = { visibleConfirm = !visibleConfirm }) {
+                    Icon(
+                        imageVector = if (visibleConfirm) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = null
+                    )
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        // ❌ Mensaje de error
+        if (error) {
+            Text(
+                text = "Las contraseñas no coinciden",
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
             )
         }
 
-        composable("loading") { LoadingScreen() }
+        Spacer(Modifier.weight(1f))
 
-        composable("success") {
-            SuccessScreen {
-                navController.navigate("home_tienda")
+        // 🔘 Botón crear usuario
+        Button(
+            onClick = {
+                if (password != confirmPassword || password.isEmpty()) {
+                    error = true
+                    return@Button
+                }
+
+                loading = true
+                onCreate(password) //
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = !loading
+        ) {
+            if (loading) {
+                CircularProgressIndicator(
+                    strokeWidth = 2.dp,
+                    modifier = Modifier.size(20.dp)
+                )
+            } else {
+                Text("Crear usuario")
             }
         }
     }
