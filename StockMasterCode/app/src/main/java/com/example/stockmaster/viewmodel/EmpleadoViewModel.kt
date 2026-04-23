@@ -42,7 +42,7 @@ class EmpleadoViewModel : ViewModel() {
                     "nombre" to nombre,
                     "email" to email,
                     "role" to "empleado",
-                    "adminId" to adminId,
+                    "createdBy" to adminId,
                     "permisos" to permisos
                 )
 

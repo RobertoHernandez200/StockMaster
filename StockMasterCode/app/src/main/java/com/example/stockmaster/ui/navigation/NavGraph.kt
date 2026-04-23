@@ -171,7 +171,9 @@ fun NavGraph() {
                     navController.navigate("crear_usuario")
                 },
                 onBack = {
-                    navController.popBackStack()
+                    navController.navigate("home_tienda") {
+                        popUpTo(0)
+                    }
                 }
             )
         }
@@ -244,7 +246,7 @@ fun NavGraph() {
 
         composable("success") {
             SuccessScreen {
-                navController.navigate("home_tienda")
+                navController.navigate("usuarios")
             }
         }
     }
