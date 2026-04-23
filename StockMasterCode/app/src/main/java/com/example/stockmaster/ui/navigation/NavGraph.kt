@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.stockmaster.ui.screens.empleados.UsuariosScreen
+import com.example.stockmaster.ui.screens.empleados.EmpleadoDetalleScreen
 import com.example.stockmaster.ui.screens.splash.SplashScreen
 import com.example.stockmaster.ui.screens.role_selection.RoleSelectionScreen
 import com.example.stockmaster.ui.screens.entry.EntryTiendaScreen
@@ -34,11 +35,9 @@ fun NavGraph() {
     ) {
 
         composable("splash") {
-            SplashScreen(
-                onStartClick = {
-                    navController.navigate("role_selection")
-                }
-            )
+            SplashScreen {
+                navController.navigate("role_selection")
+            }
         }
 
         composable("role_selection") {
@@ -62,9 +61,7 @@ fun NavGraph() {
                 onRegisterClick = {
                     navController.navigate("register/$role")
                 },
-                onBack = {
-                    navController.popBackStack()
-                }
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -107,9 +104,7 @@ fun NavGraph() {
                             callback(false, "Correo o contraseña incorrectos")
                         }
                 },
-                onBack = {
-                    navController.popBackStack()
-                }
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -129,9 +124,7 @@ fun NavGraph() {
                         }
                     }
                 },
-                onBack = {
-                    navController.popBackStack()
-                }
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -139,14 +132,14 @@ fun NavGraph() {
             HomeClienteScreen()
         }
 
-        // 🔥 HOME TIENDA (AQUÍ ESTÁ EL FIX)
+        // 🔥 HOME TIENDA
         composable("home_tienda") {
             HomeTiendaScreen(
                 onAddProduct = {
                     navController.navigate("productos")
                 },
                 onUsuarios = {
-                    navController.navigate("usuarios") // 🔥 AQUÍ ESTÁ EL CAMBIO IMPORTANTE
+                    navController.navigate("usuarios")
                 },
                 onLogout = {
                     navController.navigate("role_selection") {
@@ -157,26 +150,31 @@ fun NavGraph() {
         }
 
         composable("productos") {
-            ProductScreen(
-                onBack = {
-                    navController.popBackStack()
-                }
-            )
+            ProductScreen {
+                navController.popBackStack()
+            }
         }
 
-        // PANTALLA USUARIOS
+        // 🔥 LISTA DE USUARIOS
         composable("usuarios") {
             UsuariosScreen(
+                navController = navController,
                 onAddUser = {
                     navController.navigate("crear_usuario")
-                },
-                onBack = {
-                    navController.popBackStack()
                 }
             )
         }
 
-        // CREAR USUARIOS
+        // 🔥 DETALLE USUARIO (EDITAR / ELIMINAR)
+        composable("detalle_usuario/{id}") { backStack ->
+            val id = backStack.arguments?.getString("id")!!
+
+            EmpleadoDetalleScreen(
+                usuarioId = id,
+                navController = navController
+            )
+        }
+
         composable("crear_usuario") {
             CrearUsuarioScreen(
                 onNext = { nombre, email ->
@@ -186,7 +184,6 @@ fun NavGraph() {
             )
         }
 
-        // PERMISOS USUARIOS
         composable("permisos/{nombre}/{email}") { backStack ->
             val nombre = backStack.arguments?.getString("nombre")!!
             val email = backStack.arguments?.getString("email")!!
@@ -205,7 +202,6 @@ fun NavGraph() {
             )
         }
 
-        // CONTRASEÑA USUARIOS
         composable("password/{nombre}/{email}") { backStack ->
 
             val nombre = backStack.arguments?.getString("nombre")!!

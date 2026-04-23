@@ -1,5 +1,6 @@
 package com.example.stockmaster.ui.screens.empleados
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,10 +13,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.google.firebase.firestore.FirebaseFirestore
-import androidx.compose.foundation.background
 
 data class Usuario(
+    val id: String = "",
     val nombre: String = "",
     val email: String = "",
     val role: String = ""
@@ -23,8 +25,8 @@ data class Usuario(
 
 @Composable
 fun UsuariosScreen(
-    onAddUser: () -> Unit,
-    onBack: () -> Unit
+    navController: NavController,
+    onAddUser: () -> Unit
 ) {
 
     val db = FirebaseFirestore.getInstance()
@@ -36,6 +38,7 @@ fun UsuariosScreen(
             .addOnSuccessListener { result ->
                 usuarios = result.map {
                     Usuario(
+                        id = it.id,
                         nombre = it.getString("nombre") ?: "",
                         email = it.getString("email") ?: "",
                         role = it.getString("role") ?: ""
@@ -49,6 +52,15 @@ fun UsuariosScreen(
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
     ) {
+
+        // 🔙 BOTÓN VOLVER AL INICIO
+        TextButton(onClick = {
+            navController.navigate("home_tienda") {
+                popUpTo(0)
+            }
+        }) {
+            Text("← Inicio")
+        }
 
         // 🔝 Header
         Row(
@@ -64,7 +76,7 @@ fun UsuariosScreen(
             }
         }
 
-        // 🔍 Buscador (solo visual)
+        // 🔍 Buscador (visual)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -81,18 +93,26 @@ fun UsuariosScreen(
 
         LazyColumn {
             items(usuarios) { usuario ->
-                UsuarioItem(usuario)
+                UsuarioItem(
+                    usuario = usuario,
+                    onClick = {
+                        navController.navigate("detalle_usuario/${usuario.id}")
+                    }
+                )
             }
         }
     }
 }
 
 @Composable
-fun UsuarioItem(usuario: Usuario) {
+fun UsuarioItem(
+    usuario: Usuario,
+    onClick: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { }
+            .clickable { onClick() }
             .padding(16.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -101,6 +121,6 @@ fun UsuarioItem(usuario: Usuario) {
             Text(usuario.email, style = MaterialTheme.typography.bodySmall)
         }
 
-        Text(usuario.role)
+        Text(">")
     }
 }
