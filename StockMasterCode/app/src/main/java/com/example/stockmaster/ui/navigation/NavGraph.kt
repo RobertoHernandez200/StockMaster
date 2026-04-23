@@ -14,6 +14,15 @@ import com.example.stockmaster.ui.screens.auth.register.RegisterScreen
 import com.example.stockmaster.ui.screens.home_cliente.HomeClienteScreen
 import com.example.stockmaster.ui.screens.home_tienda.HomeTiendaScreen
 import com.example.stockmaster.ui.screens.products.ProductScreen
+import com.example.stockmaster.ui.screens.empleados.CrearUsuarioScreen
+import com.example.stockmaster.ui.screens.empleados.PermisosScreen
+import com.example.stockmaster.ui.screens.empleados.PasswordEmpleadoScreen
+import com.example.stockmaster.ui.screens.empleados.LoadingScreen
+import com.example.stockmaster.ui.screens.empleados.SuccessScreen
+// 🔹 ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.stockmaster.viewmodel.EmpleadoViewModel
+
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -149,6 +158,10 @@ fun NavGraph() {
             HomeTiendaScreen(
                 onAddProduct = {
                     navController.navigate("productos")
+
+                },
+                onUsuarios = {
+                    navController.navigate("crear_usuario")
                 },
                 onLogout = {
                     navController.navigate("role_selection") {
@@ -165,6 +178,75 @@ fun NavGraph() {
                     navController.popBackStack()
                 }
             )
+        }
+
+        composable("crear_usuario") {
+            CrearUsuarioScreen(
+                onNext = { nombre, email ->
+                    navController.navigate("permisos/$nombre/$email")
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("permisos/{nombre}/{email}") { backStack ->
+            val nombre = backStack.arguments?.getString("nombre")!!
+            val email = backStack.arguments?.getString("email")!!
+
+            PermisosScreen(
+                nombre,
+                email,
+                onNext = { permisos ->
+                    navController.currentBackStackEntry
+                        ?.savedStateHandle
+                        ?.set("permisos", permisos)
+
+                    navController.navigate("password/$nombre/$email")
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("password/{nombre}/{email}") { backStack ->
+
+            val nombre = backStack.arguments?.getString("nombre")!!
+            val email = backStack.arguments?.getString("email")!!
+            val permisos = navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.get<Map<String, Boolean>>("permisos") ?: emptyMap()
+
+            val viewModel: EmpleadoViewModel = viewModel()
+
+            PasswordEmpleadoScreen(
+                onCreate = { password ->
+
+                    navController.navigate("loading")
+
+                    viewModel.crearEmpleado(
+                        nombre,
+                        email,
+                        password,
+                        permisos,
+                        onSuccess = {
+                            navController.navigate("success") {
+                                popUpTo("crear_usuario") { inclusive = true }
+                            }
+                        },
+                        onError = {
+                            navController.popBackStack()
+                        }
+                    )
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("loading") { LoadingScreen() }
+
+        composable("success") {
+            SuccessScreen {
+                navController.navigate("home_tienda")
+            }
         }
     }
 }
