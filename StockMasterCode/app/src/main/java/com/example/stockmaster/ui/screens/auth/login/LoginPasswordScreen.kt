@@ -4,21 +4,18 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.stockmaster.R
+import com.example.stockmaster.ui.components.LineTextField
+import com.example.stockmaster.ui.components.PrimaryButton
 
 @Composable
 fun LoginPasswordScreen(
@@ -32,129 +29,118 @@ fun LoginPasswordScreen(
     var errorMessage by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
             .padding(24.dp)
     ) {
 
-        Column(modifier = Modifier.fillMaxSize()) {
+        // 🔹 HEADER
+        TextButton(onClick = onBack) {
+            Text("← Contraseña")
+        }
 
-            TextButton(onClick = onBack) {
-                Text("← Contraseña")
+        // 🔹 CONTENIDO CENTRADO
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            Image(
+                painter = painterResource(id = R.drawable.avatar),
+                contentDescription = "Perfil",
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape)
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = email,
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // 🔥 INPUT MODERNO
+            LineTextField(
+                value = password,
+                onValueChange = {
+                    password = it
+                    errorMessage = ""
+                },
+                label = "Contraseña",
+                isPassword = true,
+                visible = passwordVisible,
+                onToggleVisibility = { passwordVisible = !passwordVisible }
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                "*Mínimo 6 caracteres",
+                fontSize = 12.sp,
+                color = Color.Gray
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // 🔴 ERROR
+            if (errorMessage.isNotEmpty()) {
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 13.sp,
+                    textAlign = TextAlign.Center
+                )
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Text(
+                text = "¿Olvidaste la contraseña?",
+                fontSize = 12.sp,
+                color = Color(0xFF6A5AE0)
+            )
+        }
 
-                Image(
-                    painter = painterResource(id = R.drawable.avatar),
-                    contentDescription = "Perfil",
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(CircleShape)
-                )
+        //BOTÓN
+        PrimaryButton(
+            text = if (loading) "Entrando..." else "Entrar",
+            onClick = {
 
-                Spacer(modifier = Modifier.height(16.dp))
+                when {
+                    password.isBlank() -> {
+                        errorMessage = "Ingresa la contraseña"
+                        return@PrimaryButton
+                    }
 
-                Text(email, fontSize = 14.sp)
-
-                Spacer(modifier = Modifier.height(30.dp))
-
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = {
-                        password = it
-                        errorMessage = ""
-                    },
-                    label = { Text("Contraseña") },
-                    visualTransformation = if (passwordVisible)
-                        VisualTransformation.None
-                    else
-                        PasswordVisualTransformation(),
-
-                    trailingIcon = {
-                        IconButton(onClick = {
-                            passwordVisible = !passwordVisible
-                        }) {
-                            Icon(
-                                imageVector = if (passwordVisible)
-                                    Icons.Default.Visibility
-                                else
-                                    Icons.Default.VisibilityOff,
-                                contentDescription = "Toggle password"
-                            )
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Text("*Mínimo 6 caracteres", fontSize = 12.sp)
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // 🔴 Mostrar error
-                if (errorMessage.isNotEmpty()) {
-                    Text(
-                        text = errorMessage,
-                        color = MaterialTheme.colorScheme.error,
-                        fontSize = 13.sp
-                    )
+                    password.length < 6 -> {
+                        errorMessage = "Mínimo 6 caracteres"
+                        return@PrimaryButton
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                loading = true
 
-                Text(
-                    text = "¿Olvidaste la contraseña?",
-                    fontSize = 12.sp,
-                    color = Color(0xFF6A5AE0)
-                )
-            }
+                onLogin(password) { success, error ->
 
-            Spacer(modifier = Modifier.weight(1f))
+                    loading = false
 
-            Button(
-                onClick = {
-
-                    when {
-                        password.isBlank() -> {
-                            errorMessage = "Ingresa la contraseña"
-                            return@Button
-                        }
-
-                        password.length < 6 -> {
-                            errorMessage = "Mínimo 6 caracteres"
-                            return@Button
-                        }
+                    if (!success) {
+                        errorMessage = error ?: "Error al iniciar sesión"
                     }
-
-                    loading = true
-
-                    onLogin(password) { success, error ->
-
-                        loading = false
-
-                        if (!success) {
-                            errorMessage = error ?: "Error al iniciar sesión"
-                        }
-                    }
-                },
-                enabled = !loading,
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6A5AE0)
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp)
-            ) {
-                Text(if (loading) "Entrando..." else "Entrar")
-            }
-        }
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
+        )
     }
 }

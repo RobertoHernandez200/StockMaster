@@ -16,9 +16,12 @@ import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.stockmaster.R
+import com.example.stockmaster.ui.components.LineTextField
+import com.example.stockmaster.ui.components.PrimaryButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -43,222 +46,170 @@ fun RegisterScreen(
     val auth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
             .padding(24.dp)
     ) {
 
-        Column(modifier = Modifier.fillMaxSize()) {
+        // 🔹 HEADER
+        TextButton(onClick = onBack) {
+            Text("← Crear cuenta")
+        }
 
-            TextButton(onClick = onBack) {
-                Text("← Crear cuenta")
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
         // 🔹 CONTENIDO CENTRADO
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+            Image(
+                painter = painterResource(id = R.drawable.avatar),
+                contentDescription = "Perfil",
+                modifier = Modifier
+                    .size(90.dp)
+                    .clip(CircleShape)
+            )
 
-                // 🔷 Avatar
-                Image(
-                    painter = painterResource(id = R.drawable.avatar),
-                    contentDescription = "Perfil",
-                    modifier = Modifier
-                        .size(100.dp)
-                        .clip(CircleShape)
-                )
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = "Crear cuenta",
+                fontSize = 24.sp
+            )
 
             Spacer(modifier = Modifier.height(24.dp))
 
-                Text("Crear cuenta", fontSize = 22.sp)
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = {
-                        email = it
-                        errorMessage = ""
-                    },
-                    label = { Text("Email") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-                OutlinedTextField(
-                    value = nombre,
-                    onValueChange = {
-                        nombre = it
-                        errorMessage = ""
-                    },
-                    label = { Text("Nombre") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-                // 🔐 PASSWORD
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = {
-                        password = it
-                        errorMessage = ""
-                    },
-                    label = { Text("Contraseña") },
-                    singleLine = true,
-                    visualTransformation = if (passwordVisible)
-                        VisualTransformation.None
-                    else
-                        PasswordVisualTransformation(),
-                    trailingIcon = {
-                        IconButton(onClick = {
-                            passwordVisible = !passwordVisible
-                        }) {
-                            Icon(
-                                imageVector = if (passwordVisible)
-                                    Icons.Default.Visibility
-                                else
-                                    Icons.Default.VisibilityOff,
-                                contentDescription = ""
-                            )
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                // 🔐 CONFIRM PASSWORD
-                OutlinedTextField(
-                    value = confirmPassword,
-                    onValueChange = {
-                        confirmPassword = it
-                        errorMessage = ""
-                    },
-                    label = { Text("Confirmar contraseña") },
-                    singleLine = true,
-                    visualTransformation = if (confirmPasswordVisible)
-                        VisualTransformation.None
-                    else
-                        PasswordVisualTransformation(),
-                    trailingIcon = {
-                        IconButton(onClick = {
-                            confirmPasswordVisible = !confirmPasswordVisible
-                        }) {
-                            Icon(
-                                imageVector = if (confirmPasswordVisible)
-                                    Icons.Default.Visibility
-                                else
-                                    Icons.Default.VisibilityOff,
-                                contentDescription = ""
-                            )
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-                Text("*Mínimo 6 caracteres", fontSize = 12.sp)
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // 🔴 ERROR
-                if (errorMessage.isNotEmpty()) {
-                    Text(
-                        text = errorMessage,
-                        color = MaterialTheme.colorScheme.error,
-                        fontSize = 13.sp
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                onClick = {
-
-                    when {
-                        email.isBlank() || nombre.isBlank() ||
-                                password.isBlank() || confirmPassword.isBlank() -> {
-                            errorMessage = "Todos los campos son obligatorios"
-                            return@Button
-                        }
-
-                        !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
-                            errorMessage = "Correo inválido"
-                            return@Button
-                        }
-
-                        password.length < 6 -> {
-                            errorMessage = "Mínimo 6 caracteres"
-                            return@Button
-                        }
-
-                        password != confirmPassword -> {
-                            errorMessage = "Las contraseñas no coinciden"
-                            return@Button
-                        }
-                    }
-
-                    loading = true
+            // 🔥 INPUTS TIPO LÍNEA
+            LineTextField(
+                value = email,
+                onValueChange = {
+                    email = it
                     errorMessage = ""
-
-                    auth.createUserWithEmailAndPassword(email, password)
-                        .addOnSuccessListener { result ->
-
-                            val userId = result.user?.uid
-
-                            if (userId == null) {
-                                loading = false
-                                errorMessage = "Error creando usuario"
-                                return@addOnSuccessListener
-                            }
-
-                            val user = hashMapOf(
-                                "email" to email,
-                                "nombre" to nombre,
-                                "role" to role
-                            )
-
-                            db.collection("usuarios")
-                                .document(userId)
-                                .set(user)
-                                .addOnSuccessListener {
-                                    loading = false
-                                    onRegisterSuccess()
-                                }
-                                .addOnFailureListener {
-                                    loading = false
-                                    errorMessage = "Error guardando datos"
-                                }
-                        }
-                        .addOnFailureListener {
-                            loading = false
-                            errorMessage = "Error: ${it.message}"
-                        }
                 },
-                enabled = !loading,
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6A5AE0)
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp)
-            ) {
-                Text(if (loading) "Registrando..." else "Registrarse")
+                label = "Email"
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LineTextField(
+                value = nombre,
+                onValueChange = {
+                    nombre = it
+                    errorMessage = ""
+                },
+                label = "Nombre"
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LineTextField(
+                value = password,
+                onValueChange = {
+                    password = it
+                    errorMessage = ""
+                },
+                label = "Contraseña",
+                isPassword = true,
+                visible = passwordVisible,
+                onToggleVisibility = { passwordVisible = !passwordVisible }
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LineTextField(
+                value = confirmPassword,
+                onValueChange = {
+                    confirmPassword = it
+                    errorMessage = ""
+                },
+                label = "Confirmar contraseña",
+                isPassword = true,
+                visible = confirmPasswordVisible,
+                onToggleVisibility = { confirmPasswordVisible = !confirmPasswordVisible }
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text("*Mínimo 6 caracteres", fontSize = 12.sp, color = Color.Gray)
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (errorMessage.isNotEmpty()) {
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    fontSize = 13.sp,
+                    textAlign = TextAlign.Center
+                )
             }
         }
+
+        // 🔘 BOTÓN
+        PrimaryButton(
+            text = if (loading) "Registrando..." else "Registrarse",
+            onClick = {
+                when {
+                    email.isBlank() || nombre.isBlank() ||
+                            password.isBlank() || confirmPassword.isBlank() -> {
+                        errorMessage = "Todos los campos son obligatorios"
+                        return@PrimaryButton
+                    }
+
+                    !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                        errorMessage = "Correo inválido"
+                        return@PrimaryButton
+                    }
+
+                    password.length < 6 -> {
+                        errorMessage = "Mínimo 6 caracteres"
+                        return@PrimaryButton
+                    }
+
+                    password != confirmPassword -> {
+                        errorMessage = "Las contraseñas no coinciden"
+                        return@PrimaryButton
+                    }
+                }
+
+                loading = true
+                errorMessage = ""
+
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnSuccessListener { result ->
+
+                        val userId = result.user?.uid ?: return@addOnSuccessListener
+
+                        val user = hashMapOf(
+                            "email" to email,
+                            "nombre" to nombre,
+                            "role" to role
+                        )
+
+                        db.collection("usuarios")
+                            .document(userId)
+                            .set(user)
+                            .addOnSuccessListener {
+                                loading = false
+                                onRegisterSuccess()
+                            }
+                            .addOnFailureListener {
+                                loading = false
+                                errorMessage = "Error guardando datos"
+                            }
+                    }
+                    .addOnFailureListener {
+                        loading = false
+                        errorMessage = "Error: ${it.message}"
+                    }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
+        )
     }
-}
 }

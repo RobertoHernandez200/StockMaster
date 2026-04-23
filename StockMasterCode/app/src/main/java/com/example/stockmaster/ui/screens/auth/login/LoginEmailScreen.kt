@@ -8,8 +8,12 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.stockmaster.ui.components.LineTextField
+import com.example.stockmaster.ui.components.PrimaryButton
 
 @Composable
 fun LoginEmailScreen(
@@ -20,74 +24,82 @@ fun LoginEmailScreen(
     var email by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
 
-    Box(
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
             .padding(24.dp)
     ) {
 
-        Column(modifier = Modifier.fillMaxSize()) {
+        // 🔹 HEADER
+        TextButton(onClick = onBack) {
+            Text("← Ingresar")
+        }
 
-            TextButton(onClick = onBack) {
-                Text("← Ingresar")
-            }
+        // 🔹 CONTENIDO CENTRADO
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(1f),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-            Spacer(modifier = Modifier.height(80.dp))
+            Text(
+                text = "Ingresa tu correo",
+                fontSize = 22.sp,
+                fontWeight = FontWeight.Medium
+            )
 
-            OutlinedTextField(
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // 🔥 INPUT MODERNO
+            LineTextField(
                 value = email,
                 onValueChange = {
                     email = it
-                    errorMessage = "" // limpia error al escribir
+                    errorMessage = ""
                 },
-                label = { Text("Email") },
-                modifier = Modifier.fillMaxWidth()
+                label = "Email"
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            // 🔴 Mostrar error
+            // 🔴 ERROR
             if (errorMessage.isNotEmpty()) {
                 Text(
                     text = errorMessage,
                     color = MaterialTheme.colorScheme.error,
-                    fontSize = 13.sp
+                    fontSize = 13.sp,
+                    textAlign = TextAlign.Center
                 )
             }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                onClick = {
-
-                    // 🔥 VALIDACIONES BÁSICAS
-                    when {
-                        email.isBlank() -> {
-                            errorMessage = "Ingresa un correo"
-                            return@Button
-                        }
-
-                        !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
-                            errorMessage = "Correo inválido"
-                            return@Button
-                        }
-
-                        else -> {
-                            onNext(email)
-                        }
-                    }
-                },
-                shape = RoundedCornerShape(50),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF6A5AE0)
-                ),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(55.dp)
-            ) {
-                Text("Avanzar")
-            }
         }
+
+        // 🔘 BOTÓN
+        PrimaryButton(
+            text = "Avanzar",
+            onClick = {
+
+                when {
+                    email.isBlank() -> {
+                        errorMessage = "Ingresa un correo"
+                        return@PrimaryButton
+                    }
+
+                    !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                        errorMessage = "Correo inválido"
+                        return@PrimaryButton
+                    }
+
+                    else -> {
+                        onNext(email)
+                    }
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
+        )
     }
 }
