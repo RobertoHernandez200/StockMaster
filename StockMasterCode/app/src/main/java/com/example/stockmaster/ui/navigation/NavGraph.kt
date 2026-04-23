@@ -7,11 +7,14 @@ import androidx.navigation.compose.rememberNavController
 
 import com.example.stockmaster.ui.screens.splash.SplashScreen
 import com.example.stockmaster.ui.screens.role_selection.RoleSelectionScreen
-import com.example.stockmaster.ui.screens.auth.login.LoginScreen
+import com.example.stockmaster.ui.screens.entry.EntryTiendaScreen
+import com.example.stockmaster.ui.screens.auth.login.LoginEmailScreen
+import com.example.stockmaster.ui.screens.auth.login.LoginPasswordScreen
 import com.example.stockmaster.ui.screens.auth.register.RegisterScreen
 import com.example.stockmaster.ui.screens.home_cliente.HomeClienteScreen
 import com.example.stockmaster.ui.screens.home_tienda.HomeTiendaScreen
 import com.example.stockmaster.ui.screens.products.ProductScreen
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun NavGraph() {
@@ -36,34 +39,75 @@ fun NavGraph() {
         composable("role_selection") {
             RoleSelectionScreen(
                 onClienteClick = {
-                    navController.navigate("login/cliente")
+                    navController.navigate("entry/cliente")
                 },
                 onTiendaClick = {
-                    navController.navigate("login/tienda")
+                    navController.navigate("entry/tienda")
                 }
             )
         }
 
-        // 🔹 LOGIN
-        composable("login/{role}") { backStackEntry ->
+        // 🔹 ENTRADA DE TIENDA
+        composable("entry/{role}") { backStackEntry ->
 
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
-            LoginScreen(
-                role = role,
-                onLoginSuccess = {
-                    if (role == "cliente") {
-                        navController.navigate("home_cliente") {
-                            popUpTo("login/{role}") { inclusive = true }
-                        }
-                    } else {
-                        navController.navigate("home_tienda") {
-                            popUpTo("login/{role}") { inclusive = true }
-                        }
-                    }
+            EntryTiendaScreen(
+                onLoginClick = {
+                    navController.navigate("login_email/$role")
                 },
-                onGoToRegister = {
+                onRegisterClick = {
                     navController.navigate("register/$role")
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        // 🔹 LOGIN CORREO
+        composable("login_email/{role}") { backStackEntry ->
+
+            val role = backStackEntry.arguments?.getString("role") ?: "cliente"
+
+            LoginEmailScreen(
+                onNext = { email ->
+                    navController.navigate("login_password/$email/$role")
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        // 🔹 LOGIN CONTRASEÑA
+        composable("login_password/{email}/{role}") { backStackEntry ->
+
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            val role = backStackEntry.arguments?.getString("role") ?: "cliente"
+
+            LoginPasswordScreen(
+                email = email,
+                onLogin = { password, callback ->
+
+                    FirebaseAuth.getInstance()
+                        .signInWithEmailAndPassword(email, password)
+                        .addOnSuccessListener {
+
+                            callback(true, null)
+
+                            if (role == "cliente") {
+                                navController.navigate("home_cliente") {
+                                    popUpTo(0)
+                                }
+                            } else {
+                                navController.navigate("home_tienda") {
+                                    popUpTo(0)
+                                }
+                            }
+                        }
+                        .addOnFailureListener {
+
+                            callback(false, "Correo o contraseña incorrectos")
+                        }
                 },
                 onBack = {
                     navController.popBackStack()
@@ -107,7 +151,7 @@ fun NavGraph() {
                     navController.navigate("productos")
                 },
                 onLogout = {
-                    navController.navigate("login") {
+                    navController.navigate("role_selection") {
                         popUpTo(0) // 🔥 limpia toda la navegación
                     }
                 }
