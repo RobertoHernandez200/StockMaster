@@ -164,7 +164,7 @@ fun NavGraph() {
             )
         }
 
-        // 🔥 NUEVA PANTALLA USUARIOS
+        // PANTALLA USUARIOS
         composable("usuarios") {
             UsuariosScreen(
                 onAddUser = {
@@ -176,6 +176,7 @@ fun NavGraph() {
             )
         }
 
+        // CREAR USUARIOS
         composable("crear_usuario") {
             CrearUsuarioScreen(
                 onNext = { nombre, email ->
@@ -185,6 +186,7 @@ fun NavGraph() {
             )
         }
 
+        // PERMISOS USUARIOS
         composable("permisos/{nombre}/{email}") { backStack ->
             val nombre = backStack.arguments?.getString("nombre")!!
             val email = backStack.arguments?.getString("email")!!
@@ -203,6 +205,7 @@ fun NavGraph() {
             )
         }
 
+        // CONTRASEÑA USUARIOS
         composable("password/{nombre}/{email}") { backStack ->
 
             val nombre = backStack.arguments?.getString("nombre")!!
