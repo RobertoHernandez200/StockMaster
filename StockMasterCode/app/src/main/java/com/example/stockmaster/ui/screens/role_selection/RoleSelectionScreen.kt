@@ -64,14 +64,20 @@ fun RoleSelectionScreen(
         // 🔥 TIENDA PRIMERO
         PrimaryButton(
             text = "Tienda",
-            onClick = onTiendaClick
+            onClick = onTiendaClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         PrimaryButton(
             text = "Cliente",
-            onClick = onClienteClick
+            onClick = onClienteClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
         )
     }
 }

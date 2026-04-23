@@ -10,16 +10,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import com.example.stockmaster.R
 import com.example.stockmaster.ui.components.PrimaryButton
 import com.example.stockmaster.ui.theme.BackgroundColor
 import com.example.stockmaster.ui.theme.LightGrayText
 import com.example.stockmaster.ui.theme.Poppins
-import com.example.stockmaster.ui.theme.PurpleEnd
-import com.example.stockmaster.ui.theme.PurpleStart
 
 @Composable
 fun SplashScreen(
@@ -69,7 +65,10 @@ fun SplashScreen(
 
         PrimaryButton(
             text = "Empezar...",
-            onClick = onStartClick
+            onClick = onStartClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
         )
 
         Spacer(modifier = Modifier.height(24.dp))

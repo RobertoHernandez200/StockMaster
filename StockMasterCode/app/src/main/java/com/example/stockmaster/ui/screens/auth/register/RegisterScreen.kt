@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.stockmaster.ui.components.PrimaryButton
 import com.example.stockmaster.ui.components.BackButton
@@ -34,117 +35,137 @@ fun RegisterScreen(
             .padding(24.dp)
     ) {
 
+        // 🔹 HEADER
         BackButton(onClick = onBack)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // 🔹 CONTENIDO CENTRADO
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-        Text("Crear cuenta")
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") }
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlinedTextField(
-            value = nombre,
-            onValueChange = { nombre = it },
-            label = { Text("Nombre") }
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") }
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
-            label = { Text("Confirmar Password") }
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // 🔴 Mostrar errores
-        if (errorMessage.isNotEmpty()) {
             Text(
-                text = errorMessage,
-                color = MaterialTheme.colorScheme.error
+                text = "Crear cuenta",
+                style = MaterialTheme.typography.titleLarge
             )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
 
-        PrimaryButton(
-            text = if (loading) "Registrando..." else "Registrar cuenta",
-            onClick = {
+            Spacer(modifier = Modifier.height(24.dp))
 
-                // 🔥 VALIDACIONES
-                when {
-                    email.isEmpty() || nombre.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() -> {
-                        errorMessage = "Todos los campos son obligatorios"
-                        return@PrimaryButton
-                    }
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-                    !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
-                        errorMessage = "Correo inválido"
-                        return@PrimaryButton
-                    }
+            Spacer(modifier = Modifier.height(12.dp))
 
-                    password.length < 6 -> {
-                        errorMessage = "La contraseña debe tener al menos 6 caracteres"
-                        return@PrimaryButton
-                    }
+            OutlinedTextField(
+                value = nombre,
+                onValueChange = { nombre = it },
+                label = { Text("Nombre") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-                    password != confirmPassword -> {
-                        errorMessage = "Las contraseñas no coinciden"
-                        return@PrimaryButton
-                    }
-                }
+            Spacer(modifier = Modifier.height(12.dp))
 
-                // limpiar error y activar loading
-                errorMessage = ""
-                loading = true
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-                // 🔥 FIREBASE AUTH
-                auth.createUserWithEmailAndPassword(email, password)
-                    .addOnSuccessListener { result ->
+            Spacer(modifier = Modifier.height(12.dp))
 
-                        val userId = result.user?.uid
+            OutlinedTextField(
+                value = confirmPassword,
+                onValueChange = { confirmPassword = it },
+                label = { Text("Confirmar Password") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-                        if (userId == null) {
-                            errorMessage = "Error creando usuario"
-                            return@addOnSuccessListener
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // 🔴 ERROR
+            if (errorMessage.isNotEmpty()) {
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
+            // 🔘 BOTÓN
+            PrimaryButton(
+                text = if (loading) "Registrando..." else "Registrar cuenta",
+                onClick = {
+
+                    when {
+                        email.isEmpty() || nombre.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() -> {
+                            errorMessage = "Todos los campos son obligatorios"
+                            return@PrimaryButton
                         }
 
-                        val user = hashMapOf(
-                            "email" to email,
-                            "nombre" to nombre,
-                            "role" to role
-                        )
+                        !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                            errorMessage = "Correo inválido"
+                            return@PrimaryButton
+                        }
 
-                        db.collection("usuarios")
-                            .document(userId)
-                            .set(user)
-                            .addOnSuccessListener {
-                                onRegisterSuccess() // 🔥 SOLO aquí
-                            }
-                            .addOnFailureListener {
-                                errorMessage = "Error guardando en Firestore: ${it.message}"
-                            }
+                        password.length < 6 -> {
+                            errorMessage = "Mínimo 6 caracteres"
+                            return@PrimaryButton
+                        }
+
+                        password != confirmPassword -> {
+                            errorMessage = "Las contraseñas no coinciden"
+                            return@PrimaryButton
+                        }
                     }
-                    .addOnFailureListener {
-                        errorMessage = "Error en Auth: ${it.message}"
-                    }
-            }
-        )
+
+                    errorMessage = ""
+                    loading = true
+
+                    auth.createUserWithEmailAndPassword(email, password)
+                        .addOnSuccessListener { result ->
+
+                            val userId = result.user?.uid
+
+                            if (userId == null) {
+                                errorMessage = "Error creando usuario"
+                                loading = false
+                                return@addOnSuccessListener
+                            }
+
+                            val user = hashMapOf(
+                                "email" to email,
+                                "nombre" to nombre,
+                                "role" to role
+                            )
+
+                            db.collection("usuarios")
+                                .document(userId)
+                                .set(user)
+                                .addOnSuccessListener {
+                                    onRegisterSuccess()
+                                }
+                                .addOnFailureListener {
+                                    errorMessage = "Error guardando datos"
+                                    loading = false
+                                }
+                        }
+                        .addOnFailureListener {
+                            errorMessage = "Error en registro"
+                            loading = false
+                        }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
+            )
+        }
     }
 }

@@ -92,7 +92,7 @@ fun CardBox(
 
             PrimaryButton(
                 text = buttonText,
-                onClick = onClick
+                onClick = onClick,
             )
         }
     }

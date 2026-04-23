@@ -31,93 +31,114 @@ fun LoginScreen(
             .padding(24.dp)
     ) {
 
+        // 🔹 HEADER
         BackButton(onClick = onBack)
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // 🔹 CONTENIDO CENTRADO
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-        Text(text = "Login $role")
+            Text(
+                text = "Login $role",
+                style = MaterialTheme.typography.titleLarge
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") }
-        )
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("Email") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") }
-        )
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Password") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
-        Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
-        PrimaryButton(
-            text = "Ingresar",
-            onClick = {
+            PrimaryButton(
+                text = "Ingresar",
+                onClick = {
 
-                if (email.isEmpty() || password.isEmpty()) {
-                    errorMessage = "Completa todos los campos."
-                    return@PrimaryButton
-                }
+                    if (email.isEmpty() || password.isEmpty()) {
+                        errorMessage = "Completa todos los campos."
+                        return@PrimaryButton
+                    }
 
-                errorMessage = "Cargando..." // 👈 para ver que sí hace algo
+                    errorMessage = "Cargando..."
 
-                auth.signInWithEmailAndPassword(email, password)
-                    .addOnSuccessListener {
+                    auth.signInWithEmailAndPassword(email, password)
+                        .addOnSuccessListener {
 
-                        val userId = auth.currentUser?.uid
+                            val userId = auth.currentUser?.uid
 
-                        if (userId == null) {
-                            errorMessage = "Error obteniendo usuario"
-                            return@addOnSuccessListener
-                        }
+                            if (userId == null) {
+                                errorMessage = "Error obteniendo usuario"
+                                return@addOnSuccessListener
+                            }
 
-                        db.collection("usuarios")
-                            .document(userId)
-                            .get()
-                            .addOnSuccessListener { document ->
+                            db.collection("usuarios")
+                                .document(userId)
+                                .get()
+                                .addOnSuccessListener { document ->
 
-                                if (document.exists()) {
+                                    if (document.exists()) {
 
-                                    val tipo = document.getString("role")
+                                        val tipo = document.getString("role")
 
-                                    if (tipo == role) {
-                                        errorMessage = ""
-                                        onLoginSuccess()
+                                        if (tipo == role) {
+                                            errorMessage = ""
+                                            onLoginSuccess()
+                                        } else {
+                                            errorMessage = "Este usuario no es $role"
+                                        }
+
                                     } else {
-                                        errorMessage = "Este usuario no es $role"
+                                        errorMessage = "No se encontraron datos del usuario"
                                     }
-
-                                } else {
-                                    errorMessage = "No se encontraron datos del usuario"
                                 }
-                            }
-                            .addOnFailureListener {
-                                errorMessage = "Error al obtener datos"
-                            }
-                    }
-                    .addOnFailureListener {
-                        errorMessage = "Credenciales incorrectas"
-                    }
+                                .addOnFailureListener {
+                                    errorMessage = "Error al obtener datos"
+                                }
+                        }
+                        .addOnFailureListener {
+                            errorMessage = "Credenciales incorrectas"
+                        }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            PrimaryButton(
+                text = "Registrarse",
+                onClick = onGoToRegister,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
+            )
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            if (errorMessage.isNotEmpty()) {
+                Text(
+                    text = errorMessage,
+                    color = MaterialTheme.colorScheme.error
+                )
             }
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        PrimaryButton(
-            text = "Registrarse",
-            onClick = onGoToRegister
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(
-            text = errorMessage,
-            color = MaterialTheme.colorScheme.error
-        )
+        }
     }
 }
