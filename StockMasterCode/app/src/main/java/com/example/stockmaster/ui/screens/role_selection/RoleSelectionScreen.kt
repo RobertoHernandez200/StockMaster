@@ -3,10 +3,15 @@ package com.example.stockmaster.ui.screens.role_selection
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.*
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.stockmaster.R
@@ -14,6 +19,8 @@ import com.example.stockmaster.ui.components.PrimaryButton
 import com.example.stockmaster.ui.theme.BackgroundColor
 import com.example.stockmaster.ui.theme.LightGrayText
 import com.example.stockmaster.ui.theme.Poppins
+import com.example.stockmaster.ui.theme.PurpleEnd
+import com.example.stockmaster.ui.theme.PurpleStart
 
 @Composable
 fun RoleSelectionScreen(
@@ -21,18 +28,19 @@ fun RoleSelectionScreen(
     onTiendaClick: () -> Unit
 ) {
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)
             .padding(horizontal = 24.dp, vertical = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        contentAlignment = Alignment.Center
     ) {
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
+            // 🔷 TÍTULO CON DEGRADADO
             Image(
                 painter = painterResource(id = R.drawable.ic_logo),
                 contentDescription = "Logo",
@@ -48,36 +56,36 @@ fun RoleSelectionScreen(
                 fontSize = 14.sp,
                 color = LightGrayText
             )
-        }
 
-        Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(40.dp))
 
-        Text(
-            text = "Selecciona tu tipo de acceso",
-            fontFamily = Poppins,
-            fontSize = 14.sp,
-            color = LightGrayText
+            Text(
+                text = "Selecciona tu tipo de acceso",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium,
+                fontFamily = Poppins
             )
 
-        Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
-        // 🔥 TIENDA PRIMERO
-        PrimaryButton(
-            text = "Tienda",
-            onClick = onTiendaClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(55.dp)
-        )
+            // 🔘 BOTONES (usan tu estilo global)
+            PrimaryButton(
+                text = "Tienda",
+                onClick = onTiendaClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        PrimaryButton(
-            text = "Cliente",
-            onClick = onClienteClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(55.dp)
-        )
+            PrimaryButton(
+                text = "Cliente",
+                onClick = onClienteClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(55.dp)
+            )
+        }
     }
 }
