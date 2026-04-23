@@ -7,7 +7,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.*
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -20,38 +20,45 @@ fun PasswordEmpleadoScreen(
 ) {
 
     var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
     var visible by remember { mutableStateOf(false) }
+    var visibleConfirm by remember { mutableStateOf(false) }
+
+    var error by remember { mutableStateOf(false) }
+    var loading by remember { mutableStateOf(false) }
 
     Column(
-        Modifier.fillMaxSize().background(Color(0xFFF5F5F5)).padding(24.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFFF5F5F5))
+            .padding(24.dp)
     ) {
 
-<<<<<<< HEAD
         // 🔙 Volver
         TextButton(onClick = onBack) {
             Text("← Contraseña")
         }
-=======
-        TextButton(onClick = onBack) { Text("← Contraseña") }
->>>>>>> 715ec2d0b71fefb2ba330664d9626531e260ef20
 
-        Spacer(Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(40.dp))
 
         // 🔐 Contraseña
         OutlinedTextField(
             value = password,
-            onValueChange = { password = it },
+            onValueChange = {
+                password = it
+                error = false
+            },
             label = { Text("Contraseña") },
             singleLine = true,
             visualTransformation = if (visible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = { visible = !visible }) {
                     Icon(
-                        if (visible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        imageVector = if (visible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = null
                     )
                 }
-<<<<<<< HEAD
             },
             modifier = Modifier.fillMaxWidth()
         )
@@ -80,7 +87,7 @@ fun PasswordEmpleadoScreen(
             modifier = Modifier.fillMaxWidth()
         )
 
-        // ❌ Mensaje error
+        // ❌ Error
         if (error) {
             Text(
                 text = "Las contraseñas no coinciden",
@@ -111,15 +118,7 @@ fun PasswordEmpleadoScreen(
                 )
             } else {
                 Text("Crear usuario")
-=======
->>>>>>> 715ec2d0b71fefb2ba330664d9626531e260ef20
             }
-        )
-
-        Spacer(Modifier.weight(1f))
-
-        Button(onClick = { onCreate(password) }, modifier = Modifier.fillMaxWidth()) {
-            Text("Crear usuario")
         }
     }
 }
