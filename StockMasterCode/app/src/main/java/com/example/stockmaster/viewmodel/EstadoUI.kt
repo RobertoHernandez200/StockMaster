@@ -5,4 +5,5 @@ sealed class EstadoUI {
     object Loading : EstadoUI()
     data class Exito(val mensaje: String) : EstadoUI()
     data class Error(val mensaje: String) : EstadoUI()
+
 }
