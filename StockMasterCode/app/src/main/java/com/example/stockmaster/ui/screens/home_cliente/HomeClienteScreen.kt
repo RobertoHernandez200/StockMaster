@@ -26,17 +26,17 @@ fun HomeClienteScreen(navController: NavController) {
 
     var showDialog by remember { mutableStateOf(false) }
 
-    // 🔥 NAVEGACIÓN
+    // 🔥 navegación automática
     LaunchedEffect(tiendaId) {
         tiendaId?.let {
             navController.navigate("productos_tienda/$it")
         }
     }
 
-    // 🔥 DIALOG CON ERROR
+    // 🔥 dialog
     if (showDialog) {
         DialogCodigo(
-            error = error, // 👈 PASAMOS EL ERROR
+            error = error,
             onConfirm = {
                 viewModel.ingresarCodigo(it)
             },
@@ -72,7 +72,7 @@ fun HomeClienteScreen(navController: NavController) {
             )
         }
 
-        // 🔥 TOTAL CENTRADO CORRECTO
+        // TOTAL CENTRADO
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
@@ -114,6 +114,44 @@ fun HomeClienteScreen(navController: NavController) {
                         showDialog = true
                     }
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun CardItem(
+    title: String,
+    subtitle: String,
+    buttonText: String,
+    onClick: () -> Unit = {}
+) {
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFEDEDED))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .background(Color.LightGray, RoundedCornerShape(10.dp))
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title)
+                Text(subtitle, fontSize = 12.sp, color = Color.Gray)
+            }
+
+            Button(onClick = onClick) {
+                Text(buttonText)
             }
         }
     }
