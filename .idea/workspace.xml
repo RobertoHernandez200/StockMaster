@@ -11,10 +11,7 @@
   <component name="ChangeListManager">
     <list default="true" id="1d5ec300-3e02-4034-8c48-9ee7dc4a7a4a" name="Changes" comment="Creacion del apartado proveedores (en proceso)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/data/remote/FirestoreService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/data/remote/FirestoreService.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/navigation/NavGraph.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/navigation/NavGraph.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/empleados/PasswordEmpleadoScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/empleados/PasswordEmpleadoScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/viewmodel/ClienteViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/viewmodel/ClienteViewModel.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -130,12 +130,10 @@ fun NavGraph() {
             )
         }
 
-        // 🔥 CLIENTE
         composable("home_cliente") {
             HomeClienteScreen(navController)
         }
 
-        // 🔥 TIENDA
         composable("home_tienda") {
             HomeTiendaScreen(
                 onAddProduct = {
@@ -144,10 +142,11 @@ fun NavGraph() {
                 onUsuarios = {
                     navController.navigate("usuarios")
                 },
+                onProveedores = {  // 🔥 ESTE ERA EL ERROR
+                    // vacío por ahora
+                },
                 onLogout = {
-                    navController.navigate("role_selection") {
-                        popUpTo(0)
-                    }
+                    navController.navigate("role_selection")
                 }
             )
         }
@@ -158,14 +157,12 @@ fun NavGraph() {
             }
         }
 
-        // 🔥 CLIENTE → PRODUCTOS DE TIENDA
         composable("productos_tienda/{tiendaId}") {
             ProductScreen {
                 navController.popBackStack()
             }
         }
 
-        // USUARIOS
         composable("usuarios") {
             UsuariosScreen(
                 navController = navController,
@@ -230,7 +227,7 @@ fun NavGraph() {
             val viewModel: EmpleadoViewModel = viewModel()
 
             PasswordEmpleadoScreen(
-                onCreate = { password, onResult ->
+                onCreate = { password ->
 
                     viewModel.crearEmpleado(
                         nombre,
@@ -238,11 +235,9 @@ fun NavGraph() {
                         password,
                         permisos,
                         onSuccess = {
-                            onResult(true)
                             navController.navigate("success")
                         },
                         onError = {
-                            onResult(false)
                         }
                     )
                 },
