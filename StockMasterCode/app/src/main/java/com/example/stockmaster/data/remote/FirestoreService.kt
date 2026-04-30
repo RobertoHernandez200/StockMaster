@@ -36,7 +36,8 @@ class FirestoreService {
             null
         }
     }
-    suspend fun guardarTiendaCliente(userId: String, tienda: com.example.stockmaster.model.Tienda) {
+
+    suspend fun guardarTiendaCliente(userId: String, tienda: Tienda) {
 
         db.collection("clientes")
             .document(userId)
@@ -45,6 +46,7 @@ class FirestoreService {
             .set(tienda)
             .await()
     }
+
     suspend fun tiendaYaExiste(userId: String, tiendaId: String): Boolean {
 
         val doc = db.collection("clientes")
@@ -56,5 +58,22 @@ class FirestoreService {
 
         return doc.exists()
     }
-}
 
+    // 🔥 NUEVO (CLAVE)
+    suspend fun obtenerTiendasCliente(userId: String): List<Tienda> {
+
+        val result = db.collection("clientes")
+            .document(userId)
+            .collection("tiendas")
+            .get()
+            .await()
+
+        return result.documents.map {
+            Tienda(
+                id = it.id,
+                nombre = it.getString("nombre") ?: "",
+                codigo = it.getString("codigo") ?: ""
+            )
+        }
+    }
+}

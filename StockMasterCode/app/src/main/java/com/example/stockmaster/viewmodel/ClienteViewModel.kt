@@ -14,6 +14,9 @@ class ClienteViewModel : ViewModel() {
     private val firestore = FirestoreService()
     private val auth = FirebaseAuth.getInstance()
 
+    private val _tiendas = MutableStateFlow<List<Tienda>>(emptyList())
+    val tiendas: StateFlow<List<Tienda>> = _tiendas
+
     private val _tienda = MutableStateFlow<Tienda?>(null)
     val tienda: StateFlow<Tienda?> = _tienda
 
@@ -23,9 +26,19 @@ class ClienteViewModel : ViewModel() {
     private val _success = MutableStateFlow(false)
     val success: StateFlow<Boolean> = _success
 
+    init {
+        cargarTiendas()
+    }
+
+    fun cargarTiendas() {
+        viewModelScope.launch {
+            val userId = auth.currentUser?.uid ?: return@launch
+            _tiendas.value = firestore.obtenerTiendasCliente(userId)
+        }
+    }
+
     fun buscarTienda(codigo: String) {
         viewModelScope.launch {
-
             val result = firestore.obtenerTiendaPorCodigo(codigo)
 
             if (result != null) {
@@ -54,6 +67,8 @@ class ClienteViewModel : ViewModel() {
             firestore.guardarTiendaCliente(userId, tienda)
 
             _success.value = true
+
+            cargarTiendas() // 🔥 RECARGA
         }
     }
 

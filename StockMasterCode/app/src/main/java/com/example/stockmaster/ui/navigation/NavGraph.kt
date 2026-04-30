@@ -1,29 +1,25 @@
 package com.example.stockmaster.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.stockmaster.ui.screens.empleados.UsuariosScreen
-import com.example.stockmaster.ui.screens.empleados.EmpleadoDetalleScreen
+import com.example.stockmaster.ui.screens.empleados.*
 import com.example.stockmaster.ui.screens.splash.SplashScreen
 import com.example.stockmaster.ui.screens.role_selection.RoleSelectionScreen
 import com.example.stockmaster.ui.screens.entry.EntryTiendaScreen
-import com.example.stockmaster.ui.screens.auth.login.LoginEmailScreen
-import com.example.stockmaster.ui.screens.auth.login.LoginPasswordScreen
+import com.example.stockmaster.ui.screens.auth.login.*
 import com.example.stockmaster.ui.screens.auth.register.RegisterScreen
 import com.example.stockmaster.ui.screens.home_cliente.HomeClienteScreen
 import com.example.stockmaster.ui.screens.home_tienda.HomeTiendaScreen
 import com.example.stockmaster.ui.screens.proveedores.ProveedoresScreen
 import com.example.stockmaster.ui.screens.products.ProductScreen
 import com.example.stockmaster.ui.screens.cliente.TiendasClienteScreen
-import com.example.stockmaster.ui.screens.empleados.CrearUsuarioScreen
-import com.example.stockmaster.ui.screens.empleados.PermisosScreen
-import com.example.stockmaster.ui.screens.empleados.PasswordEmpleadoScreen
-import com.example.stockmaster.ui.screens.empleados.LoadingScreen
-import com.example.stockmaster.ui.screens.empleados.SuccessScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.stockmaster.viewmodel.EmpleadoViewModel
+import com.example.stockmaster.viewmodel.ClienteViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -36,7 +32,6 @@ fun NavGraph() {
         startDestination = "splash"
     ) {
 
-        // SPLASH
         composable("splash") {
             SplashScreen {
                 navController.navigate("role_selection") {
@@ -45,7 +40,6 @@ fun NavGraph() {
             }
         }
 
-        // SELECCIÓN DE ROL
         composable("role_selection") {
             RoleSelectionScreen(
                 onClienteClick = {
@@ -57,7 +51,6 @@ fun NavGraph() {
             )
         }
 
-        // ENTRY
         composable("entry/{role}") { backStackEntry ->
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
@@ -72,7 +65,6 @@ fun NavGraph() {
             )
         }
 
-        // LOGIN EMAIL
         composable("login_email/{role}") { backStackEntry ->
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
@@ -84,7 +76,6 @@ fun NavGraph() {
             )
         }
 
-        // LOGIN PASSWORD
         composable("login_password/{email}/{role}") { backStackEntry ->
             val email = backStackEntry.arguments?.getString("email") ?: ""
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -117,7 +108,6 @@ fun NavGraph() {
             )
         }
 
-        // REGISTER
         composable("register/{role}") { backStackEntry ->
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
@@ -138,15 +128,19 @@ fun NavGraph() {
             )
         }
 
-        // HOME CLIENTE
+        // 🔥 HOME CLIENTE
         composable("home_cliente") {
             HomeClienteScreen(navController)
         }
 
-        // 🔥 MIS TIENDAS (CLIENTE)
+        // 🔥 TIENDAS CLIENTE (AHORA CON FIREBASE REAL)
         composable("mis_tiendas") {
+
+            val viewModel: ClienteViewModel = viewModel()
+            val tiendas by viewModel.tiendas.collectAsState()
+
             TiendasClienteScreen(
-                tiendas = listOf(),
+                tiendas = tiendas,
                 onClick = {
                     navController.navigate("productos_tienda/${it.id}")
                 },
@@ -154,7 +148,7 @@ fun NavGraph() {
             )
         }
 
-        // HOME TIENDA
+        // 🔥 HOME TIENDA
         composable("home_tienda") {
             HomeTiendaScreen(
                 onAddProduct = {
@@ -174,28 +168,24 @@ fun NavGraph() {
             )
         }
 
-        // PROVEEDORES
         composable("proveedores") {
             ProveedoresScreen(
                 onBack = { navController.popBackStack() }
             )
         }
 
-        // PRODUCTOS
         composable("productos") {
             ProductScreen {
                 navController.popBackStack()
             }
         }
 
-        // PRODUCTOS POR TIENDA (CLIENTE)
         composable("productos_tienda/{tiendaId}") {
             ProductScreen {
                 navController.popBackStack()
             }
         }
 
-        // USUARIOS
         composable("usuarios") {
             UsuariosScreen(
                 navController = navController,
@@ -270,8 +260,7 @@ fun NavGraph() {
                         onSuccess = {
                             navController.navigate("success")
                         },
-                        onError = {
-                        }
+                        onError = {}
                     )
                 },
                 onBack = {
