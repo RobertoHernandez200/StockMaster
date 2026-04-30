@@ -24,11 +24,14 @@ import com.example.stockmaster.model.Tienda
 fun TiendasClienteScreen(
     tiendas: List<Tienda>,
     onClick: (Tienda) -> Unit,
-    onDelete: (Tienda) -> Unit, // 🔥 NUEVO
+    onDelete: (Tienda) -> Unit,
     onBack: () -> Unit
 ) {
 
     var search by remember { mutableStateOf("") }
+
+    // 🔥 NUEVO: control del diálogo
+    var tiendaAEliminar by remember { mutableStateOf<Tienda?>(null) }
 
     Column(
         modifier = Modifier
@@ -36,7 +39,7 @@ fun TiendasClienteScreen(
             .background(Color(0xFFF2F2F2))
     ) {
 
-        // 🔥 HEADER
+        // HEADER
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -56,7 +59,7 @@ fun TiendasClienteScreen(
             }
         }
 
-        // 🔥 BUSCADOR
+        // BUSCADOR
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -97,7 +100,7 @@ fun TiendasClienteScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // 🔥 LISTA
+        // LISTA
         LazyColumn {
 
             items(tiendas.filter {
@@ -107,10 +110,47 @@ fun TiendasClienteScreen(
                 TiendaItem(
                     tienda = tienda,
                     onClick = onClick,
-                    onDelete = onDelete // 🔥 NUEVO
+                    onDelete = {
+                        tiendaAEliminar = tienda // 🔥 ABRE DIÁLOGO
+                    }
                 )
             }
         }
+    }
+
+    // 🔥 DIÁLOGO DE CONFIRMACIÓN
+    tiendaAEliminar?.let { tienda ->
+
+        AlertDialog(
+            onDismissRequest = {
+                tiendaAEliminar = null
+            },
+            title = {
+                Text("Eliminar tienda")
+            },
+            text = {
+                Text("¿Seguro que deseas eliminar \"${tienda.nombre}\"?")
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        onDelete(tienda)
+                        tiendaAEliminar = null
+                    }
+                ) {
+                    Text("Eliminar")
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        tiendaAEliminar = null
+                    }
+                ) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
 
@@ -118,7 +158,7 @@ fun TiendasClienteScreen(
 fun TiendaItem(
     tienda: Tienda,
     onClick: (Tienda) -> Unit,
-    onDelete: (Tienda) -> Unit // 🔥 NUEVO
+    onDelete: () -> Unit
 ) {
 
     Column(
@@ -138,7 +178,6 @@ fun TiendaItem(
                 modifier = Modifier.clickable { onClick(tienda) }
             ) {
 
-                // ICONO
                 Box(
                     modifier = Modifier
                         .size(50.dp)
@@ -160,8 +199,7 @@ fun TiendaItem(
                 )
             }
 
-            // 🔥 BOTÓN ELIMINAR
-            IconButton(onClick = { onDelete(tienda) }) {
+            IconButton(onClick = onDelete) {
                 Icon(
                     imageVector = Icons.Default.Delete,
                     contentDescription = "Eliminar",
