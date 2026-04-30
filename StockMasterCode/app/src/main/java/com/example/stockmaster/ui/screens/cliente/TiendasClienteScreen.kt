@@ -111,7 +111,7 @@ fun TiendasClienteScreen(
                     tienda = tienda,
                     onClick = onClick,
                     onDelete = {
-                        tiendaAEliminar = tienda // 🔥 ABRE DIÁLOGO
+                        tiendaAEliminar = tienda
                     }
                 )
             }

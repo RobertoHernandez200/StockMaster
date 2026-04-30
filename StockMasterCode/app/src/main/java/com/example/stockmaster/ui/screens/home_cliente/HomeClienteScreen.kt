@@ -14,6 +14,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.Icon
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.stockmaster.viewmodel.ClienteViewModel
 import com.example.stockmaster.ui.components.DialogCodigo
 import com.example.stockmaster.ui.components.DialogConfirmarTienda
@@ -102,7 +106,7 @@ fun HomeClienteScreen(navController: NavController) {
                 .background(Color(0xFFF2F2F2))
         ) {
 
-            // 🔥 HEADER CON MENÚ REAL
+            // HEADER CON MENÚ REAL
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -160,13 +164,16 @@ fun HomeClienteScreen(navController: NavController) {
                     CardItem(
                         title = "Lista de deseos",
                         subtitle = "Crear lista",
-                        buttonText = "+ Agregar lista"
+                        buttonText = "+ Agregar lista",
+                        icon = Icons.Default.Favorite
                     )
+
 
                     CardItem(
                         title = "Tiendas",
                         subtitle = "Agregar nueva tienda",
                         buttonText = "+ Agregar código",
+                        icon = Icons.Default.Store,
                         onClick = {
                             showDialogCodigo = true
                         }
@@ -182,6 +189,7 @@ fun CardItem(
     title: String,
     subtitle: String,
     buttonText: String,
+    icon: ImageVector,
     onClick: () -> Unit = {}
 ) {
     Card(
@@ -195,10 +203,11 @@ fun CardItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .background(Color.LightGray, RoundedCornerShape(10.dp))
+            Icon(
+                imageVector = icon,
+                contentDescription = title,
+                tint = Color(0xFF6A5AE0),
+                modifier = Modifier.size(28.dp)
             )
 
             Spacer(modifier = Modifier.width(12.dp))

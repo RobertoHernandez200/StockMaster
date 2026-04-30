@@ -138,7 +138,9 @@ fun RegisterScreen(
                             }
                     }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(55.dp)
         )
     }
 }
