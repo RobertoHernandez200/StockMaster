@@ -17,6 +17,7 @@ import com.example.stockmaster.ui.screens.home_tienda.HomeTiendaScreen
 import com.example.stockmaster.ui.screens.proveedores.ProveedoresScreen
 import com.example.stockmaster.ui.screens.products.ProductScreen
 import com.example.stockmaster.ui.screens.cliente.TiendasClienteScreen
+import com.example.stockmaster.ui.screens.cliente.ClienteProductosScreen // 🔥 IMPORTANTE
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.stockmaster.viewmodel.EmpleadoViewModel
 import com.example.stockmaster.viewmodel.ClienteViewModel
@@ -133,7 +134,7 @@ fun NavGraph() {
             HomeClienteScreen(navController)
         }
 
-        // 🔥 TIENDAS CLIENTE (AHORA CON FIREBASE REAL)
+        // 🔥 TIENDAS CLIENTE
         composable("mis_tiendas") {
 
             val viewModel: ClienteViewModel = viewModel()
@@ -144,6 +145,20 @@ fun NavGraph() {
                 onClick = {
                     navController.navigate("productos_tienda/${it.id}")
                 },
+                onDelete = { // 🔥 NUEVO
+                    viewModel.eliminarTienda(it.id)
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        // 🔥 PRODUCTOS SOLO LECTURA (CLIENTE)
+        composable("productos_tienda/{tiendaId}") { backStack ->
+
+            val tiendaId = backStack.arguments?.getString("tiendaId")!!
+
+            ClienteProductosScreen(
+                tiendaId = tiendaId,
                 onBack = { navController.popBackStack() }
             )
         }
@@ -180,11 +195,8 @@ fun NavGraph() {
             }
         }
 
-        composable("productos_tienda/{tiendaId}") {
-            ProductScreen {
-                navController.popBackStack()
-            }
-        }
+        // 🔥 YA NO SE USA ProductScreen PARA CLIENTE
+        // (este queda solo para tienda)
 
         composable("usuarios") {
             UsuariosScreen(

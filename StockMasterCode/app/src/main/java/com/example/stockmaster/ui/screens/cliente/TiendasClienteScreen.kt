@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -23,6 +24,7 @@ import com.example.stockmaster.model.Tienda
 fun TiendasClienteScreen(
     tiendas: List<Tienda>,
     onClick: (Tienda) -> Unit,
+    onDelete: (Tienda) -> Unit, // 🔥 NUEVO
     onBack: () -> Unit
 ) {
 
@@ -95,14 +97,18 @@ fun TiendasClienteScreen(
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // 🔥 LISTA DE TIENDAS
+        // 🔥 LISTA
         LazyColumn {
 
             items(tiendas.filter {
                 it.nombre.contains(search, ignoreCase = true)
             }) { tienda ->
 
-                TiendaItem(tienda, onClick)
+                TiendaItem(
+                    tienda = tienda,
+                    onClick = onClick,
+                    onDelete = onDelete // 🔥 NUEVO
+                )
             }
         }
     }
@@ -111,38 +117,57 @@ fun TiendasClienteScreen(
 @Composable
 fun TiendaItem(
     tienda: Tienda,
-    onClick: (Tienda) -> Unit
+    onClick: (Tienda) -> Unit,
+    onDelete: (Tienda) -> Unit // 🔥 NUEVO
 ) {
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onClick(tienda) }
             .padding(horizontal = 16.dp, vertical = 10.dp)
     ) {
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
 
-            // 🔥 ICONO
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .background(Color(0xFF6A5AE0), CircleShape),
-                contentAlignment = Alignment.Center
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable { onClick(tienda) }
             ) {
+
+                // ICONO
+                Box(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .background(Color(0xFF6A5AE0), CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = tienda.nombre.first().toString(),
+                        color = Color.White,
+                        fontSize = 20.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
                 Text(
-                    text = tienda.nombre.first().toString(),
-                    color = Color.White,
-                    fontSize = 20.sp
+                    tienda.nombre,
+                    fontSize = 18.sp
                 )
             }
 
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Text(
-                tienda.nombre,
-                fontSize = 18.sp
-            )
+            // 🔥 BOTÓN ELIMINAR
+            IconButton(onClick = { onDelete(tienda) }) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Eliminar",
+                    tint = Color.Red
+                )
+            }
         }
 
         Divider(

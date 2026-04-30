@@ -68,7 +68,17 @@ class ClienteViewModel : ViewModel() {
 
             _success.value = true
 
-            cargarTiendas() // 🔥 RECARGA
+            cargarTiendas()
+        }
+    }
+
+    fun eliminarTienda(tiendaId: String) {
+        viewModelScope.launch {
+            val userId = auth.currentUser?.uid ?: return@launch
+
+            firestore.eliminarTiendaCliente(userId, tiendaId)
+
+            cargarTiendas()
         }
     }
 

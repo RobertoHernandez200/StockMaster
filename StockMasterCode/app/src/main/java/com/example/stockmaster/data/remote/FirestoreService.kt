@@ -59,7 +59,6 @@ class FirestoreService {
         return doc.exists()
     }
 
-    // 🔥 NUEVO (CLAVE)
     suspend fun obtenerTiendasCliente(userId: String): List<Tienda> {
 
         val result = db.collection("clientes")
@@ -75,5 +74,15 @@ class FirestoreService {
                 codigo = it.getString("codigo") ?: ""
             )
         }
+    }
+
+    suspend fun eliminarTiendaCliente(userId: String, tiendaId: String) {
+
+        db.collection("clientes")
+            .document(userId)
+            .collection("tiendas")
+            .document(tiendaId)
+            .delete()
+            .await()
     }
 }
