@@ -44,6 +44,13 @@ class ClienteViewModel : ViewModel() {
             val userId = auth.currentUser?.uid ?: return@launch
             val tienda = _tienda.value ?: return@launch
 
+            val existe = firestore.tiendaYaExiste(userId, tienda.id)
+
+            if (existe) {
+                _error.value = "La tienda ya está agregada"
+                return@launch
+            }
+
             firestore.guardarTiendaCliente(userId, tienda)
 
             _success.value = true

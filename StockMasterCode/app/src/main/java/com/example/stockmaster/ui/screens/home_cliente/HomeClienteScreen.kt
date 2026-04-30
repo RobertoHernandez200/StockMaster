@@ -16,6 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.stockmaster.viewmodel.ClienteViewModel
 import com.example.stockmaster.ui.components.DialogCodigo
 import com.example.stockmaster.ui.components.DialogConfirmarTienda
+import com.example.stockmaster.ui.components.MenuDrawer
 
 @Composable
 fun HomeClienteScreen(navController: NavController) {
@@ -24,11 +25,23 @@ fun HomeClienteScreen(navController: NavController) {
 
     val tienda by viewModel.tienda.collectAsState()
     val error by viewModel.error.collectAsState()
-    val success by viewModel.success.collectAsState() //  NUEVO
+    val success by viewModel.success.collectAsState()
 
     var showDialogCodigo by remember { mutableStateOf(false) }
+    var drawerOpen by remember { mutableStateOf(false) } // 🔥 MENÚ
 
-    //  DIALOG INGRESAR CÓDIGO
+    // 🔥 MENÚ LATERAL
+    if (drawerOpen) {
+        MenuDrawer(
+            onInicio = { drawerOpen = false },
+            onTiendas = {
+                drawerOpen = false
+                navController.navigate("mis_tiendas")
+            }
+        )
+    }
+
+    // 🔥 DIALOG CÓDIGO
     if (showDialogCodigo) {
         DialogCodigo(
             error = error,
@@ -42,7 +55,7 @@ fun HomeClienteScreen(navController: NavController) {
         )
     }
 
-    //  DIALOG CONFIRMAR TIENDA
+    // 🔥 CONFIRMAR TIENDA
     tienda?.let {
         DialogConfirmarTienda(
             tienda = it,
@@ -55,7 +68,7 @@ fun HomeClienteScreen(navController: NavController) {
         )
     }
 
-    //  MENSAJE DE ÉXITO (como tu imagen)
+    // 🔥 ÉXITO
     if (success) {
         AlertDialog(
             onDismissRequest = {
@@ -70,12 +83,8 @@ fun HomeClienteScreen(navController: NavController) {
                     Text("OK")
                 }
             },
-            title = {
-                Text("¡Listo!")
-            },
-            text = {
-                Text("Tienda agregada correctamente")
-            }
+            title = { Text("¡Listo!") },
+            text = { Text("Tienda agregada correctamente") }
         )
     }
 
@@ -85,14 +94,21 @@ fun HomeClienteScreen(navController: NavController) {
             .background(Color(0xFFF2F2F2))
     ) {
 
-        // HEADER
+        // 🔥 HEADER CON MENÚ
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Inicio")
+
+            Text(
+                "☰",
+                fontSize = 22.sp,
+                modifier = Modifier.clickable {
+                    drawerOpen = true
+                }
+            )
 
             Text(
                 "Salir",

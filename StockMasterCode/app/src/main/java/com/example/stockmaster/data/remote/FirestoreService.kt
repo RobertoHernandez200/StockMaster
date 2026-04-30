@@ -45,5 +45,16 @@ class FirestoreService {
             .set(tienda)
             .await()
     }
+    suspend fun tiendaYaExiste(userId: String, tiendaId: String): Boolean {
+
+        val doc = db.collection("clientes")
+            .document(userId)
+            .collection("tiendas")
+            .document(tiendaId)
+            .get()
+            .await()
+
+        return doc.exists()
+    }
 }
 

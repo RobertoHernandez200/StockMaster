@@ -16,6 +16,7 @@ import com.example.stockmaster.ui.screens.home_cliente.HomeClienteScreen
 import com.example.stockmaster.ui.screens.home_tienda.HomeTiendaScreen
 import com.example.stockmaster.ui.screens.proveedores.ProveedoresScreen
 import com.example.stockmaster.ui.screens.products.ProductScreen
+import com.example.stockmaster.ui.screens.cliente.TiendasClienteScreen
 import com.example.stockmaster.ui.screens.empleados.CrearUsuarioScreen
 import com.example.stockmaster.ui.screens.empleados.PermisosScreen
 import com.example.stockmaster.ui.screens.empleados.PasswordEmpleadoScreen
@@ -35,6 +36,7 @@ fun NavGraph() {
         startDestination = "splash"
     ) {
 
+        // SPLASH
         composable("splash") {
             SplashScreen {
                 navController.navigate("role_selection") {
@@ -43,6 +45,7 @@ fun NavGraph() {
             }
         }
 
+        // SELECCIÓN DE ROL
         composable("role_selection") {
             RoleSelectionScreen(
                 onClienteClick = {
@@ -54,6 +57,7 @@ fun NavGraph() {
             )
         }
 
+        // ENTRY
         composable("entry/{role}") { backStackEntry ->
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
@@ -68,6 +72,7 @@ fun NavGraph() {
             )
         }
 
+        // LOGIN EMAIL
         composable("login_email/{role}") { backStackEntry ->
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
@@ -79,6 +84,7 @@ fun NavGraph() {
             )
         }
 
+        // LOGIN PASSWORD
         composable("login_password/{email}/{role}") { backStackEntry ->
             val email = backStackEntry.arguments?.getString("email") ?: ""
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -111,6 +117,7 @@ fun NavGraph() {
             )
         }
 
+        // REGISTER
         composable("register/{role}") { backStackEntry ->
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
@@ -131,10 +138,23 @@ fun NavGraph() {
             )
         }
 
+        // HOME CLIENTE
         composable("home_cliente") {
             HomeClienteScreen(navController)
         }
 
+        // 🔥 MIS TIENDAS (CLIENTE)
+        composable("mis_tiendas") {
+            TiendasClienteScreen(
+                tiendas = listOf(),
+                onClick = {
+                    navController.navigate("productos_tienda/${it.id}")
+                },
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        // HOME TIENDA
         composable("home_tienda") {
             HomeTiendaScreen(
                 onAddProduct = {
@@ -147,29 +167,35 @@ fun NavGraph() {
                     navController.navigate("proveedores")
                 },
                 onLogout = {
-                    navController.navigate("role_selection")
+                    navController.navigate("role_selection") {
+                        popUpTo(0)
+                    }
                 }
             )
         }
 
+        // PROVEEDORES
         composable("proveedores") {
             ProveedoresScreen(
                 onBack = { navController.popBackStack() }
             )
         }
 
+        // PRODUCTOS
         composable("productos") {
             ProductScreen {
                 navController.popBackStack()
             }
         }
 
+        // PRODUCTOS POR TIENDA (CLIENTE)
         composable("productos_tienda/{tiendaId}") {
             ProductScreen {
                 navController.popBackStack()
             }
         }
 
+        // USUARIOS
         composable("usuarios") {
             UsuariosScreen(
                 navController = navController,
