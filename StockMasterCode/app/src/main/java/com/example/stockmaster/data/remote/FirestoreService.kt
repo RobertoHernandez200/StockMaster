@@ -8,14 +8,22 @@ class FirestoreService {
     private val db = FirebaseFirestore.getInstance()
 
     suspend fun obtenerTiendaPorCodigo(codigo: String): String? {
-        val result = db.collection("tiendas")
-            .whereEqualTo("codigo", codigo)
-            .get()
-            .await()
 
-        return if (!result.isEmpty) {
-            result.documents.first().id
-        } else {
+        return try {
+
+            val result = db.collection("usuarios") //
+                .whereEqualTo("codigo", codigo)
+                .whereEqualTo("role", "tienda") // 
+                .get()
+                .await()
+
+            if (!result.isEmpty) {
+                result.documents.first().id
+            } else {
+                null
+            }
+
+        } catch (e: Exception) {
             null
         }
     }
