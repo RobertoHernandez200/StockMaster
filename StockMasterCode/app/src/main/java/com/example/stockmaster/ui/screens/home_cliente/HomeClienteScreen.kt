@@ -13,11 +13,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import com.example.stockmaster.viewmodel.ClienteViewModel
 import com.example.stockmaster.ui.components.DialogCodigo
 import com.example.stockmaster.ui.components.DialogConfirmarTienda
 import com.example.stockmaster.ui.components.MenuDrawer
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeClienteScreen(navController: NavController) {
 
@@ -28,141 +30,148 @@ fun HomeClienteScreen(navController: NavController) {
     val success by viewModel.success.collectAsState()
 
     var showDialogCodigo by remember { mutableStateOf(false) }
-    var drawerOpen by remember { mutableStateOf(false) } // 🔥 MENÚ
 
-    // 🔥 MENÚ LATERAL
-    if (drawerOpen) {
-        MenuDrawer(
-            onInicio = { drawerOpen = false },
-            onTiendas = {
-                drawerOpen = false
-                navController.navigate("mis_tiendas")
-            }
-        )
-    }
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
-    // 🔥 DIALOG CÓDIGO
-    if (showDialogCodigo) {
-        DialogCodigo(
-            error = error,
-            onConfirm = {
-                viewModel.buscarTienda(it)
-            },
-            onDismiss = {
-                showDialogCodigo = false
-                viewModel.limpiar()
-            }
-        )
-    }
-
-    // 🔥 CONFIRMAR TIENDA
-    tienda?.let {
-        DialogConfirmarTienda(
-            tienda = it,
-            onConfirm = {
-                viewModel.confirmarTienda()
-            },
-            onDismiss = {
-                viewModel.limpiar()
-            }
-        )
-    }
-
-    // 🔥 ÉXITO
-    if (success) {
-        AlertDialog(
-            onDismissRequest = {
-                viewModel.limpiar()
-                showDialogCodigo = false
-            },
-            confirmButton = {
-                Button(onClick = {
-                    viewModel.limpiar()
-                    showDialogCodigo = false
-                }) {
-                    Text("OK")
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            MenuDrawer(
+                onInicio = {
+                    scope.launch { drawerState.close() }
+                },
+                onTiendas = {
+                    scope.launch { drawerState.close() }
+                    navController.navigate("mis_tiendas")
                 }
-            },
-            title = { Text("¡Listo!") },
-            text = { Text("Tienda agregada correctamente") }
-        )
-    }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF2F2F2))
+            )
+        }
     ) {
 
-        // 🔥 HEADER CON MENÚ
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-            Text(
-                "☰",
-                fontSize = 22.sp,
-                modifier = Modifier.clickable {
-                    drawerOpen = true
+        // 🔥 DIALOG CÓDIGO
+        if (showDialogCodigo) {
+            DialogCodigo(
+                error = error,
+                onConfirm = {
+                    viewModel.buscarTienda(it)
+                },
+                onDismiss = {
+                    showDialogCodigo = false
+                    viewModel.limpiar()
                 }
             )
+        }
 
-            Text(
-                "Salir",
-                color = Color.Blue,
-                modifier = Modifier.clickable {
-                    navController.navigate("role_selection") {
-                        popUpTo("role_selection") { inclusive = true }
+        // 🔥 CONFIRMAR TIENDA
+        tienda?.let {
+            DialogConfirmarTienda(
+                tienda = it,
+                onConfirm = {
+                    viewModel.confirmarTienda()
+                },
+                onDismiss = {
+                    viewModel.limpiar()
+                }
+            )
+        }
+
+        // 🔥 ÉXITO
+        if (success) {
+            AlertDialog(
+                onDismissRequest = {
+                    viewModel.limpiar()
+                    showDialogCodigo = false
+                },
+                confirmButton = {
+                    Button(onClick = {
+                        viewModel.limpiar()
+                        showDialogCodigo = false
+                    }) {
+                        Text("OK")
                     }
-                }
+                },
+                title = { Text("¡Listo!") },
+                text = { Text("Tienda agregada correctamente") }
             )
         }
 
-        // TOTAL
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Total")
-                Text("$0.00", fontSize = 26.sp)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // FONDO MORADO
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        listOf(Color(0xFF6A5AE0), Color(0xFF7F67F8))
-                    ),
-                    shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
-                )
-                .padding(16.dp)
+                .background(Color(0xFFF2F2F2))
         ) {
 
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            // 🔥 HEADER CON MENÚ REAL
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
 
-                CardItem(
-                    title = "Lista de deseos",
-                    subtitle = "Crear lista",
-                    buttonText = "+ Agregar lista"
-                )
-
-                CardItem(
-                    title = "Tiendas",
-                    subtitle = "Agregar nueva tienda",
-                    buttonText = "+ Agregar código",
-                    onClick = {
-                        showDialogCodigo = true
+                Text(
+                    "☰",
+                    fontSize = 22.sp,
+                    modifier = Modifier.clickable {
+                        scope.launch { drawerState.open() }
                     }
                 )
+
+                Text(
+                    "Salir",
+                    color = Color.Blue,
+                    modifier = Modifier.clickable {
+                        navController.navigate("role_selection") {
+                            popUpTo("role_selection") { inclusive = true }
+                        }
+                    }
+                )
+            }
+
+            // TOTAL
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Total")
+                    Text("$0.00", fontSize = 26.sp)
+                }
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            // FONDO MORADO
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(Color(0xFF6A5AE0), Color(0xFF7F67F8))
+                        ),
+                        shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
+                    )
+                    .padding(16.dp)
+            ) {
+
+                Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+
+                    CardItem(
+                        title = "Lista de deseos",
+                        subtitle = "Crear lista",
+                        buttonText = "+ Agregar lista"
+                    )
+
+                    CardItem(
+                        title = "Tiendas",
+                        subtitle = "Agregar nueva tienda",
+                        buttonText = "+ Agregar código",
+                        onClick = {
+                            showDialogCodigo = true
+                        }
+                    )
+                }
             }
         }
     }
