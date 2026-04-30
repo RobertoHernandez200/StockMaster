@@ -7,9 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -18,175 +16,204 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.stockmaster.model.Tienda
-import com.example.stockmaster.ui.components.DialogCodigo
-import com.example.stockmaster.ui.components.DialogConfirmarTienda
+import com.example.stockmaster.viewmodel.ClienteViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun TiendasClienteScreen(
     tiendas: List<Tienda>,
     onDelete: (Tienda) -> Unit,
     onBack: () -> Unit,
-    viewModel: com.example.stockmaster.viewmodel.ClienteViewModel
+    viewModel: ClienteViewModel
 ) {
 
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
+
     var search by remember { mutableStateOf("") }
-
     var tiendaAEliminar by remember { mutableStateOf<Tienda?>(null) }
-
-    // 🔥 NUEVO: diálogo agregar tienda
     var showDialogCodigo by remember { mutableStateOf(false) }
 
     val tienda by viewModel.tienda.collectAsState()
     val error by viewModel.error.collectAsState()
     val success by viewModel.success.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0xFFF2F2F2))
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            ModalDrawerSheet {
+
+                Text("Menú", modifier = Modifier.padding(16.dp), fontSize = 20.sp)
+
+                NavigationDrawerItem(
+                    label = { Text("Inicio") },
+                    selected = false,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                        onBack()
+                    }
+                )
+
+                NavigationDrawerItem(
+                    label = { Text("Tiendas") },
+                    selected = true,
+                    onClick = {
+                        scope.launch { drawerState.close() }
+                    }
+                )
+
+                NavigationDrawerItem(
+                    label = { Text("Listas de deseos") },
+                    selected = false,
+                    onClick = { }
+                )
+            }
+        }
     ) {
 
-        // HEADER
-        Row(
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .background(Color(0xFFF2F2F2))
         ) {
 
-            TextButton(onClick = onBack) {
-                Text("← Volver")
-            }
+            //  HEADER CON MENÚ
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-            Text("Tiendas", fontSize = 20.sp)
-
-            // 🔥 BOTÓN +
-            IconButton(onClick = {
-                showDialogCodigo = true
-            }) {
-                Icon(Icons.Default.Add, contentDescription = "")
-            }
-        }
-
-        // BUSCADOR
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .background(
-                    brush = Brush.horizontalGradient(
-                        listOf(Color(0xFF6A5AE0), Color(0xFF7F67F8))
-                    ),
-                    shape = RoundedCornerShape(50)
-                )
-                .padding(12.dp)
-        ) {
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-
-                Icon(Icons.Default.Search, contentDescription = "", tint = Color.White)
-
-                Spacer(modifier = Modifier.width(8.dp))
-
-                TextField(
-                    value = search,
-                    onValueChange = { search = it },
-                    placeholder = { Text("Buscar tienda", color = Color.White) },
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedTextColor = Color.White,
-                        unfocusedTextColor = Color.White,
-                        cursorColor = Color.White,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // LISTA
-        LazyColumn {
-
-            items(tiendas.filter {
-                it.nombre.contains(search, ignoreCase = true)
-            }) { tiendaItem ->
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-
-                        Box(
-                            modifier = Modifier
-                                .size(50.dp)
-                                .background(Color(0xFF6A5AE0), CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                tiendaItem.nombre.first().toString(),
-                                color = Color.White
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.width(12.dp))
-
-                        Text(tiendaItem.nombre, fontSize = 18.sp)
-                    }
-
-                    IconButton(
-                        onClick = {
-                            tiendaAEliminar = tiendaItem
-                        }
-                    ) {
-                        Icon(
-                            Icons.Default.Delete,
-                            contentDescription = "",
-                            tint = Color.Red
-                        )
-                    }
+                IconButton(onClick = {
+                    scope.launch { drawerState.open() }
+                }) {
+                    Icon(Icons.Default.Menu, contentDescription = "Menú")
                 }
 
+                Text("Tiendas", fontSize = 20.sp)
+
+                IconButton(onClick = {
+                    showDialogCodigo = true
+                }) {
+                    Icon(Icons.Default.Add, contentDescription = "")
+                }
+            }
+
+            //  BUSCADOR
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp)
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            listOf(Color(0xFF6A5AE0), Color(0xFF7F67F8))
+                        ),
+                        shape = RoundedCornerShape(50)
+                    )
+                    .padding(12.dp)
+            ) {
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+
+                    Icon(Icons.Default.Search, contentDescription = "", tint = Color.White)
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    TextField(
+                        value = search,
+                        onValueChange = { search = it },
+                        placeholder = { Text("Buscar tienda", color = Color.White) },
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.Transparent,
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedTextColor = Color.White,
+                            unfocusedTextColor = Color.White,
+                            cursorColor = Color.White,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            //  LISTA
+            LazyColumn {
+
+                items(tiendas.filter {
+                    it.nombre.contains(search, ignoreCase = true)
+                }) { tiendaItem ->
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+
+                            Box(
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .background(Color(0xFF6A5AE0), CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    tiendaItem.nombre.first().toString(),
+                                    color = Color.White
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(12.dp))
+
+                            Text(tiendaItem.nombre, fontSize = 18.sp)
+                        }
+
+                        IconButton(
+                            onClick = {
+                                tiendaAEliminar = tiendaItem
+                            }
+                        ) {
+                            Icon(Icons.Default.Delete, contentDescription = "", tint = Color.Red)
+                        }
+                    }
+
+                    Divider(color = Color(0xFF6A5AE0))
+                }
             }
         }
     }
 
-    // 🔥 CONFIRMAR ELIMINAR
-    tiendaAEliminar?.let { tiendaSel ->
-
+    //  CONFIRMAR ELIMINAR
+    tiendaAEliminar?.let {
         AlertDialog(
             onDismissRequest = { tiendaAEliminar = null },
             title = { Text("Eliminar tienda") },
-            text = { Text("¿Seguro que deseas eliminar ${tiendaSel.nombre}?") },
+            text = { Text("¿Seguro que deseas eliminar ${it.nombre}?") },
             confirmButton = {
                 Button(onClick = {
-                    onDelete(tiendaSel)
+                    onDelete(it)
                     tiendaAEliminar = null
                 }) {
                     Text("Eliminar")
                 }
             },
             dismissButton = {
-                TextButton(onClick = {
-                    tiendaAEliminar = null
-                }) {
+                TextButton(onClick = { tiendaAEliminar = null }) {
                     Text("Cancelar")
                 }
             }
         )
     }
 
-    // 🔥 DIALOG INGRESAR CÓDIGO
+    //  DIALOG AGREGAR CÓDIGO
     if (showDialogCodigo) {
-        DialogCodigo(
+        com.example.stockmaster.ui.components.DialogCodigo(
             error = error,
             onConfirm = {
                 viewModel.buscarTienda(it)
@@ -198,9 +225,9 @@ fun TiendasClienteScreen(
         )
     }
 
-    // 🔥 CONFIRMAR AGREGAR
+    //  CONFIRMAR TIENDA
     tienda?.let {
-        DialogConfirmarTienda(
+        com.example.stockmaster.ui.components.DialogConfirmarTienda(
             tienda = it,
             onConfirm = {
                 viewModel.confirmarTienda()
@@ -211,7 +238,7 @@ fun TiendasClienteScreen(
         )
     }
 
-    // 🔥 MENSAJE ÉXITO
+    //  ÉXITO
     if (success) {
         AlertDialog(
             onDismissRequest = {
