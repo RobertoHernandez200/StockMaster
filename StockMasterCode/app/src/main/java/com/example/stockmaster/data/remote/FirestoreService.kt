@@ -6,7 +6,7 @@ import kotlinx.coroutines.tasks.await
 
 class FirestoreService {
 
-    private val db = FirebaseFirestore.getInstance()
+    val db = FirebaseFirestore.getInstance()
 
     suspend fun obtenerTiendaPorCodigo(codigo: String): Tienda? {
 
@@ -38,7 +38,6 @@ class FirestoreService {
     }
 
     suspend fun guardarTiendaCliente(userId: String, tienda: Tienda) {
-
         db.collection("clientes")
             .document(userId)
             .collection("tiendas")
@@ -77,7 +76,6 @@ class FirestoreService {
     }
 
     suspend fun eliminarTiendaCliente(userId: String, tiendaId: String) {
-
         db.collection("clientes")
             .document(userId)
             .collection("tiendas")
@@ -86,11 +84,19 @@ class FirestoreService {
             .await()
     }
 
-    // GUARDAR LISTA DE DESEOS
+    // 🔥 GUARDAR LISTA CON PRODUCTOS
     suspend fun guardarListaDeseos(
         userId: String,
-        lista: Map<String, String>
+        nombre: String,
+        tiendaId: String,
+        productos: List<String>
     ) {
+        val lista = hashMapOf(
+            "nombre" to nombre,
+            "tiendaId" to tiendaId,
+            "productos" to productos
+        )
+
         db.collection("clientes")
             .document(userId)
             .collection("listas")
@@ -98,8 +104,8 @@ class FirestoreService {
             .await()
     }
 
-    // OBTENER LISTAS DE DESEOS
-    suspend fun obtenerListasDeseos(userId: String): List<Map<String, String>> {
+    // 🔥 OBTENER LISTAS
+    suspend fun obtenerListasDeseos(userId: String): List<Map<String, Any>> {
 
         val result = db.collection("clientes")
             .document(userId)
@@ -107,6 +113,6 @@ class FirestoreService {
             .get()
             .await()
 
-        return result.documents.mapNotNull { it.data as? Map<String, String> }
+        return result.documents.mapNotNull { it.data }
     }
 }

@@ -14,12 +14,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import com.example.stockmaster.ui.components.MenuDrawer
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.stockmaster.viewmodel.ClienteViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WishlistScreen(navController: NavController) {
 
-    var listas by remember { mutableStateOf(mutableListOf<String>()) }
+    val viewModel: ClienteViewModel = viewModel()
+    val listas by viewModel.listas.collectAsState()
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -84,9 +87,12 @@ fun WishlistScreen(navController: NavController) {
                     Text("Aún no tienes listas...", color = Color.Gray)
                 }
             } else {
+
                 LazyColumn {
 
                     items(listas) { lista ->
+
+                        val nombre = lista["nombre"] as? String ?: ""
 
                         Card(
                             modifier = Modifier
@@ -99,16 +105,11 @@ fun WishlistScreen(navController: NavController) {
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
 
-                                Text(lista)
+                                Text(nombre)
 
                                 Text(
                                     "Eliminar",
-                                    color = Color.Red,
-                                    modifier = Modifier.clickable {
-                                        listas = listas.toMutableList().apply {
-                                            remove(lista)
-                                        }
-                                    }
+                                    color = Color.Red
                                 )
                             }
                         }

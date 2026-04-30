@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.stockmaster.viewmodel.ProductosViewModel
+import com.example.stockmaster.viewmodel.ClienteViewModel
 
 @Composable
 fun SeleccionarProductosScreen(
@@ -23,12 +24,12 @@ fun SeleccionarProductosScreen(
 ) {
 
     val viewModel: ProductosViewModel = viewModel()
+    val clienteViewModel: ClienteViewModel = viewModel()
 
     val productos by viewModel.productos.collectAsState()
 
     var seleccionados by remember { mutableStateOf(setOf<String>()) }
 
-    // 🔥 CARGAR PRODUCTOS DE LA TIENDA
     LaunchedEffect(Unit) {
         viewModel.cargarProductosDeTienda(tiendaId)
     }
@@ -44,9 +45,7 @@ fun SeleccionarProductosScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 🔥 SI NO HAY PRODUCTOS
         if (productos.isEmpty()) {
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -55,9 +54,7 @@ fun SeleccionarProductosScreen(
             ) {
                 Text("Esta tienda no tiene productos", color = Color.Gray)
             }
-
         } else {
-
             LazyColumn(
                 modifier = Modifier.weight(1f)
             ) {
@@ -70,7 +67,6 @@ fun SeleccionarProductosScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-
                                 seleccionados = if (seleccionado) {
                                     seleccionados - producto.id
                                 } else {
@@ -97,11 +93,14 @@ fun SeleccionarProductosScreen(
             }
         }
 
-        // 🔥 BOTÓN GUARDAR
         Button(
             onClick = {
 
-                // 🔥 AQUÍ LUEGO GUARDAS EN FIREBASE
+                clienteViewModel.guardarLista(
+                    nombreLista,
+                    tiendaId,
+                    seleccionados.toList()
+                )
 
                 navController.navigate("wishlist") {
                     popUpTo("wishlist") { inclusive = true }

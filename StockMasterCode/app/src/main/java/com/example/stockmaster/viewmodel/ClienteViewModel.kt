@@ -20,8 +20,8 @@ class ClienteViewModel : ViewModel() {
     private val _tienda = MutableStateFlow<Tienda?>(null)
     val tienda: StateFlow<Tienda?> = _tienda
 
-    private val _listas = MutableStateFlow<List<Map<String, String>>>(emptyList())
-    val listas: StateFlow<List<Map<String, String>>> = _listas
+    private val _listas = MutableStateFlow<List<Map<String, Any>>>(emptyList())
+    val listas: StateFlow<List<Map<String, Any>>> = _listas
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
@@ -31,24 +31,25 @@ class ClienteViewModel : ViewModel() {
 
     init {
         cargarTiendas()
+        cargarListas()
     }
 
-    fun crearListaDeseos(
+    // 🔥 GUARDAR LISTA REAL
+    fun guardarLista(
         nombreLista: String,
         tiendaId: String,
-        tiendaNombre: String
+        productos: List<String>
     ) {
         viewModelScope.launch {
 
             val userId = auth.currentUser?.uid ?: return@launch
 
-            val lista = hashMapOf(
-                "nombre" to nombreLista,
-                "tiendaId" to tiendaId,
-                "tiendaNombre" to tiendaNombre
+            firestore.guardarListaDeseos(
+                userId,
+                nombreLista,
+                tiendaId,
+                productos
             )
-
-            firestore.guardarListaDeseos(userId, lista)
 
             cargarListas()
         }
@@ -106,9 +107,7 @@ class ClienteViewModel : ViewModel() {
     fun eliminarTienda(tiendaId: String) {
         viewModelScope.launch {
             val userId = auth.currentUser?.uid ?: return@launch
-
             firestore.eliminarTiendaCliente(userId, tiendaId)
-
             cargarTiendas()
         }
     }
