@@ -9,11 +9,13 @@ import kotlinx.coroutines.flow.StateFlow
 
 class ProductosViewModel : ViewModel() {
 
-    // Firebase
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
-    // Estados UI
+    // 🔥 NUEVO: código de tienda
+    private val _codigo = MutableStateFlow("")
+    val codigo: StateFlow<String> = _codigo
+
     private val _nombre = MutableStateFlow("")
     val nombre: StateFlow<String> = _nombre
 
@@ -28,12 +30,23 @@ class ProductosViewModel : ViewModel() {
 
     private var productoId: String? = null
 
-    // Se ejecuta al entrar a la pantalla
     init {
         cargarProductos()
+        cargarCodigo() // 🔥 NUEVO
     }
 
-    // CARGAR PRODUCTOS DEL USUARIO
+    // 🔥 NUEVO: cargar código de tienda
+    private fun cargarCodigo() {
+        val userId = auth.currentUser?.uid ?: return
+
+        db.collection("usuarios")
+            .document(userId)
+            .get()
+            .addOnSuccessListener {
+                _codigo.value = it.getString("codigo") ?: ""
+            }
+    }
+
     private fun cargarProductos() {
         val userId = auth.currentUser?.uid ?: return
 
@@ -51,7 +64,6 @@ class ProductosViewModel : ViewModel() {
             }
     }
 
-    // Inputs
     fun onNombreChange(value: String) {
         _nombre.value = value
     }
@@ -64,7 +76,6 @@ class ProductosViewModel : ViewModel() {
         _stock.value = value
     }
 
-    // Cargar producto para editar
     fun cargarProducto(producto: Producto) {
         productoId = producto.id
         _nombre.value = producto.nombre
@@ -72,7 +83,6 @@ class ProductosViewModel : ViewModel() {
         _stock.value = producto.stock.toString()
     }
 
-    // CREAR O EDITAR PRODUCTO
     fun crearProducto() {
 
         val userId = auth.currentUser?.uid ?: return
@@ -91,14 +101,12 @@ class ProductosViewModel : ViewModel() {
         )
 
         if (productoId == null) {
-            // CREAR
             db.collection("usuarios")
                 .document(userId)
                 .collection("productos")
                 .add(producto)
 
         } else {
-            // EDITAR
             db.collection("usuarios")
                 .document(userId)
                 .collection("productos")
@@ -111,7 +119,6 @@ class ProductosViewModel : ViewModel() {
         limpiarCampos()
     }
 
-    // ELIMINAR
     fun eliminarProducto(id: String) {
         val userId = auth.currentUser?.uid ?: return
 
@@ -122,7 +129,6 @@ class ProductosViewModel : ViewModel() {
             .delete()
     }
 
-    // Limpiar inputs
     private fun limpiarCampos() {
         _nombre.value = ""
         _valor.value = ""

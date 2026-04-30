@@ -4,14 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
-import com.example.stockmaster.ui.components.PrimaryButton
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.stockmaster.viewmodel.ProductosViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -24,13 +25,17 @@ fun HomeTiendaScreen(
 
     val auth = FirebaseAuth.getInstance()
 
+    // 🔥 ViewModel (de aquí sale el código real)
+    val viewModel: ProductosViewModel = viewModel()
+    val codigo by viewModel.codigo.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
     ) {
 
-        // HEADER
+        // 🔹 HEADER
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -51,7 +56,7 @@ fun HomeTiendaScreen(
             }
         }
 
-        // RESUMEN
+        // 🔹 RESUMEN
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -66,10 +71,15 @@ fun HomeTiendaScreen(
                 fontSize = 32.sp
             )
 
-            Text("Código: PDF417", fontSize = 14.sp)
+            // 🔥 CÓDIGO REAL
+            Text(
+                text = "Código: $codigo",
+                fontSize = 16.sp,
+                color = Color.Gray
+            )
         }
 
-        // CONTENEDOR MORADO
+        // 🔥 CONTENEDOR MORADO
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -138,7 +148,6 @@ fun CardBox(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            // ICONO
             Box(
                 modifier = Modifier
                     .size(70.dp)
