@@ -5,6 +5,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -26,6 +29,9 @@ fun WishlistScreen(navController: NavController) {
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
+
+    var listaEditar by remember { mutableStateOf<Map<String, Any>?>(null) }
+    var nombreEditado by remember { mutableStateOf("") }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -53,6 +59,7 @@ fun WishlistScreen(navController: NavController) {
                 .padding(16.dp)
         ) {
 
+            // HEADER
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -80,42 +87,111 @@ fun WishlistScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(20.dp))
 
             if (listas.isEmpty()) {
+
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
                     Text("Aún no tienes listas...", color = Color.Gray)
                 }
+
             } else {
 
-                LazyColumn {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
 
                     items(listas) { lista ->
 
                         val nombre = lista["nombre"] as? String ?: ""
 
+                        var expanded by remember { mutableStateOf(false) }
+
                         Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp)
+                            shape = RoundedCornerShape(16.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFFEDEDED)
+                            ),
+                            modifier = Modifier.fillMaxWidth()
                         ) {
 
                             Row(
-                                modifier = Modifier.padding(16.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
 
-                                Text(nombre)
+                                Text(nombre, fontSize = 16.sp)
 
-                                Text(
-                                    "Eliminar",
-                                    color = Color.Red
-                                )
+                                Box {
+
+                                    IconButton(onClick = {
+                                        expanded = true
+                                    }) {
+                                        Icon(Icons.Default.MoreVert, contentDescription = "")
+                                    }
+
+                                    DropdownMenu(
+                                        expanded = expanded,
+                                        onDismissRequest = { expanded = false }
+                                    ) {
+
+                                        DropdownMenuItem(
+                                            text = { Text("Editar") },
+                                            onClick = {
+                                                expanded = false
+                                                listaEditar = lista
+                                                nombreEditado = nombre
+                                            }
+                                        )
+
+                                        DropdownMenuItem(
+                                            text = { Text("Eliminar", color = Color.Red) },
+                                            onClick = {
+                                                expanded = false
+                                                // 🔥 aquí luego borras en firebase
+                                            }
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    // 🔥 DIALOG EDITAR
+    listaEditar?.let {
+
+        AlertDialog(
+            onDismissRequest = { listaEditar = null },
+            title = { Text("Editar lista") },
+            text = {
+                OutlinedTextField(
+                    value = nombreEditado,
+                    onValueChange = { nombreEditado = it },
+                    label = { Text("Nombre") }
+                )
+            },
+            confirmButton = {
+                Button(onClick = {
+
+                    // 🔥 AQUÍ luego actualizas en Firebase
+
+                    listaEditar = null
+                }) {
+                    Text("Guardar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { listaEditar = null }) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
