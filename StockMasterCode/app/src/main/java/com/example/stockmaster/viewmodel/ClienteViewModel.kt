@@ -19,7 +19,7 @@ class ClienteViewModel : ViewModel() {
 
     fun ingresarCodigo(codigo: String) {
         viewModelScope.launch {
-            val result = firestore.obtenerTiendaPorCodigo(codigo)
+            val result: String? = firestore.obtenerTiendaPorCodigo(codigo)
 
             if (result != null) {
                 _tiendaId.value = result

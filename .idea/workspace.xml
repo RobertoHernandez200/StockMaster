@@ -10,11 +10,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1d5ec300-3e02-4034-8c48-9ee7dc4a7a4a" name="Changes" comment="Creacion del apartado proveedores (en proceso)">
-      <change afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/proveedores/proveedoresScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/data/remote/FirestoreService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/data/remote/FirestoreService.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/navigation/NavGraph.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/navigation/NavGraph.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/home_tienda/HomeTiendaScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/home_tienda/HomeTiendaScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/empleados/PasswordEmpleadoScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/empleados/PasswordEmpleadoScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/viewmodel/ClienteViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/viewmodel/ClienteViewModel.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +24,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[LocalEmulator::path=C:\Users\User\.android\avd\Pixel_5.avd]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[LocalEmulator::path=C:\Users\rober\.android\avd\Pixel.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$/StockMasterCode">
       <ProjectState />
@@ -34,6 +34,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Kotlin File" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -60,25 +61,28 @@
   &quot;associatedIndex&quot;: 6
 }</component>
   <component name="ProjectId" id="3CkCYxDsNbOQvj2cyzUmLDC9HTm" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Android App.MainActivity.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/rober/Documents/proyecto/StockMaster"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Android App.MainActivity.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/rober/Documents/proyecto/StockMaster&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Android App.MainActivity">
     <configuration name="MainActivity" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false" temporary="true">
       <module name="StockMaster.app" />

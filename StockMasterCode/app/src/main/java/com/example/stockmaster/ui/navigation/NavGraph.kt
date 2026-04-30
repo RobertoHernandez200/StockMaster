@@ -130,11 +130,12 @@ fun NavGraph() {
             )
         }
 
+        // 🔥 CLIENTE
         composable("home_cliente") {
-            // 🔥 MODIFICADO
             HomeClienteScreen(navController)
         }
 
+        // 🔥 TIENDA
         composable("home_tienda") {
             HomeTiendaScreen(
                 onAddProduct = {
@@ -157,10 +158,8 @@ fun NavGraph() {
             }
         }
 
-        // 🔥 NUEVA RUTA CLIENTE → PRODUCTOS POR TIENDA
-        composable("productos_tienda/{tiendaId}") { backStack ->
-            val tiendaId = backStack.arguments?.getString("tiendaId")!!
-
+        // 🔥 CLIENTE → PRODUCTOS DE TIENDA
+        composable("productos_tienda/{tiendaId}") {
             ProductScreen {
                 navController.popBackStack()
             }
@@ -240,10 +239,7 @@ fun NavGraph() {
                         permisos,
                         onSuccess = {
                             onResult(true)
-
-                            navController.navigate("success") {
-                                popUpTo("usuarios") { inclusive = false }
-                            }
+                            navController.navigate("success")
                         },
                         onError = {
                             onResult(false)
