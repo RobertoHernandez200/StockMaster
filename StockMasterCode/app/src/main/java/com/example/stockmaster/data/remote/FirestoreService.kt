@@ -28,9 +28,7 @@ class FirestoreService {
                     codigo = doc.getString("codigo") ?: ""
                 )
 
-            } else {
-                null
-            }
+            } else null
 
         } catch (e: Exception) {
             null
@@ -47,7 +45,6 @@ class FirestoreService {
     }
 
     suspend fun tiendaYaExiste(userId: String, tiendaId: String): Boolean {
-
         val doc = db.collection("clientes")
             .document(userId)
             .collection("tiendas")
@@ -59,7 +56,6 @@ class FirestoreService {
     }
 
     suspend fun obtenerTiendasCliente(userId: String): List<Tienda> {
-
         val result = db.collection("clientes")
             .document(userId)
             .collection("tiendas")
@@ -84,7 +80,7 @@ class FirestoreService {
             .await()
     }
 
-    // 🔥 GUARDAR LISTA CON PRODUCTOS
+    // 🔥 GUARDAR LISTA
     suspend fun guardarListaDeseos(
         userId: String,
         nombre: String,
@@ -104,7 +100,7 @@ class FirestoreService {
             .await()
     }
 
-    // 🔥 OBTENER LISTAS
+    // 🔥 OBTENER LISTAS CON ID
     suspend fun obtenerListasDeseos(userId: String): List<Map<String, Any>> {
 
         val result = db.collection("clientes")
@@ -113,6 +109,20 @@ class FirestoreService {
             .get()
             .await()
 
-        return result.documents.mapNotNull { it.data }
+        return result.documents.mapNotNull { doc ->
+            doc.data?.toMutableMap()?.apply {
+                put("id", doc.id)
+            }
+        }
+    }
+
+    // 🔥 ELIMINAR LISTA
+    suspend fun eliminarLista(userId: String, listaId: String) {
+        db.collection("clientes")
+            .document(userId)
+            .collection("listas")
+            .document(listaId)
+            .delete()
+            .await()
     }
 }

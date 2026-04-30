@@ -23,15 +23,16 @@ fun SeleccionarProductosScreen(
     nombreLista: String
 ) {
 
-    val viewModel: ProductosViewModel = viewModel()
+    val productosViewModel: ProductosViewModel = viewModel()
     val clienteViewModel: ClienteViewModel = viewModel()
 
-    val productos by viewModel.productos.collectAsState()
+    val productos by productosViewModel.productos.collectAsState()
 
     var seleccionados by remember { mutableStateOf(setOf<String>()) }
 
+    // 🔥 CARGAR PRODUCTOS DE LA TIENDA
     LaunchedEffect(Unit) {
-        viewModel.cargarProductosDeTienda(tiendaId)
+        productosViewModel.cargarProductosDeTienda(tiendaId)
     }
 
     Column(
@@ -46,6 +47,7 @@ fun SeleccionarProductosScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         if (productos.isEmpty()) {
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -54,7 +56,9 @@ fun SeleccionarProductosScreen(
             ) {
                 Text("Esta tienda no tiene productos", color = Color.Gray)
             }
+
         } else {
+
             LazyColumn(
                 modifier = Modifier.weight(1f)
             ) {
@@ -67,6 +71,7 @@ fun SeleccionarProductosScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
+
                                 seleccionados = if (seleccionado) {
                                     seleccionados - producto.id
                                 } else {
@@ -93,6 +98,7 @@ fun SeleccionarProductosScreen(
             }
         }
 
+        // 🔥 BOTÓN GUARDAR REAL
         Button(
             onClick = {
 

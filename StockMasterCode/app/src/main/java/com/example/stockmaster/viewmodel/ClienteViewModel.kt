@@ -17,40 +17,18 @@ class ClienteViewModel : ViewModel() {
     private val _tiendas = MutableStateFlow<List<Tienda>>(emptyList())
     val tiendas: StateFlow<List<Tienda>> = _tiendas
 
-    private val _tienda = MutableStateFlow<Tienda?>(null)
-    val tienda: StateFlow<Tienda?> = _tienda
-
     private val _listas = MutableStateFlow<List<Map<String, Any>>>(emptyList())
     val listas: StateFlow<List<Map<String, Any>>> = _listas
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
-
-    private val _success = MutableStateFlow(false)
-    val success: StateFlow<Boolean> = _success
 
     init {
         cargarTiendas()
         cargarListas()
     }
 
-    // 🔥 GUARDAR LISTA REAL
-    fun guardarLista(
-        nombreLista: String,
-        tiendaId: String,
-        productos: List<String>
-    ) {
+    fun guardarLista(nombre: String, tiendaId: String, productos: List<String>) {
         viewModelScope.launch {
-
             val userId = auth.currentUser?.uid ?: return@launch
-
-            firestore.guardarListaDeseos(
-                userId,
-                nombreLista,
-                tiendaId,
-                productos
-            )
-
+            firestore.guardarListaDeseos(userId, nombre, tiendaId, productos)
             cargarListas()
         }
     }
@@ -62,59 +40,18 @@ class ClienteViewModel : ViewModel() {
         }
     }
 
+    fun eliminarLista(listaId: String) {
+        viewModelScope.launch {
+            val userId = auth.currentUser?.uid ?: return@launch
+            firestore.eliminarLista(userId, listaId)
+            cargarListas()
+        }
+    }
+
     fun cargarTiendas() {
         viewModelScope.launch {
             val userId = auth.currentUser?.uid ?: return@launch
             _tiendas.value = firestore.obtenerTiendasCliente(userId)
         }
-    }
-
-    fun buscarTienda(codigo: String) {
-        viewModelScope.launch {
-            val result = firestore.obtenerTiendaPorCodigo(codigo)
-
-            if (result != null) {
-                _tienda.value = result
-                _error.value = null
-            } else {
-                _error.value = "Código inválido"
-                _tienda.value = null
-            }
-        }
-    }
-
-    fun confirmarTienda() {
-        viewModelScope.launch {
-
-            val userId = auth.currentUser?.uid ?: return@launch
-            val tienda = _tienda.value ?: return@launch
-
-            val existe = firestore.tiendaYaExiste(userId, tienda.id)
-
-            if (existe) {
-                _error.value = "La tienda ya está agregada"
-                return@launch
-            }
-
-            firestore.guardarTiendaCliente(userId, tienda)
-
-            _success.value = true
-
-            cargarTiendas()
-        }
-    }
-
-    fun eliminarTienda(tiendaId: String) {
-        viewModelScope.launch {
-            val userId = auth.currentUser?.uid ?: return@launch
-            firestore.eliminarTiendaCliente(userId, tiendaId)
-            cargarTiendas()
-        }
-    }
-
-    fun limpiar() {
-        _tienda.value = null
-        _error.value = null
-        _success.value = false
     }
 }

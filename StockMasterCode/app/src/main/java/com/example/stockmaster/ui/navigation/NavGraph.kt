@@ -1,11 +1,9 @@
 package com.example.stockmaster.ui.navigation
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.auth.FirebaseAuth
 
@@ -20,28 +18,17 @@ import com.example.stockmaster.ui.screens.home_cliente.HomeClienteScreen
 import com.example.stockmaster.ui.screens.home_tienda.HomeTiendaScreen
 import com.example.stockmaster.ui.screens.proveedores.ProveedoresScreen
 import com.example.stockmaster.ui.screens.products.ProductScreen
-import com.example.stockmaster.ui.screens.cliente.TiendasClienteScreen
-import com.example.stockmaster.ui.screens.cliente.ClienteProductosScreen
+import com.example.stockmaster.ui.screens.cliente.*
+import com.example.stockmaster.ui.screens.lista_deseos.*
 
-// LISTAS
-import com.example.stockmaster.ui.screens.lista_deseos.WishlistScreen
-import com.example.stockmaster.ui.screens.lista_deseos.CrearListaScreen
-import com.example.stockmaster.ui.screens.lista_deseos.SeleccionarTiendaScreen
-import com.example.stockmaster.ui.screens.lista_deseos.SeleccionarProductosScreen // 🔥 IMPORTANTE
-
-// VIEWMODELS
-import com.example.stockmaster.viewmodel.EmpleadoViewModel
-import com.example.stockmaster.viewmodel.ClienteViewModel
+import com.example.stockmaster.viewmodel.*
 
 @Composable
 fun NavGraph() {
 
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = "splash"
-    ) {
+    NavHost(navController = navController, startDestination = "splash") {
 
         // SPLASH
         composable("splash") {
@@ -55,33 +42,25 @@ fun NavGraph() {
         // ROLE
         composable("role_selection") {
             RoleSelectionScreen(
-                onClienteClick = {
-                    navController.navigate("entry/cliente")
-                },
-                onTiendaClick = {
-                    navController.navigate("entry/tienda")
-                }
+                onClienteClick = { navController.navigate("entry/cliente") },
+                onTiendaClick = { navController.navigate("entry/tienda") }
             )
         }
 
         // ENTRY
-        composable("entry/{role}") { backStackEntry ->
-            val role = backStackEntry.arguments?.getString("role") ?: "cliente"
+        composable("entry/{role}") { backStack ->
+            val role = backStack.arguments?.getString("role") ?: "cliente"
 
             EntryTiendaScreen(
-                onLoginClick = {
-                    navController.navigate("login_email/$role")
-                },
-                onRegisterClick = {
-                    navController.navigate("register/$role")
-                },
+                onLoginClick = { navController.navigate("login_email/$role") },
+                onRegisterClick = { navController.navigate("register/$role") },
                 onBack = { navController.popBackStack() }
             )
         }
 
         // LOGIN EMAIL
-        composable("login_email/{role}") { backStackEntry ->
-            val role = backStackEntry.arguments?.getString("role") ?: "cliente"
+        composable("login_email/{role}") { backStack ->
+            val role = backStack.arguments?.getString("role") ?: "cliente"
 
             LoginEmailScreen(
                 onNext = { email ->
@@ -92,9 +71,10 @@ fun NavGraph() {
         }
 
         // LOGIN PASSWORD
-        composable("login_password/{email}/{role}") { backStackEntry ->
-            val email = backStackEntry.arguments?.getString("email") ?: ""
-            val role = backStackEntry.arguments?.getString("role") ?: "cliente"
+        composable("login_password/{email}/{role}") { backStack ->
+
+            val email = backStack.arguments?.getString("email") ?: ""
+            val role = backStack.arguments?.getString("role") ?: "cliente"
 
             LoginPasswordScreen(
                 email = email,
@@ -117,7 +97,7 @@ fun NavGraph() {
                             }
                         }
                         .addOnFailureListener {
-                            callback(false, "Correo o contraseña incorrectos")
+                            callback(false, "Error login")
                         }
                 },
                 onBack = { navController.popBackStack() }
@@ -125,19 +105,19 @@ fun NavGraph() {
         }
 
         // REGISTER
-        composable("register/{role}") { backStackEntry ->
-            val role = backStackEntry.arguments?.getString("role") ?: "cliente"
+        composable("register/{role}") { backStack ->
+            val role = backStack.arguments?.getString("role") ?: "cliente"
 
             RegisterScreen(
                 role = role,
                 onRegisterSuccess = {
                     if (role == "cliente") {
                         navController.navigate("home_cliente") {
-                            popUpTo("register/{role}") { inclusive = true }
+                            popUpTo(0)
                         }
                     } else {
                         navController.navigate("home_tienda") {
-                            popUpTo("register/{role}") { inclusive = true }
+                            popUpTo(0)
                         }
                     }
                 },
@@ -150,7 +130,7 @@ fun NavGraph() {
             HomeClienteScreen(navController)
         }
 
-        // TIENDAS CLIENTE
+        // 🔥 TIENDAS CLIENTE (ARREGLADO)
         composable("mis_tiendas") {
 
             val viewModel: ClienteViewModel = viewModel()
@@ -158,20 +138,11 @@ fun NavGraph() {
 
             TiendasClienteScreen(
                 tiendas = tiendas,
-                onDelete = { viewModel.eliminarTienda(it.id) },
+                onDelete = { tienda ->
+                    viewModel.eliminarTienda(tienda.id) // ✅ CORREGIDO
+                },
                 viewModel = viewModel,
                 navController = navController
-            )
-        }
-
-        // PRODUCTOS CLIENTE (VER)
-        composable("productos_tienda/{tiendaId}") { backStack ->
-
-            val tiendaId = backStack.arguments?.getString("tiendaId") ?: ""
-
-            ClienteProductosScreen(
-                tiendaId = tiendaId,
-                onBack = { navController.popBackStack() }
             )
         }
 
@@ -181,113 +152,25 @@ fun NavGraph() {
                 onAddProduct = { navController.navigate("productos") },
                 onUsuarios = { navController.navigate("usuarios") },
                 onProveedores = { navController.navigate("proveedores") },
-                onLogout = {
-                    navController.navigate("role_selection") {
-                        popUpTo(0)
-                    }
-                }
+                onLogout = { navController.navigate("role_selection") }
             )
         }
 
-        // PROVEEDORES
-        composable("proveedores") {
-            ProveedoresScreen(
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        // PRODUCTOS TIENDA
+        // PRODUCTOS
         composable("productos") {
             ProductScreen {
                 navController.popBackStack()
             }
         }
 
-        // USUARIOS
-        composable("usuarios") {
-            UsuariosScreen(
-                navController = navController,
-                onAddUser = { navController.navigate("crear_usuario") },
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable("detalle_usuario/{id}") { backStack ->
-            val id = backStack.arguments?.getString("id")!!
-
-            EmpleadoDetalleScreen(
-                usuarioId = id,
-                navController = navController
-            )
-        }
-
-        composable("crear_usuario") {
-            CrearUsuarioScreen(
-                onNext = { nombre, email ->
-                    navController.navigate("permisos/$nombre/$email")
-                },
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable("permisos/{nombre}/{email}") { backStack ->
-            val nombre = backStack.arguments?.getString("nombre")!!
-            val email = backStack.arguments?.getString("email")!!
-
-            PermisosScreen(
-                nombre,
-                email,
-                onNext = { permisos ->
-                    navController.currentBackStackEntry
-                        ?.savedStateHandle
-                        ?.set("permisos", permisos)
-
-                    navController.navigate("password/$nombre/$email")
-                },
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable("password/{nombre}/{email}") { backStack ->
-
-            val nombre = backStack.arguments?.getString("nombre")!!
-            val email = backStack.arguments?.getString("email")!!
-
-            val permisos = navController.previousBackStackEntry
-                ?.savedStateHandle
-                ?.get<Map<String, Boolean>>("permisos") ?: emptyMap()
-
-            val viewModel: EmpleadoViewModel = viewModel()
-
-            PasswordEmpleadoScreen(
-                onCreate = { password ->
-                    viewModel.crearEmpleado(
-                        nombre,
-                        email,
-                        password,
-                        permisos,
-                        onSuccess = {
-                            navController.navigate("success")
-                        },
-                        onError = {}
-                    )
-                },
-                onBack = { navController.popBackStack() }
-            )
-        }
-
-        composable("loading") { LoadingScreen() }
-
-        composable("success") {
-            SuccessScreen {
-                navController.navigate("usuarios") {
-                    popUpTo("usuarios") { inclusive = false }
-                }
+        // PROVEEDORES
+        composable("proveedores") {
+            ProveedoresScreen {
+                navController.popBackStack()
             }
         }
 
-        // 🔥 LISTAS DE DESEOS
-
+        // 🔥 LISTAS
         composable("wishlist") {
             WishlistScreen(navController)
         }
@@ -296,13 +179,12 @@ fun NavGraph() {
             CrearListaScreen(navController)
         }
 
-        composable("seleccionar_tienda/{nombreLista}") { backStackEntry ->
-
-            val nombreLista = backStackEntry.arguments?.getString("nombreLista") ?: ""
+        composable("seleccionar_tienda/{nombreLista}") { backStack ->
+            val nombre = backStack.arguments?.getString("nombreLista") ?: ""
 
             SeleccionarTiendaScreen(
                 navController = navController,
-                nombreLista = nombreLista
+                nombreLista = nombre
             )
         }
 
