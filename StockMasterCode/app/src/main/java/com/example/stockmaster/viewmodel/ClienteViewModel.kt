@@ -3,6 +3,8 @@ package com.example.stockmaster.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.stockmaster.data.remote.FirestoreService
+import com.example.stockmaster.model.Tienda
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -10,22 +12,47 @@ import kotlinx.coroutines.launch
 class ClienteViewModel : ViewModel() {
 
     private val firestore = FirestoreService()
+    private val auth = FirebaseAuth.getInstance()
 
-    private val _tiendaId = MutableStateFlow<String?>(null)
-    val tiendaId: StateFlow<String?> = _tiendaId
+    private val _tienda = MutableStateFlow<Tienda?>(null)
+    val tienda: StateFlow<Tienda?> = _tienda
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
-    fun ingresarCodigo(codigo: String) {
+    private val _success = MutableStateFlow(false)
+    val success: StateFlow<Boolean> = _success
+
+    fun buscarTienda(codigo: String) {
         viewModelScope.launch {
-            val result: String? = firestore.obtenerTiendaPorCodigo(codigo)
+
+            val result = firestore.obtenerTiendaPorCodigo(codigo)
 
             if (result != null) {
-                _tiendaId.value = result
+                _tienda.value = result
+                _error.value = null
             } else {
                 _error.value = "Código inválido"
+                _tienda.value = null
             }
         }
+    }
+
+    fun confirmarTienda() {
+        viewModelScope.launch {
+
+            val userId = auth.currentUser?.uid ?: return@launch
+            val tienda = _tienda.value ?: return@launch
+
+            firestore.guardarTiendaCliente(userId, tienda)
+
+            _success.value = true
+        }
+    }
+
+    fun limpiar() {
+        _tienda.value = null
+        _error.value = null
+        _success.value = false
     }
 }

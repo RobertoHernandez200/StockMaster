@@ -15,33 +15,66 @@ import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.stockmaster.viewmodel.ClienteViewModel
 import com.example.stockmaster.ui.components.DialogCodigo
+import com.example.stockmaster.ui.components.DialogConfirmarTienda
 
 @Composable
 fun HomeClienteScreen(navController: NavController) {
 
     val viewModel: ClienteViewModel = viewModel()
 
-    val tiendaId by viewModel.tiendaId.collectAsState()
+    val tienda by viewModel.tienda.collectAsState()
     val error by viewModel.error.collectAsState()
+    val success by viewModel.success.collectAsState() //  NUEVO
 
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialogCodigo by remember { mutableStateOf(false) }
 
-    // 🔥 navegación automática
-    LaunchedEffect(tiendaId) {
-        tiendaId?.let {
-            navController.navigate("productos_tienda/$it")
-        }
-    }
-
-    // 🔥 dialog
-    if (showDialog) {
+    //  DIALOG INGRESAR CÓDIGO
+    if (showDialogCodigo) {
         DialogCodigo(
             error = error,
             onConfirm = {
-                viewModel.ingresarCodigo(it)
+                viewModel.buscarTienda(it)
             },
             onDismiss = {
-                showDialog = false
+                showDialogCodigo = false
+                viewModel.limpiar()
+            }
+        )
+    }
+
+    //  DIALOG CONFIRMAR TIENDA
+    tienda?.let {
+        DialogConfirmarTienda(
+            tienda = it,
+            onConfirm = {
+                viewModel.confirmarTienda()
+            },
+            onDismiss = {
+                viewModel.limpiar()
+            }
+        )
+    }
+
+    //  MENSAJE DE ÉXITO (como tu imagen)
+    if (success) {
+        AlertDialog(
+            onDismissRequest = {
+                viewModel.limpiar()
+                showDialogCodigo = false
+            },
+            confirmButton = {
+                Button(onClick = {
+                    viewModel.limpiar()
+                    showDialogCodigo = false
+                }) {
+                    Text("OK")
+                }
+            },
+            title = {
+                Text("¡Listo!")
+            },
+            text = {
+                Text("Tienda agregada correctamente")
             }
         )
     }
@@ -72,13 +105,13 @@ fun HomeClienteScreen(navController: NavController) {
             )
         }
 
-        // TOTAL CENTRADO
+        // TOTAL
         Box(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Total", fontSize = 14.sp)
+                Text("Total")
                 Text("$0.00", fontSize = 26.sp)
             }
         }
@@ -111,7 +144,7 @@ fun HomeClienteScreen(navController: NavController) {
                     subtitle = "Agregar nueva tienda",
                     buttonText = "+ Agregar código",
                     onClick = {
-                        showDialog = true
+                        showDialogCodigo = true
                     }
                 )
             }
