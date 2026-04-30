@@ -115,7 +115,7 @@ fun UsuariosScreen(
             TextField(
                 value = searchText,
                 onValueChange = { searchText = it },
-                placeholder = { Text("Buscar usuarios") },
+                placeholder = { Text("Buscar usuarios", color = Color.White) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
