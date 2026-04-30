@@ -18,8 +18,9 @@ import com.google.firebase.auth.FirebaseAuth
 fun HomeTiendaScreen(
     onAddProduct: () -> Unit,
     onUsuarios: () -> Unit,
+    onProveedores: () -> Unit,
     onLogout: () -> Unit
-) {
+){
 
     val auth = FirebaseAuth.getInstance()
 
@@ -111,7 +112,7 @@ fun HomeTiendaScreen(
                     title = "Proveedores",
                     subtitle = "Añadir nuevo contacto",
                     buttonText = "Agregar contacto",
-                    onClick = { }
+                    onClick = onProveedores
                 )
             }
         }

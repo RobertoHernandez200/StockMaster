@@ -15,6 +15,7 @@ import com.example.stockmaster.ui.screens.auth.register.RegisterScreen
 import com.example.stockmaster.ui.screens.home_cliente.HomeClienteScreen
 import com.example.stockmaster.ui.screens.home_tienda.HomeTiendaScreen
 import com.example.stockmaster.ui.screens.products.ProductScreen
+import com.example.stockmaster.ui.screens.proveedores.ProveedoresScreen
 import com.example.stockmaster.ui.screens.empleados.CrearUsuarioScreen
 import com.example.stockmaster.ui.screens.empleados.PermisosScreen
 import com.example.stockmaster.ui.screens.empleados.PasswordEmpleadoScreen
@@ -132,7 +133,7 @@ fun NavGraph() {
             HomeClienteScreen()
         }
 
-        // HOME TIENDA
+        //  HOME TIENDA (ACTUALIZADO)
         composable("home_tienda") {
             HomeTiendaScreen(
                 onAddProduct = {
@@ -140,6 +141,9 @@ fun NavGraph() {
                 },
                 onUsuarios = {
                     navController.navigate("usuarios")
+                },
+                onProveedores = {
+                    navController.navigate("proveedores")
                 },
                 onLogout = {
                     navController.navigate("role_selection") {
@@ -155,7 +159,14 @@ fun NavGraph() {
             }
         }
 
-        // LISTA DE USUARIOS
+        // 🔥 NUEVA SCREEN
+        composable("proveedores") {
+            ProveedoresScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        // USUARIOS
         composable("usuarios") {
             UsuariosScreen(
                 navController = navController,
@@ -173,7 +184,6 @@ fun NavGraph() {
             )
         }
 
-        // DETALLE USUARIO (EDITAR / ELIMINAR)
         composable("detalle_usuario/{id}") { backStack ->
             val id = backStack.arguments?.getString("id")!!
 
