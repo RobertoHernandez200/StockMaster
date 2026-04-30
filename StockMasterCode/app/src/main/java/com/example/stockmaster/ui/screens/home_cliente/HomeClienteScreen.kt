@@ -1,7 +1,7 @@
 package com.example.stockmaster.ui.screens.home_cliente
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -12,9 +12,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.stockmaster.viewmodel.ClienteViewModel
+import com.example.stockmaster.ui.components.DialogCodigo
 
 @Composable
 fun HomeClienteScreen(navController: NavController) {
+
+    val viewModel: ClienteViewModel = viewModel()
+
+    val tiendaId by viewModel.tiendaId.collectAsState()
+    val error by viewModel.error.collectAsState()
+
+    var showDialog by remember { mutableStateOf(false) }
+
+    // 🔥 NAVEGACIÓN AUTOMÁTICA
+    LaunchedEffect(tiendaId) {
+        tiendaId?.let {
+            navController.navigate("productos_tienda/$it")
+        }
+    }
+
+    // 🔥 DIALOG
+    if (showDialog) {
+        DialogCodigo(
+            onConfirm = {
+                viewModel.ingresarCodigo(it)
+                showDialog = false
+            },
+            onDismiss = { showDialog = false }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -22,14 +50,14 @@ fun HomeClienteScreen(navController: NavController) {
             .background(Color(0xFFF2F2F2))
     ) {
 
-        // 🔹 HEADER
+        // HEADER
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Inicio", color = Color.Black)
+            Text("Inicio")
 
             Text(
                 "Salir",
@@ -42,27 +70,20 @@ fun HomeClienteScreen(navController: NavController) {
             )
         }
 
-        // 🔹 TOTAL
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("HOY", fontSize = 12.sp)
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text("HOY")
             Text("$0.00", fontSize = 26.sp)
         }
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        // 🔥 FONDO MORADO
+        // FONDO MORADO
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
                     brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFF6A5AE0),
-                            Color(0xFF7F67F8)
-                        )
+                        listOf(Color(0xFF6A5AE0), Color(0xFF7F67F8))
                     ),
                     shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
                 )
@@ -71,22 +92,27 @@ fun HomeClienteScreen(navController: NavController) {
 
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
-                // 🔹 CARD LISTA DE DESEOS
+                // LISTA DE DESEOS
                 CardItem(
                     title = "Lista de deseos",
                     subtitle = "Crear lista",
                     buttonText = "+ Agregar lista"
                 )
 
-                // 🔹 CARD TIENDAS
+                // 🔥 TIENDAS (YA FUNCIONA)
                 CardItem(
                     title = "Tiendas",
                     subtitle = "Agregar nueva tienda",
                     buttonText = "+ Agregar código",
                     onClick = {
-                        // aquí va tu lógica de código
+                        showDialog = true
                     }
                 )
+
+                // ERROR
+                error?.let {
+                    Text(it, color = Color.Red)
+                }
             }
         }
     }
@@ -110,7 +136,6 @@ fun CardItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            // 🔹 ICONO (placeholder)
             Box(
                 modifier = Modifier
                     .size(50.dp)
