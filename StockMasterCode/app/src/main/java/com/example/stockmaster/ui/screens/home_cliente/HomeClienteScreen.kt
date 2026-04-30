@@ -26,21 +26,23 @@ fun HomeClienteScreen(navController: NavController) {
 
     var showDialog by remember { mutableStateOf(false) }
 
-    // 🔥 NAVEGACIÓN AUTOMÁTICA
+    // 🔥 NAVEGACIÓN
     LaunchedEffect(tiendaId) {
         tiendaId?.let {
             navController.navigate("productos_tienda/$it")
         }
     }
 
-    // 🔥 DIALOG
+    // 🔥 DIALOG CON ERROR
     if (showDialog) {
         DialogCodigo(
+            error = error, // 👈 PASAMOS EL ERROR
             onConfirm = {
                 viewModel.ingresarCodigo(it)
-                showDialog = false
             },
-            onDismiss = { showDialog = false }
+            onDismiss = {
+                showDialog = false
+            }
         )
     }
 
@@ -70,9 +72,15 @@ fun HomeClienteScreen(navController: NavController) {
             )
         }
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text("HOY")
-            Text("$0.00", fontSize = 26.sp)
+        // 🔥 TOTAL CENTRADO CORRECTO
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text("Total", fontSize = 14.sp)
+                Text("$0.00", fontSize = 26.sp)
+            }
         }
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -92,14 +100,12 @@ fun HomeClienteScreen(navController: NavController) {
 
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
 
-                // LISTA DE DESEOS
                 CardItem(
                     title = "Lista de deseos",
                     subtitle = "Crear lista",
                     buttonText = "+ Agregar lista"
                 )
 
-                // 🔥 TIENDAS (YA FUNCIONA)
                 CardItem(
                     title = "Tiendas",
                     subtitle = "Agregar nueva tienda",
@@ -108,49 +114,6 @@ fun HomeClienteScreen(navController: NavController) {
                         showDialog = true
                     }
                 )
-
-                // ERROR
-                error?.let {
-                    Text(it, color = Color.Red)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun CardItem(
-    title: String,
-    subtitle: String,
-    buttonText: String,
-    onClick: () -> Unit = {}
-) {
-    Card(
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFEDEDED))
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .background(Color.LightGray, RoundedCornerShape(10.dp))
-            )
-
-            Spacer(modifier = Modifier.width(12.dp))
-
-            Column(modifier = Modifier.weight(1f)) {
-                Text(title)
-                Text(subtitle, fontSize = 12.sp, color = Color.Gray)
-            }
-
-            Button(onClick = onClick) {
-                Text(buttonText)
             }
         }
     }
