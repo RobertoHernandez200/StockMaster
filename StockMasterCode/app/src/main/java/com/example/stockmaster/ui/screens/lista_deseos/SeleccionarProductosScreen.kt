@@ -12,9 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.stockmaster.model.Producto
-import com.example.stockmaster.viewmodel.ProductosViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.stockmaster.viewmodel.ProductosViewModel
 
 @Composable
 fun SeleccionarProductosScreen(
@@ -29,6 +28,11 @@ fun SeleccionarProductosScreen(
 
     var seleccionados by remember { mutableStateOf(setOf<String>()) }
 
+    // 🔥 CARGAR PRODUCTOS DE LA TIENDA
+    LaunchedEffect(Unit) {
+        viewModel.cargarProductosDeTienda(tiendaId)
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -40,52 +44,70 @@ fun SeleccionarProductosScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        LazyColumn(
-            modifier = Modifier.weight(1f)
-        ) {
+        // 🔥 SI NO HAY PRODUCTOS
+        if (productos.isEmpty()) {
 
-            items(productos) { producto ->
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text("Esta tienda no tiene productos", color = Color.Gray)
+            }
 
-                val seleccionado = seleccionados.contains(producto.id)
+        } else {
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
+            LazyColumn(
+                modifier = Modifier.weight(1f)
+            ) {
 
-                            seleccionados = if (seleccionado) {
-                                seleccionados - producto.id
-                            } else {
-                                seleccionados + producto.id
+                items(productos) { producto ->
+
+                    val seleccionado = seleccionados.contains(producto.id)
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+
+                                seleccionados = if (seleccionado) {
+                                    seleccionados - producto.id
+                                } else {
+                                    seleccionados + producto.id
+                                }
                             }
-                        }
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
 
-                    Column {
-                        Text(producto.nombre)
-                        Text("$${producto.valor}", color = Color.Gray)
+                        Column {
+                            Text(producto.nombre)
+                            Text("$${producto.valor}", color = Color.Gray)
+                        }
+
+                        Checkbox(
+                            checked = seleccionado,
+                            onCheckedChange = null
+                        )
                     }
 
-                    Checkbox(
-                        checked = seleccionado,
-                        onCheckedChange = null
-                    )
+                    Divider(color = Color.LightGray)
                 }
             }
         }
 
+        // 🔥 BOTÓN GUARDAR
         Button(
             onClick = {
 
-                // 🔥 GUARDAR LISTA
-                // aquí luego conectas con Firestore
+                // 🔥 AQUÍ LUEGO GUARDAS EN FIREBASE
 
                 navController.navigate("wishlist") {
                     popUpTo("wishlist") { inclusive = true }
                 }
             },
+            enabled = seleccionados.isNotEmpty(),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(55.dp),

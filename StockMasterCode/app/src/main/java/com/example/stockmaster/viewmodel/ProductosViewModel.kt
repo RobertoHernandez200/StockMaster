@@ -12,7 +12,7 @@ class ProductosViewModel : ViewModel() {
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
-    // 🔥 NUEVO: código de tienda
+    // 🔥 CÓDIGO TIENDA
     private val _codigo = MutableStateFlow("")
     val codigo: StateFlow<String> = _codigo
 
@@ -31,11 +31,11 @@ class ProductosViewModel : ViewModel() {
     private var productoId: String? = null
 
     init {
-        cargarProductos()
-        cargarCodigo() // 🔥 NUEVO
+        cargarProductos()      // 🔥 productos del usuario (tienda)
+        cargarCodigo()
     }
 
-    // 🔥 NUEVO: cargar código de tienda
+    // 🔥 CARGAR CÓDIGO TIENDA
     private fun cargarCodigo() {
         val userId = auth.currentUser?.uid ?: return
 
@@ -47,6 +47,7 @@ class ProductosViewModel : ViewModel() {
             }
     }
 
+    // 🔥 PRODUCTOS DEL USUARIO (TIENDA LOGUEADA)
     private fun cargarProductos() {
         val userId = auth.currentUser?.uid ?: return
 
@@ -64,6 +65,24 @@ class ProductosViewModel : ViewModel() {
             }
     }
 
+    // 🔥 NUEVO: PRODUCTOS DE OTRA TIENDA (CLIENTE)
+    fun cargarProductosDeTienda(tiendaId: String) {
+
+        db.collection("usuarios")
+            .document(tiendaId)
+            .collection("productos")
+            .addSnapshotListener { snapshot, _ ->
+
+                if (snapshot != null) {
+                    val lista = snapshot.documents.mapNotNull {
+                        it.toObject(Producto::class.java)?.copy(id = it.id)
+                    }
+                    _productos.value = lista
+                }
+            }
+    }
+
+    // INPUTS
     fun onNombreChange(value: String) {
         _nombre.value = value
     }
@@ -76,6 +95,7 @@ class ProductosViewModel : ViewModel() {
         _stock.value = value
     }
 
+    // EDITAR
     fun cargarProducto(producto: Producto) {
         productoId = producto.id
         _nombre.value = producto.nombre
@@ -83,6 +103,7 @@ class ProductosViewModel : ViewModel() {
         _stock.value = producto.stock.toString()
     }
 
+    // CREAR / EDITAR
     fun crearProducto() {
 
         val userId = auth.currentUser?.uid ?: return
@@ -101,12 +122,14 @@ class ProductosViewModel : ViewModel() {
         )
 
         if (productoId == null) {
+
             db.collection("usuarios")
                 .document(userId)
                 .collection("productos")
                 .add(producto)
 
         } else {
+
             db.collection("usuarios")
                 .document(userId)
                 .collection("productos")
@@ -119,7 +142,9 @@ class ProductosViewModel : ViewModel() {
         limpiarCampos()
     }
 
+    // ELIMINAR
     fun eliminarProducto(id: String) {
+
         val userId = auth.currentUser?.uid ?: return
 
         db.collection("usuarios")
@@ -129,6 +154,7 @@ class ProductosViewModel : ViewModel() {
             .delete()
     }
 
+    // LIMPIAR
     private fun limpiarCampos() {
         _nombre.value = ""
         _valor.value = ""
