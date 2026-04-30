@@ -14,6 +14,7 @@ import com.example.stockmaster.ui.screens.auth.login.LoginPasswordScreen
 import com.example.stockmaster.ui.screens.auth.register.RegisterScreen
 import com.example.stockmaster.ui.screens.home_cliente.HomeClienteScreen
 import com.example.stockmaster.ui.screens.home_tienda.HomeTiendaScreen
+import com.example.stockmaster.ui.screens.proveedores.ProveedoresScreen
 import com.example.stockmaster.ui.screens.products.ProductScreen
 import com.example.stockmaster.ui.screens.empleados.CrearUsuarioScreen
 import com.example.stockmaster.ui.screens.empleados.PermisosScreen
@@ -142,12 +143,18 @@ fun NavGraph() {
                 onUsuarios = {
                     navController.navigate("usuarios")
                 },
-                onProveedores = {  // 🔥 ESTE ERA EL ERROR
-                    // vacío por ahora
+                onProveedores = {
+                    navController.navigate("proveedores")
                 },
                 onLogout = {
                     navController.navigate("role_selection")
                 }
+            )
+        }
+
+        composable("proveedores") {
+            ProveedoresScreen(
+                onBack = { navController.popBackStack() }
             )
         }
 
