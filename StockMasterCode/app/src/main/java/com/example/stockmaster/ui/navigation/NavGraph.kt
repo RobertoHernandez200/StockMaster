@@ -17,7 +17,7 @@ import com.example.stockmaster.ui.screens.home_tienda.HomeTiendaScreen
 import com.example.stockmaster.ui.screens.proveedores.ProveedoresScreen
 import com.example.stockmaster.ui.screens.products.ProductScreen
 import com.example.stockmaster.ui.screens.cliente.TiendasClienteScreen
-import com.example.stockmaster.ui.screens.cliente.ClienteProductosScreen // 🔥 IMPORTANTE
+import com.example.stockmaster.ui.screens.cliente.ClienteProductosScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.stockmaster.viewmodel.EmpleadoViewModel
 import com.example.stockmaster.viewmodel.ClienteViewModel
@@ -134,7 +134,7 @@ fun NavGraph() {
             HomeClienteScreen(navController)
         }
 
-        // 🔥 TIENDAS CLIENTE
+        // 🔥 TIENDAS CLIENTE (SOLO GESTIÓN)
         composable("mis_tiendas") {
 
             val viewModel: ClienteViewModel = viewModel()
@@ -142,20 +142,18 @@ fun NavGraph() {
 
             TiendasClienteScreen(
                 tiendas = tiendas,
-                onClick = {
-                    navController.navigate("productos_tienda/${it.id}")
-                },
-                onDelete = { // 🔥 NUEVO
+                onDelete = {
                     viewModel.eliminarTienda(it.id)
                 },
-                onBack = { navController.popBackStack() }
+                onBack = { navController.popBackStack() },
+                viewModel = viewModel // 🔥 IMPORTANTE
             )
         }
 
-        // 🔥 PRODUCTOS SOLO LECTURA (CLIENTE)
+        // 🔥 PRODUCTOS CLIENTE (YA NO SE USA DESDE TIENDAS)
         composable("productos_tienda/{tiendaId}") { backStack ->
 
-            val tiendaId = backStack.arguments?.getString("tiendaId")!!
+            val tiendaId = backStack.arguments?.getString("tiendaId") ?: ""
 
             ClienteProductosScreen(
                 tiendaId = tiendaId,
@@ -194,9 +192,6 @@ fun NavGraph() {
                 navController.popBackStack()
             }
         }
-
-        // 🔥 YA NO SE USA ProductScreen PARA CLIENTE
-        // (este queda solo para tienda)
 
         composable("usuarios") {
             UsuariosScreen(
