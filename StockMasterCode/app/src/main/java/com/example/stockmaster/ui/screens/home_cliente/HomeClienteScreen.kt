@@ -1,5 +1,6 @@
 package com.example.stockmaster.ui.screens.home_cliente
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,8 +16,6 @@ import androidx.navigation.NavController
 @Composable
 fun HomeClienteScreen(navController: NavController) {
 
-    var showDialog by remember { mutableStateOf(false) }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -30,94 +29,103 @@ fun HomeClienteScreen(navController: NavController) {
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Inicio", color = Color.Blue)
-            Text("Salir", color = Color.Blue)
-        }
+            Text("Inicio", color = Color.Black)
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-
-            // 🔹 TOTAL
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text("Total")
-                Text("$0.00", fontSize = 24.sp)
-            }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            // 🔥 FONDO MORADO
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                Color(0xFF6A5AE0),
-                                Color(0xFF7F67F8)
-                            )
-                        ),
-                        shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
-                    )
-                    .padding(20.dp)
-            ) {
-
-                Column {
-
-                    // 🔹 LISTA DE DESEOS
-                    Card(
-                        shape = RoundedCornerShape(20.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-
-                            Column {
-                                Text("Lista de deseos")
-                                Text("Crea tu lista de deseos", fontSize = 12.sp)
-                            }
-
-                            Button(onClick = { }) {
-                                Text("+ Agregar lista")
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(20.dp))
-
-                    // 🔹 TIENDAS
-                    Card(
-                        shape = RoundedCornerShape(20.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-
-                            Column {
-                                Text("Tiendas")
-                                Text("Agrega una nueva tienda", fontSize = 12.sp)
-                            }
-
-                            Button(
-                                onClick = {
-                                    // 🔥 AQUÍ VA TU LÓGICA DEL CÓDIGO
-                                    showDialog = true
-                                }
-                            ) {
-                                Text("+ Agregar código")
-                            }
-                        }
+            Text(
+                "Salir",
+                color = Color.Blue,
+                modifier = Modifier.clickable {
+                    navController.navigate("role_selection") {
+                        popUpTo("role_selection") { inclusive = true }
                     }
                 }
+            )
+        }
+
+        // 🔹 TOTAL
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("HOY", fontSize = 12.sp)
+            Text("$0.00", fontSize = 26.sp)
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        // 🔥 FONDO MORADO
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF6A5AE0),
+                            Color(0xFF7F67F8)
+                        )
+                    ),
+                    shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
+                )
+                .padding(16.dp)
+        ) {
+
+            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+
+                // 🔹 CARD LISTA DE DESEOS
+                CardItem(
+                    title = "Lista de deseos",
+                    subtitle = "Crear lista",
+                    buttonText = "+ Agregar lista"
+                )
+
+                // 🔹 CARD TIENDAS
+                CardItem(
+                    title = "Tiendas",
+                    subtitle = "Agregar nueva tienda",
+                    buttonText = "+ Agregar código",
+                    onClick = {
+                        // aquí va tu lógica de código
+                    }
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun CardItem(
+    title: String,
+    subtitle: String,
+    buttonText: String,
+    onClick: () -> Unit = {}
+) {
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFEDEDED))
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            // 🔹 ICONO (placeholder)
+            Box(
+                modifier = Modifier
+                    .size(50.dp)
+                    .background(Color.LightGray, RoundedCornerShape(10.dp))
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(title)
+                Text(subtitle, fontSize = 12.sp, color = Color.Gray)
+            }
+
+            Button(onClick = onClick) {
+                Text(buttonText)
             }
         }
     }
