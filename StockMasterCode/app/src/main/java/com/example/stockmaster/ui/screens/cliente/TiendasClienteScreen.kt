@@ -15,16 +15,19 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.stockmaster.model.Tienda
 import com.example.stockmaster.viewmodel.ClienteViewModel
+import com.example.stockmaster.ui.components.MenuDrawer
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TiendasClienteScreen(
     tiendas: List<Tienda>,
     onDelete: (Tienda) -> Unit,
-    onBack: () -> Unit,
-    viewModel: ClienteViewModel
+    viewModel: ClienteViewModel,
+    navController: NavController
 ) {
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
@@ -41,33 +44,19 @@ fun TiendasClienteScreen(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            ModalDrawerSheet {
-
-                Text("Menú", modifier = Modifier.padding(16.dp), fontSize = 20.sp)
-
-                NavigationDrawerItem(
-                    label = { Text("Inicio") },
-                    selected = false,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                        onBack()
-                    }
-                )
-
-                NavigationDrawerItem(
-                    label = { Text("Tiendas") },
-                    selected = true,
-                    onClick = {
-                        scope.launch { drawerState.close() }
-                    }
-                )
-
-                NavigationDrawerItem(
-                    label = { Text("Listas de deseos") },
-                    selected = false,
-                    onClick = { }
-                )
-            }
+            MenuDrawer(
+                onInicio = {
+                    scope.launch { drawerState.close() }
+                    navController.navigate("home_cliente")
+                },
+                onTiendas = {
+                    scope.launch { drawerState.close() }
+                },
+                onLista = {
+                    scope.launch { drawerState.close() }
+                    navController.navigate("wishlist")
+                }
+            )
         }
     ) {
 
@@ -77,31 +66,28 @@ fun TiendasClienteScreen(
                 .background(Color(0xFFF2F2F2))
         ) {
 
-            //  HEADER CON MENÚ
+            // 🔥 HEADER EXACTO COMO HOME
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
 
-                IconButton(onClick = {
-                    scope.launch { drawerState.open() }
-                }) {
-                    Icon(Icons.Default.Menu, contentDescription = "Menú")
-                }
+                Text(
+                    "☰",
+                    fontSize = 22.sp,
+                    modifier = Modifier.clickable {
+                        scope.launch { drawerState.open() }
+                    }
+                )
 
                 Text("Tiendas", fontSize = 20.sp)
 
-                IconButton(onClick = {
-                    showDialogCodigo = true
-                }) {
-                    Icon(Icons.Default.Add, contentDescription = "")
-                }
+                Text("") // para centrar
             }
 
-            //  BUSCADOR
+            // 🔥 BUSCADOR
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -141,7 +127,7 @@ fun TiendasClienteScreen(
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            //  LISTA
+            // 🔥 LISTA
             LazyColumn {
 
                 items(tiendas.filter {
@@ -189,7 +175,7 @@ fun TiendasClienteScreen(
         }
     }
 
-    //  CONFIRMAR ELIMINAR
+    // 🔥 ELIMINAR
     tiendaAEliminar?.let {
         AlertDialog(
             onDismissRequest = { tiendaAEliminar = null },
@@ -211,13 +197,11 @@ fun TiendasClienteScreen(
         )
     }
 
-    //  DIALOG AGREGAR CÓDIGO
+    // 🔥 AGREGAR TIENDA
     if (showDialogCodigo) {
         com.example.stockmaster.ui.components.DialogCodigo(
             error = error,
-            onConfirm = {
-                viewModel.buscarTienda(it)
-            },
+            onConfirm = { viewModel.buscarTienda(it) },
             onDismiss = {
                 showDialogCodigo = false
                 viewModel.limpiar()
@@ -225,20 +209,14 @@ fun TiendasClienteScreen(
         )
     }
 
-    //  CONFIRMAR TIENDA
     tienda?.let {
         com.example.stockmaster.ui.components.DialogConfirmarTienda(
             tienda = it,
-            onConfirm = {
-                viewModel.confirmarTienda()
-            },
-            onDismiss = {
-                viewModel.limpiar()
-            }
+            onConfirm = { viewModel.confirmarTienda() },
+            onDismiss = { viewModel.limpiar() }
         )
     }
 
-    //  ÉXITO
     if (success) {
         AlertDialog(
             onDismissRequest = {

@@ -135,7 +135,7 @@ fun NavGraph() {
             HomeClienteScreen(navController)
         }
 
-        // 🔥 TIENDAS CLIENTE
+        // 🔥 TIENDAS CLIENTE (ARREGLADO)
         composable("mis_tiendas") {
 
             val viewModel: ClienteViewModel = viewModel()
@@ -146,12 +146,12 @@ fun NavGraph() {
                 onDelete = {
                     viewModel.eliminarTienda(it.id)
                 },
-                onBack = { navController.popBackStack() },
-                viewModel = viewModel // 🔥 IMPORTANTE
+                viewModel = viewModel,
+                navController = navController // 🔥 CLAVE
             )
         }
 
-
+        // 🔥 PRODUCTOS CLIENTE (SOLO LECTURA)
         composable("productos_tienda/{tiendaId}") { backStack ->
 
             val tiendaId = backStack.arguments?.getString("tiendaId") ?: ""
@@ -287,6 +287,8 @@ fun NavGraph() {
             }
         }
 
-        composable("wishlist") { WishlistScreen(navController) }
+        composable("wishlist") {
+            WishlistScreen(navController)
+        }
     }
 }
