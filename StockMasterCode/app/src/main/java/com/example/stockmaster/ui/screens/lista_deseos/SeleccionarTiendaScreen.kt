@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.stockmaster.viewmodel.ClienteViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun SeleccionarTiendaScreen(
@@ -27,10 +26,7 @@ fun SeleccionarTiendaScreen(
 
     val viewModel: ClienteViewModel = viewModel()
 
-    // 🔥 tiendas reales desde Firebase
     val tiendas by viewModel.tiendas.collectAsState(initial = emptyList())
-
-    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -76,7 +72,7 @@ fun SeleccionarTiendaScreen(
             )
         }
 
-        // 🏪 LISTA REAL
+        // 🏪 LISTA DE TIENDAS
         LazyColumn {
 
             items(tiendas) { tienda ->
@@ -86,14 +82,10 @@ fun SeleccionarTiendaScreen(
                         .fillMaxWidth()
                         .clickable {
 
-                            // 🔥 AQUÍ GUARDARÁS LISTA + TIENDA
-                            viewModel.crearListaDeseos(
-                                nombreLista = nombreLista,
-                                tiendaId = tienda.id,
-                                tiendaNombre = tienda.nombre
+                            // 🔥 AQUÍ VAS A PRODUCTOS
+                            navController.navigate(
+                                "seleccionar_productos/${tienda.id}/$nombreLista"
                             )
-
-                            navController.popBackStack("wishlist", false)
                         }
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,

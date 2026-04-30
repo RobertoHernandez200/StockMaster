@@ -19,7 +19,7 @@ import com.example.stockmaster.ui.components.MenuDrawer
 @Composable
 fun WishlistScreen(navController: NavController) {
 
-    var listas by remember { mutableStateOf(listOf<String>()) }
+    var listas by remember { mutableStateOf(mutableListOf<String>()) }
 
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -38,7 +38,6 @@ fun WishlistScreen(navController: NavController) {
                 },
                 onLista = {
                     scope.launch { drawerState.close() }
-                    navController.navigate("wishlist")
                 }
             )
         }
@@ -51,7 +50,6 @@ fun WishlistScreen(navController: NavController) {
                 .padding(16.dp)
         ) {
 
-            // 🔥 HEADER CON MENÚ
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -83,20 +81,36 @@ fun WishlistScreen(navController: NavController) {
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    Text("Aún no tienes listas de deseos...", color = Color.Gray)
+                    Text("Aún no tienes listas...", color = Color.Gray)
                 }
             } else {
                 LazyColumn {
+
                     items(listas) { lista ->
+
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 6.dp)
                         ) {
-                            Text(
-                                lista,
-                                modifier = Modifier.padding(16.dp)
-                            )
+
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+
+                                Text(lista)
+
+                                Text(
+                                    "Eliminar",
+                                    color = Color.Red,
+                                    modifier = Modifier.clickable {
+                                        listas = listas.toMutableList().apply {
+                                            remove(lista)
+                                        }
+                                    }
+                                )
+                            }
                         }
                     }
                 }

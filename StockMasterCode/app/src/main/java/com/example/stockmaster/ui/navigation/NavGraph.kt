@@ -6,6 +6,10 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.auth.FirebaseAuth
+
+// SCREENS
 import com.example.stockmaster.ui.screens.empleados.*
 import com.example.stockmaster.ui.screens.splash.SplashScreen
 import com.example.stockmaster.ui.screens.role_selection.RoleSelectionScreen
@@ -18,13 +22,16 @@ import com.example.stockmaster.ui.screens.proveedores.ProveedoresScreen
 import com.example.stockmaster.ui.screens.products.ProductScreen
 import com.example.stockmaster.ui.screens.cliente.TiendasClienteScreen
 import com.example.stockmaster.ui.screens.cliente.ClienteProductosScreen
+
+// LISTAS
 import com.example.stockmaster.ui.screens.lista_deseos.WishlistScreen
 import com.example.stockmaster.ui.screens.lista_deseos.CrearListaScreen
 import com.example.stockmaster.ui.screens.lista_deseos.SeleccionarTiendaScreen
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.stockmaster.ui.screens.lista_deseos.SeleccionarProductosScreen // 🔥 IMPORTANTE
+
+// VIEWMODELS
 import com.example.stockmaster.viewmodel.EmpleadoViewModel
 import com.example.stockmaster.viewmodel.ClienteViewModel
-import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun NavGraph() {
@@ -36,6 +43,7 @@ fun NavGraph() {
         startDestination = "splash"
     ) {
 
+        // SPLASH
         composable("splash") {
             SplashScreen {
                 navController.navigate("role_selection") {
@@ -44,6 +52,7 @@ fun NavGraph() {
             }
         }
 
+        // ROLE
         composable("role_selection") {
             RoleSelectionScreen(
                 onClienteClick = {
@@ -55,6 +64,7 @@ fun NavGraph() {
             )
         }
 
+        // ENTRY
         composable("entry/{role}") { backStackEntry ->
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
@@ -69,6 +79,7 @@ fun NavGraph() {
             )
         }
 
+        // LOGIN EMAIL
         composable("login_email/{role}") { backStackEntry ->
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
@@ -80,6 +91,7 @@ fun NavGraph() {
             )
         }
 
+        // LOGIN PASSWORD
         composable("login_password/{email}/{role}") { backStackEntry ->
             val email = backStackEntry.arguments?.getString("email") ?: ""
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
@@ -112,6 +124,7 @@ fun NavGraph() {
             )
         }
 
+        // REGISTER
         composable("register/{role}") { backStackEntry ->
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
@@ -132,12 +145,12 @@ fun NavGraph() {
             )
         }
 
-        // 🔥 HOME CLIENTE
+        // HOME CLIENTE
         composable("home_cliente") {
             HomeClienteScreen(navController)
         }
 
-        // 🔥 TIENDAS CLIENTE (ARREGLADO)
+        // TIENDAS CLIENTE
         composable("mis_tiendas") {
 
             val viewModel: ClienteViewModel = viewModel()
@@ -145,15 +158,13 @@ fun NavGraph() {
 
             TiendasClienteScreen(
                 tiendas = tiendas,
-                onDelete = {
-                    viewModel.eliminarTienda(it.id)
-                },
+                onDelete = { viewModel.eliminarTienda(it.id) },
                 viewModel = viewModel,
-                navController = navController // 🔥 CLAVE
+                navController = navController
             )
         }
 
-        // 🔥 PRODUCTOS CLIENTE (SOLO LECTURA)
+        // PRODUCTOS CLIENTE (VER)
         composable("productos_tienda/{tiendaId}") { backStack ->
 
             val tiendaId = backStack.arguments?.getString("tiendaId") ?: ""
@@ -164,18 +175,12 @@ fun NavGraph() {
             )
         }
 
-        // 🔥 HOME TIENDA
+        // HOME TIENDA
         composable("home_tienda") {
             HomeTiendaScreen(
-                onAddProduct = {
-                    navController.navigate("productos")
-                },
-                onUsuarios = {
-                    navController.navigate("usuarios")
-                },
-                onProveedores = {
-                    navController.navigate("proveedores")
-                },
+                onAddProduct = { navController.navigate("productos") },
+                onUsuarios = { navController.navigate("usuarios") },
+                onProveedores = { navController.navigate("proveedores") },
                 onLogout = {
                     navController.navigate("role_selection") {
                         popUpTo(0)
@@ -184,27 +189,26 @@ fun NavGraph() {
             )
         }
 
+        // PROVEEDORES
         composable("proveedores") {
             ProveedoresScreen(
                 onBack = { navController.popBackStack() }
             )
         }
 
+        // PRODUCTOS TIENDA
         composable("productos") {
             ProductScreen {
                 navController.popBackStack()
             }
         }
 
+        // USUARIOS
         composable("usuarios") {
             UsuariosScreen(
                 navController = navController,
-                onAddUser = {
-                    navController.navigate("crear_usuario")
-                },
-                onBack = {
-                    navController.popBackStack()
-                }
+                onAddUser = { navController.navigate("crear_usuario") },
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -222,9 +226,7 @@ fun NavGraph() {
                 onNext = { nombre, email ->
                     navController.navigate("permisos/$nombre/$email")
                 },
-                onBack = {
-                    navController.popBackStack()
-                }
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -242,9 +244,7 @@ fun NavGraph() {
 
                     navController.navigate("password/$nombre/$email")
                 },
-                onBack = {
-                    navController.popBackStack()
-                }
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -261,7 +261,6 @@ fun NavGraph() {
 
             PasswordEmpleadoScreen(
                 onCreate = { password ->
-
                     viewModel.crearEmpleado(
                         nombre,
                         email,
@@ -273,9 +272,7 @@ fun NavGraph() {
                         onError = {}
                     )
                 },
-                onBack = {
-                    navController.popBackStack()
-                }
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -289,18 +286,34 @@ fun NavGraph() {
             }
         }
 
+        // 🔥 LISTAS DE DESEOS
+
         composable("wishlist") {
             WishlistScreen(navController)
         }
+
         composable("crear_lista") {
             CrearListaScreen(navController)
         }
+
         composable("seleccionar_tienda/{nombreLista}") { backStackEntry ->
 
             val nombreLista = backStackEntry.arguments?.getString("nombreLista") ?: ""
 
             SeleccionarTiendaScreen(
                 navController = navController,
+                nombreLista = nombreLista
+            )
+        }
+
+        composable("seleccionar_productos/{tiendaId}/{nombreLista}") { backStack ->
+
+            val tiendaId = backStack.arguments?.getString("tiendaId") ?: ""
+            val nombreLista = backStack.arguments?.getString("nombreLista") ?: ""
+
+            SeleccionarProductosScreen(
+                navController = navController,
+                tiendaId = tiendaId,
                 nombreLista = nombreLista
             )
         }
