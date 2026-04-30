@@ -147,7 +147,7 @@ fun NavGraph() {
                     viewModel.eliminarTienda(it.id)
                 },
                 onBack = { navController.popBackStack() },
-                viewModel = viewModel // 🔥 IMPORTANTE
+                viewModel = viewModel
             )
         }
 
