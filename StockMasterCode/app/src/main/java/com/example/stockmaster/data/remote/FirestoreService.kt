@@ -85,4 +85,28 @@ class FirestoreService {
             .delete()
             .await()
     }
+
+    // GUARDAR LISTA DE DESEOS
+    suspend fun guardarListaDeseos(
+        userId: String,
+        lista: Map<String, String>
+    ) {
+        db.collection("clientes")
+            .document(userId)
+            .collection("listas")
+            .add(lista)
+            .await()
+    }
+
+    // OBTENER LISTAS DE DESEOS
+    suspend fun obtenerListasDeseos(userId: String): List<Map<String, String>> {
+
+        val result = db.collection("clientes")
+            .document(userId)
+            .collection("listas")
+            .get()
+            .await()
+
+        return result.documents.mapNotNull { it.data as? Map<String, String> }
+    }
 }

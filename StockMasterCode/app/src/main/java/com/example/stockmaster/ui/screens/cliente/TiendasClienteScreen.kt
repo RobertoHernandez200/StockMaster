@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.stockmaster.model.Tienda
 import com.example.stockmaster.viewmodel.ClienteViewModel
+import androidx.compose.foundation.clickable
 import com.example.stockmaster.ui.components.MenuDrawer
 import kotlinx.coroutines.launch
 
