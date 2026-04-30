@@ -155,7 +155,6 @@ fun TiendasClienteScreen(
                     }
                 }
 
-                Divider(color = Color(0xFF6A5AE0))
             }
         }
     }

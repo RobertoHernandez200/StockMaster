@@ -18,6 +18,7 @@ import com.example.stockmaster.ui.screens.proveedores.ProveedoresScreen
 import com.example.stockmaster.ui.screens.products.ProductScreen
 import com.example.stockmaster.ui.screens.cliente.TiendasClienteScreen
 import com.example.stockmaster.ui.screens.cliente.ClienteProductosScreen
+import com.example.stockmaster.ui.screens.lista_deseos.WishlistScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.stockmaster.viewmodel.EmpleadoViewModel
 import com.example.stockmaster.viewmodel.ClienteViewModel
@@ -134,7 +135,7 @@ fun NavGraph() {
             HomeClienteScreen(navController)
         }
 
-        // 🔥 TIENDAS CLIENTE (SOLO GESTIÓN)
+        // 🔥 TIENDAS CLIENTE
         composable("mis_tiendas") {
 
             val viewModel: ClienteViewModel = viewModel()
@@ -150,7 +151,7 @@ fun NavGraph() {
             )
         }
 
-        // 🔥 PRODUCTOS CLIENTE (YA NO SE USA DESDE TIENDAS)
+
         composable("productos_tienda/{tiendaId}") { backStack ->
 
             val tiendaId = backStack.arguments?.getString("tiendaId") ?: ""
@@ -285,5 +286,7 @@ fun NavGraph() {
                 }
             }
         }
+
+        composable("wishlist") { WishlistScreen(navController) }
     }
 }

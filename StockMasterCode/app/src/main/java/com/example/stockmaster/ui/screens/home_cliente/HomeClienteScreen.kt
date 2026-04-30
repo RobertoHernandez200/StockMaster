@@ -48,6 +48,10 @@ fun HomeClienteScreen(navController: NavController) {
                 onTiendas = {
                     scope.launch { drawerState.close() }
                     navController.navigate("mis_tiendas")
+                },
+                onLista = {
+                    scope.launch { drawerState.close() }
+                    navController.navigate("wishlist")
                 }
             )
         }
@@ -165,7 +169,10 @@ fun HomeClienteScreen(navController: NavController) {
                         title = "Lista de deseos",
                         subtitle = "Crear lista",
                         buttonText = "+ Agregar lista",
-                        icon = Icons.Default.Favorite
+                        icon = Icons.Default.Favorite,
+                        onClick = {
+                            navController.navigate("wishlist")
+                        }
                     )
 
 

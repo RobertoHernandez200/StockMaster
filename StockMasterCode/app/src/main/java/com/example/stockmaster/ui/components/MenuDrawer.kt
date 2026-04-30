@@ -13,7 +13,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun MenuDrawer(
     onInicio: () -> Unit,
-    onTiendas: () -> Unit
+    onTiendas: () -> Unit,
+    onLista: () -> Unit
 ) {
 
     Column(
@@ -30,7 +31,7 @@ fun MenuDrawer(
 
         MenuItem("Inicio", onInicio)
         MenuItem("Tiendas", onTiendas)
-        MenuItem("Listas de deseos", {})
+        MenuItem("Listas de deseos", onLista)
         MenuItem("Opciones", {})
     }
 }
