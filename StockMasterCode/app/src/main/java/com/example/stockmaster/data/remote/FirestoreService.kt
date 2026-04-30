@@ -3,6 +3,7 @@ package com.example.stockmaster.data.remote
 import com.example.stockmaster.model.Tienda
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
+import com.example.stockmaster.model.Producto
 
 class FirestoreService {
 
@@ -81,18 +82,7 @@ class FirestoreService {
     }
 
     // 🔥 GUARDAR LISTA
-    suspend fun guardarListaDeseos(
-        userId: String,
-        nombre: String,
-        tiendaId: String,
-        productos: List<String>
-    ) {
-        val lista = hashMapOf(
-            "nombre" to nombre,
-            "tiendaId" to tiendaId,
-            "productos" to productos
-        )
-
+    suspend fun guardarListaDeseos(userId: String, lista: Map<String, Any>) {
         db.collection("clientes")
             .document(userId)
             .collection("listas")
@@ -122,6 +112,36 @@ class FirestoreService {
             .document(userId)
             .collection("listas")
             .document(listaId)
+            .delete()
+            .await()
+    }
+
+    suspend fun obtenerProductosDeLista(userId: String, listaId: String): List<Producto> {
+
+        val result = db.collection("clientes")
+            .document(userId)
+            .collection("listas")
+            .document(listaId)
+            .collection("productos")
+            .get()
+            .await()
+
+        return result.documents.map {
+            Producto(
+                id = it.id,
+                nombre = it.getString("nombre") ?: "",
+                valor = it.getDouble("valor") ?: 0.0
+            )
+        }
+    }
+
+    suspend fun eliminarProductoDeLista(userId: String, listaId: String, productoId: String) {
+        db.collection("clientes")
+            .document(userId)
+            .collection("listas")
+            .document(listaId)
+            .collection("productos")
+            .document(productoId)
             .delete()
             .await()
     }
