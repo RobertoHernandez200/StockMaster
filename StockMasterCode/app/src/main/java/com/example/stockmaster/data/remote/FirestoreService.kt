@@ -8,6 +8,7 @@ class FirestoreService {
 
     private val db = FirebaseFirestore.getInstance()
 
+    // 🔥 OBTENER TIENDA POR CÓDIGO
     suspend fun obtenerTiendaPorCodigo(codigo: String): Tienda? {
 
         return try {
@@ -35,6 +36,7 @@ class FirestoreService {
         }
     }
 
+    // 🔥 GUARDAR TIENDA
     suspend fun guardarTiendaCliente(userId: String, tienda: Tienda) {
 
         db.collection("clientes")
@@ -45,6 +47,7 @@ class FirestoreService {
             .await()
     }
 
+    // 🔥 VALIDAR SI YA EXISTE
     suspend fun tiendaYaExiste(userId: String, tiendaId: String): Boolean {
 
         val doc = db.collection("clientes")
@@ -57,6 +60,7 @@ class FirestoreService {
         return doc.exists()
     }
 
+    // 🔥 OBTENER TIENDAS
     suspend fun obtenerTiendasCliente(userId: String): List<Tienda> {
 
         val result = db.collection("clientes")
@@ -74,6 +78,7 @@ class FirestoreService {
         }
     }
 
+    // 🔥 ELIMINAR TIENDA
     suspend fun eliminarTiendaCliente(userId: String, tiendaId: String) {
 
         db.collection("clientes")
@@ -84,8 +89,11 @@ class FirestoreService {
             .await()
     }
 
-    // 🔥 LISTAS
+    // =========================================
+    // 🔥 LISTAS DE DESEOS
+    // =========================================
 
+    // 🔥 GUARDAR LISTA
     suspend fun guardarListaDeseos(
         userId: String,
         lista: Map<String, String>
@@ -97,6 +105,7 @@ class FirestoreService {
             .await()
     }
 
+    // 🔥 OBTENER LISTAS (ARREGLADO)
     suspend fun obtenerListasDeseos(userId: String): List<Map<String, String>> {
 
         val result = db.collection("clientes")
@@ -106,11 +115,19 @@ class FirestoreService {
             .await()
 
         return result.documents.map {
+
             val data = it.data ?: emptyMap()
-            data + ("id" to it.id)
+
+            // 🔥 AQUÍ ESTÁ LA SOLUCIÓN DEL ERROR
+            val mapaConvertido = data.mapValues { entry ->
+                entry.value?.toString() ?: ""
+            }
+
+            mapaConvertido + ("id" to it.id)
         }
     }
 
+    // 🔥 ELIMINAR LISTA
     suspend fun eliminarLista(userId: String, listaId: String) {
         db.collection("clientes")
             .document(userId)
@@ -120,6 +137,7 @@ class FirestoreService {
             .await()
     }
 
+    // 🔥 ACTUALIZAR LISTA
     suspend fun actualizarLista(
         userId: String,
         listaId: String,
