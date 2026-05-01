@@ -28,6 +28,7 @@ fun SeleccionarProductosScreen(
 
     val productos by productosViewModel.productos.collectAsState()
 
+    // 🔥 AHORA GUARDAMOS NOMBRES (NO IDs)
     var seleccionados by remember { mutableStateOf(setOf<String>()) }
 
     // 🔥 CARGAR PRODUCTOS DE LA TIENDA
@@ -65,7 +66,8 @@ fun SeleccionarProductosScreen(
 
                 items(productos) { producto ->
 
-                    val seleccionado = seleccionados.contains(producto.id)
+                    // 🔥 CAMBIO AQUÍ
+                    val seleccionado = seleccionados.contains(producto.nombre)
 
                     Row(
                         modifier = Modifier
@@ -73,9 +75,9 @@ fun SeleccionarProductosScreen(
                             .clickable {
 
                                 seleccionados = if (seleccionado) {
-                                    seleccionados - producto.id
+                                    seleccionados - producto.nombre
                                 } else {
-                                    seleccionados + producto.id
+                                    seleccionados + producto.nombre
                                 }
                             }
                             .padding(16.dp),
@@ -98,14 +100,14 @@ fun SeleccionarProductosScreen(
             }
         }
 
-        // 🔥 BOTÓN GUARDAR REAL
+        // 🔥 BOTÓN GUARDAR
         Button(
             onClick = {
 
                 clienteViewModel.guardarLista(
                     nombreLista,
                     tiendaId,
-                    seleccionados.toList()
+                    seleccionados.toList() // 🔥 YA SON NOMBRES
                 )
 
                 navController.navigate("wishlist") {
