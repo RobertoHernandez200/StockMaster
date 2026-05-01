@@ -3,11 +3,10 @@ package com.example.stockmaster.data.remote
 import com.example.stockmaster.model.Tienda
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
-import com.example.stockmaster.model.Producto
 
 class FirestoreService {
 
-    val db = FirebaseFirestore.getInstance()
+    private val db = FirebaseFirestore.getInstance()
 
     suspend fun obtenerTiendaPorCodigo(codigo: String): Tienda? {
 
@@ -37,6 +36,7 @@ class FirestoreService {
     }
 
     suspend fun guardarTiendaCliente(userId: String, tienda: Tienda) {
+
         db.collection("clientes")
             .document(userId)
             .collection("tiendas")
@@ -46,6 +46,7 @@ class FirestoreService {
     }
 
     suspend fun tiendaYaExiste(userId: String, tiendaId: String): Boolean {
+
         val doc = db.collection("clientes")
             .document(userId)
             .collection("tiendas")
@@ -57,6 +58,7 @@ class FirestoreService {
     }
 
     suspend fun obtenerTiendasCliente(userId: String): List<Tienda> {
+
         val result = db.collection("clientes")
             .document(userId)
             .collection("tiendas")
@@ -73,6 +75,7 @@ class FirestoreService {
     }
 
     suspend fun eliminarTiendaCliente(userId: String, tiendaId: String) {
+
         db.collection("clientes")
             .document(userId)
             .collection("tiendas")
@@ -81,8 +84,12 @@ class FirestoreService {
             .await()
     }
 
-    // 🔥 GUARDAR LISTA
-    suspend fun guardarListaDeseos(userId: String, lista: Map<String, Any>) {
+    // 🔥 LISTAS
+
+    suspend fun guardarListaDeseos(
+        userId: String,
+        lista: Map<String, String>
+    ) {
         db.collection("clientes")
             .document(userId)
             .collection("listas")
@@ -90,8 +97,7 @@ class FirestoreService {
             .await()
     }
 
-    // 🔥 OBTENER LISTAS CON ID
-    suspend fun obtenerListasDeseos(userId: String): List<Map<String, Any>> {
+    suspend fun obtenerListasDeseos(userId: String): List<Map<String, String>> {
 
         val result = db.collection("clientes")
             .document(userId)
@@ -99,14 +105,12 @@ class FirestoreService {
             .get()
             .await()
 
-        return result.documents.mapNotNull { doc ->
-            doc.data?.toMutableMap()?.apply {
-                put("id", doc.id)
-            }
+        return result.documents.map {
+            val data = it.data ?: emptyMap()
+            data + ("id" to it.id)
         }
     }
 
-    // 🔥 ELIMINAR LISTA
     suspend fun eliminarLista(userId: String, listaId: String) {
         db.collection("clientes")
             .document(userId)
@@ -116,33 +120,16 @@ class FirestoreService {
             .await()
     }
 
-    suspend fun obtenerProductosDeLista(userId: String, listaId: String): List<Producto> {
-
-        val result = db.collection("clientes")
-            .document(userId)
-            .collection("listas")
-            .document(listaId)
-            .collection("productos")
-            .get()
-            .await()
-
-        return result.documents.map {
-            Producto(
-                id = it.id,
-                nombre = it.getString("nombre") ?: "",
-                valor = it.getDouble("valor") ?: 0.0
-            )
-        }
-    }
-
-    suspend fun eliminarProductoDeLista(userId: String, listaId: String, productoId: String) {
+    suspend fun actualizarLista(
+        userId: String,
+        listaId: String,
+        lista: Map<String, String>
+    ) {
         db.collection("clientes")
             .document(userId)
             .collection("listas")
             .document(listaId)
-            .collection("productos")
-            .document(productoId)
-            .delete()
+            .set(lista)
             .await()
     }
 }

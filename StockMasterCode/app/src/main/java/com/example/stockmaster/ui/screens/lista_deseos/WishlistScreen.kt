@@ -1,12 +1,10 @@
 package com.example.stockmaster.ui.screens.lista_deseos
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -23,6 +21,8 @@ fun WishlistScreen(navController: NavController) {
     val viewModel: ClienteViewModel = viewModel()
     val listas by viewModel.listas.collectAsState()
 
+    var expandedId by remember { mutableStateOf<String?>(null) }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -30,80 +30,79 @@ fun WishlistScreen(navController: NavController) {
             .padding(16.dp)
     ) {
 
-        // 🔥 HEADER
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-
             Text("Listas", fontSize = 18.sp)
 
-            Text(
-                "+",
-                fontSize = 22.sp,
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "",
                 modifier = Modifier.clickable {
                     navController.navigate("crear_lista")
                 }
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        if (listas.isEmpty()) {
+        LazyColumn {
 
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Aún no tienes listas...", color = Color.Gray)
-            }
+            items(listas) { lista ->
 
-        } else {
+                val id = lista["id"] ?: ""
+                val nombre = lista["nombre"] ?: ""
+                val tiendaId = lista["tiendaId"] ?: ""
 
-            LazyColumn {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 6.dp)
+                        .clickable {
+                            navController.navigate("detalle_lista/$id/$nombre/$tiendaId")
+                        }
+                ) {
 
-                items(listas) { lista ->
-
-                    val nombre = lista["nombre"] as? String ?: ""
-                    val id = lista["id"] as? String ?: ""
-
-                    var expanded by remember { mutableStateOf(false) }
-
-                    Card(
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp)
-                            .clickable {
-                                navController.navigate("detalle_lista/$id")
-                            }
+                            .padding(16.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
 
-                        Row(
-                            modifier = Modifier.padding(16.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
+                        Text(nombre)
 
-                            Text(nombre)
+                        Box {
 
-                            Box {
-
-                                IconButton(onClick = { expanded = true }) {
-                                    Icon(Icons.Default.MoreVert, contentDescription = "")
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "",
+                                modifier = Modifier.clickable {
+                                    expandedId = id
                                 }
+                            )
 
-                                DropdownMenu(
-                                    expanded = expanded,
-                                    onDismissRequest = { expanded = false }
-                                ) {
+                            DropdownMenu(
+                                expanded = expandedId == id,
+                                onDismissRequest = { expandedId = null }
+                            ) {
 
-                                    DropdownMenuItem(
-                                        text = { Text("Eliminar") },
-                                        onClick = {
-                                            expanded = false
-                                            viewModel.eliminarLista(id)
-                                        }
-                                    )
-                                }
+                                DropdownMenuItem(
+                                    text = { Text("Editar") },
+                                    onClick = {
+                                        // puedes abrir dialog aquí
+                                        expandedId = null
+                                    }
+                                )
+
+                                DropdownMenuItem(
+                                    text = { Text("Eliminar") },
+                                    onClick = {
+                                        viewModel.eliminarLista(id)
+                                        expandedId = null
+                                    }
+                                )
                             }
                         }
                     }

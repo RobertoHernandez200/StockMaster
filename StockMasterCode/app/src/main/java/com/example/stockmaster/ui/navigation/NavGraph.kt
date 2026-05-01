@@ -1,11 +1,9 @@
 package com.example.stockmaster.ui.navigation
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.auth.FirebaseAuth
 
@@ -24,12 +22,7 @@ import com.example.stockmaster.ui.screens.cliente.TiendasClienteScreen
 import com.example.stockmaster.ui.screens.cliente.ClienteProductosScreen
 
 // LISTAS
-import com.example.stockmaster.ui.screens.lista_deseos.WishlistScreen
-import com.example.stockmaster.ui.screens.lista_deseos.CrearListaScreen
-import com.example.stockmaster.ui.screens.lista_deseos.SeleccionarTiendaScreen
-import com.example.stockmaster.ui.screens.lista_deseos.SeleccionarProductosScreen
-
-// VIEWMODELS
+import com.example.stockmaster.ui.screens.lista_deseos.*
 import com.example.stockmaster.viewmodel.EmpleadoViewModel
 import com.example.stockmaster.viewmodel.ClienteViewModel
 
@@ -55,12 +48,8 @@ fun NavGraph() {
         // ROLE
         composable("role_selection") {
             RoleSelectionScreen(
-                onClienteClick = {
-                    navController.navigate("entry/cliente")
-                },
-                onTiendaClick = {
-                    navController.navigate("entry/tienda")
-                }
+                onClienteClick = { navController.navigate("entry/cliente") },
+                onTiendaClick = { navController.navigate("entry/tienda") }
             )
         }
 
@@ -69,12 +58,8 @@ fun NavGraph() {
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
             EntryTiendaScreen(
-                onLoginClick = {
-                    navController.navigate("login_email/$role")
-                },
-                onRegisterClick = {
-                    navController.navigate("register/$role")
-                },
+                onLoginClick = { navController.navigate("login_email/$role") },
+                onRegisterClick = { navController.navigate("register/$role") },
                 onBack = { navController.popBackStack() }
             )
         }
@@ -93,6 +78,7 @@ fun NavGraph() {
 
         // LOGIN PASSWORD
         composable("login_password/{email}/{role}") { backStackEntry ->
+
             val email = backStackEntry.arguments?.getString("email") ?: ""
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
@@ -126,6 +112,7 @@ fun NavGraph() {
 
         // REGISTER
         composable("register/{role}") { backStackEntry ->
+
             val role = backStackEntry.arguments?.getString("role") ?: "cliente"
 
             RegisterScreen(
@@ -158,15 +145,13 @@ fun NavGraph() {
 
             TiendasClienteScreen(
                 tiendas = tiendas,
-                onDelete = { tienda ->
-                    viewModel.eliminarTienda(tienda.id)
-                },
+                onDelete = { viewModel.eliminarTienda(it.id) },
                 viewModel = viewModel,
                 navController = navController
             )
         }
 
-        // PRODUCTOS DE TIENDA (CLIENTE - SOLO VER)
+        // PRODUCTOS (CLIENTE SOLO VER)
         composable("productos_tienda/{tiendaId}") { backStack ->
 
             val tiendaId = backStack.arguments?.getString("tiendaId") ?: ""
@@ -191,21 +176,14 @@ fun NavGraph() {
             )
         }
 
-        // PROVEEDORES
         composable("proveedores") {
-            ProveedoresScreen(
-                onBack = { navController.popBackStack() }
-            )
+            ProveedoresScreen(onBack = { navController.popBackStack() })
         }
 
-        // PRODUCTOS (TIENDA)
         composable("productos") {
-            ProductScreen {
-                navController.popBackStack()
-            }
+            ProductScreen { navController.popBackStack() }
         }
 
-        // USUARIOS
         composable("usuarios") {
             UsuariosScreen(
                 navController = navController,
@@ -268,9 +246,7 @@ fun NavGraph() {
                         email,
                         password,
                         permisos,
-                        onSuccess = {
-                            navController.navigate("success")
-                        },
+                        onSuccess = { navController.navigate("success") },
                         onError = {}
                     )
                 },
@@ -288,7 +264,7 @@ fun NavGraph() {
             }
         }
 
-        // 🔥 LISTAS DE DESEOS
+        // 🔥 LISTAS
 
         composable("wishlist") {
             WishlistScreen(navController)
@@ -298,9 +274,9 @@ fun NavGraph() {
             CrearListaScreen(navController)
         }
 
-        composable("seleccionar_tienda/{nombreLista}") { backStackEntry ->
+        composable("seleccionar_tienda/{nombreLista}") { backStack ->
 
-            val nombreLista = backStackEntry.arguments?.getString("nombreLista") ?: ""
+            val nombreLista = backStack.arguments?.getString("nombreLista") ?: ""
 
             SeleccionarTiendaScreen(
                 navController = navController,
@@ -317,6 +293,21 @@ fun NavGraph() {
                 navController = navController,
                 tiendaId = tiendaId,
                 nombreLista = nombreLista
+            )
+        }
+
+        // 🔥 ESTA ES LA CLAVE QUE TE FALTABA
+        composable("detalle_lista/{listaId}/{nombre}/{tiendaId}") { backStack ->
+
+            val listaId = backStack.arguments?.getString("listaId") ?: ""
+            val nombre = backStack.arguments?.getString("nombre") ?: ""
+            val tiendaId = backStack.arguments?.getString("tiendaId") ?: ""
+
+            DetalleListaScreen(
+                navController = navController,
+                listaId = listaId,
+                nombreLista = nombre,
+                tiendaId = tiendaId
             )
         }
     }
