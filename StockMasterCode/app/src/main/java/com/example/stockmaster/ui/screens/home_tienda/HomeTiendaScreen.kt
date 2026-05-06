@@ -1,5 +1,6 @@
 package com.example.stockmaster.ui.screens.home_tienda
 
+import android.text.Layout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,6 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.stockmaster.viewmodel.ProductosViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -20,7 +23,8 @@ fun HomeTiendaScreen(
     onAddProduct: () -> Unit,
     onUsuarios: () -> Unit,
     onProveedores: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onFinanzas: () -> Unit
 ){
 
     val auth = FirebaseAuth.getInstance()
@@ -124,6 +128,15 @@ fun HomeTiendaScreen(
                     buttonText = "Agregar contacto",
                     onClick = onProveedores
                 )
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                CardBox(
+                    title = "Finanzas",
+                    subtitle = "Ver estadisticas e informes",
+                    buttonText = "Agregar Informes",
+                    onClick = onFinanzas
+                )
             }
         }
     }
@@ -136,42 +149,69 @@ fun CardBox(
     buttonText: String,
     onClick: () -> Unit
 ) {
-
     Card(
-        shape = RoundedCornerShape(20.dp),
-        modifier = Modifier.fillMaxWidth()
+        shape = RoundedCornerShape(28.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp) // Le damos una altura fija generosa
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFE5E4E9))
     ) {
-
         Row(
             modifier = Modifier
-                .padding(20.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .padding(horizontal = 24.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
         ) {
 
             Box(
                 modifier = Modifier
-                    .size(70.dp)
-                    .background(Color.LightGray, RoundedCornerShape(12.dp))
+                    .size(60.dp)
+                    .background(Color(0xFFC4C4C4), RoundedCornerShape(12.dp))
             )
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(12.dp))
+
 
             Column(
                 modifier = Modifier.weight(1f)
             ) {
+                Text(
+                    text = title,
+                    fontSize = 17.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    maxLines = 1
+                )
 
-                Text(title, fontSize = 18.sp)
+                Spacer(modifier = Modifier.height(2.dp))
 
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(subtitle, fontSize = 14.sp, color = Color.Gray)
+                Text(
+                    text = subtitle,
+                    fontSize = 13.sp,
+                    color = Color.Gray,
+                    lineHeight = 16.sp,
+                    maxLines = 2
+                )
             }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
 
             Button(
                 onClick = onClick,
-                shape = RoundedCornerShape(50)
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4A5D91)),
+                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                modifier = Modifier.heightIn(min = 36.dp)
             ) {
-                Text("+ $buttonText")
+                Text(
+                    text = "+ $buttonText",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White
+                )
             }
         }
     }

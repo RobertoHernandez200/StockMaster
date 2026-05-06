@@ -20,6 +20,10 @@ import com.example.stockmaster.ui.screens.proveedores.ProveedoresScreen
 import com.example.stockmaster.ui.screens.products.ProductScreen
 import com.example.stockmaster.ui.screens.cliente.TiendasClienteScreen
 import com.example.stockmaster.ui.screens.cliente.ClienteProductosScreen
+import com.example.stockmaster.ui.screens.finanzas.ClientesStatsScreen
+import com.example.stockmaster.ui.screens.finanzas.FinanzasScreen
+import com.example.stockmaster.ui.screens.finanzas.InventarioStatsScreen
+import com.example.stockmaster.ui.screens.finanzas.TendenciasScreen
 
 // LISTAS
 import com.example.stockmaster.ui.screens.lista_deseos.*
@@ -168,6 +172,7 @@ fun NavGraph() {
                 onAddProduct = { navController.navigate("productos") },
                 onUsuarios = { navController.navigate("usuarios") },
                 onProveedores = { navController.navigate("proveedores") },
+                onFinanzas = {navController.navigate("finanzas")},
                 onLogout = {
                     navController.navigate("role_selection") {
                         popUpTo(0)
@@ -180,6 +185,21 @@ fun NavGraph() {
             ProveedoresScreen(onBack = { navController.popBackStack() })
         }
 
+        composable("finanzas") {
+            FinanzasScreen(
+                navController = navController, // Pasamos el controlador aquí
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable("inventarioStats"){
+            InventarioStatsScreen(navController)
+        }
+        composable("clienteStats"){
+            ClientesStatsScreen(navController)
+        }
+        composable("tendencias"){
+            TendenciasScreen(navController)
+        }
         composable("productos") {
             ProductScreen { navController.popBackStack() }
         }
