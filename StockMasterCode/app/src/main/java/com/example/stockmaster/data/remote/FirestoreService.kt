@@ -1,6 +1,7 @@
 package com.example.stockmaster.data.remote
 
 import com.example.stockmaster.model.Tienda
+import com.example.stockmaster.model.Proveedor
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -8,7 +9,7 @@ class FirestoreService {
 
     private val db = FirebaseFirestore.getInstance()
 
-
+    // 🔥 OBTENER TIENDA POR CÓDIGO
     suspend fun obtenerTiendaPorCodigo(codigo: String): Tienda? {
 
         return try {
@@ -86,6 +87,73 @@ class FirestoreService {
             .collection("tiendas")
             .document(tiendaId)
             .delete()
+            .await()
+    }
+
+    // =========================================
+    // Proveedor
+    // =========================================
+
+    suspend fun guardarProveedor(
+        userId: String,
+        proveedor: Proveedor
+    ) {
+
+        db.collection("tiendas")
+            .document(userId)
+            .collection("proveedores")
+            .add(
+                hashMapOf(
+                    "nombre" to proveedor.nombre,
+                    "correo" to proveedor.correo
+                )
+            )
+            .await()
+    }
+
+    suspend fun obtenerProveedores(
+        userId: String
+    ): List<Proveedor> {
+
+        val result = db.collection("tiendas")
+            .document(userId)
+            .collection("proveedores")
+            .get()
+            .await()
+
+        return result.documents.map {
+
+            Proveedor(
+                id = it.id,
+                nombre = it.getString("nombre") ?: "",
+                correo = it.getString("correo") ?: ""
+            )
+        }
+    }
+
+    suspend fun eliminarProveedor(
+        userId: String,
+        proveedorId: String
+    ) {
+
+        db.collection("tiendas")
+            .document(userId)
+            .collection("proveedores")
+            .document(proveedorId)
+            .delete()
+            .await()
+    }
+
+    suspend fun actualizarProveedor(
+        userId: String,
+        proveedor: Proveedor
+    ) {
+
+        db.collection("tiendas")
+            .document(userId)
+            .collection("proveedores")
+            .document(proveedor.id)
+            .set(proveedor)
             .await()
     }
 

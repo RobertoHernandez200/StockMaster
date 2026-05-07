@@ -5,12 +5,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import com.example.stockmaster.ui.components.LineTextField
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.navigation.NavController
 
 @Composable
@@ -51,17 +53,17 @@ fun CrearListaScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(40.dp))
 
         // 📝 INPUT
-        OutlinedTextField(
+        LineTextField(
             value = nombreLista,
-            onValueChange = { nombreLista = it },
-            label = { Text("Nombre de lista") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            onValueChange = {
+                nombreLista = it
+            },
+            label = "Nombre de lista"
         )
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // 🔘 BOTÓN
+        // BOTÓN
         Button(
             onClick = {
                 if (nombreLista.isNotBlank()) {
@@ -70,6 +72,8 @@ fun CrearListaScreen(navController: NavController) {
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
+                .offset(y = 10.dp)
                 .height(55.dp),
             shape = MaterialTheme.shapes.large,
             colors = ButtonDefaults.buttonColors(

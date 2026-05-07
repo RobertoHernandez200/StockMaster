@@ -62,7 +62,9 @@ fun DetalleListaScreen(
                 imageVector = Icons.Default.Add,
                 contentDescription = "",
                 modifier = Modifier.clickable {
-                    navController.navigate("seleccionar_productos/$tiendaId/$nombreLista")
+                    navController.navigate(
+                        "seleccionar_productos/$listaId/$tiendaId/$nombreLista"
+                    )
                 }
             )
         }

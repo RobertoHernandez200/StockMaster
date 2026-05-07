@@ -17,8 +17,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.stockmaster.model.Proveedor
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.stockmaster.viewmodel.ProveedorViewModel
 
-// MODELO SIMPLE
 data class Proveedor(
     val nombre: String,
     val contacto: String
@@ -29,14 +31,13 @@ fun ProveedoresScreen(
     onBack: () -> Unit
 ) {
 
-    var proveedores by remember {
-        mutableStateOf(
-            listOf(
-                Proveedor("Proveedor 1", "contacto@test.com"),
-                Proveedor("Proveedor 2", "proveedor@email.com")
-            )
-        )
-    }
+    val viewModel: ProveedorViewModel = viewModel()
+    val proveedores by viewModel.proveedores.collectAsState()
+
+    var showDialog by remember { mutableStateOf(false) }
+    var nombre by remember { mutableStateOf("") }
+    var correo by remember { mutableStateOf("") }
+
 
     Column(
         modifier = Modifier
@@ -60,8 +61,15 @@ fun ProveedoresScreen(
                 Text("Proveedores", fontSize = 20.sp)
             }
 
-            IconButton(onClick = { /* luego agregar proveedor */ }) {
-                Icon(Icons.Default.Add, contentDescription = "Agregar")
+            IconButton(
+                onClick = {
+                    showDialog = true
+                }
+            ) {
+                Icon(
+                    Icons.Default.Add,
+                    contentDescription = "Agregar"
+                )
             }
         }
 
@@ -95,6 +103,84 @@ fun ProveedoresScreen(
                 }
             }
         }
+    }
+    if (showDialog) {
+
+        AlertDialog(
+
+            onDismissRequest = {
+                showDialog = false
+            },
+
+            title = {
+                Text("Agregar proveedor")
+            },
+
+            text = {
+
+                Column {
+
+                    OutlinedTextField(
+                        value = nombre,
+                        onValueChange = {
+                            nombre = it
+                        },
+                        label = {
+                            Text("Nombre")
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    OutlinedTextField(
+                        value = correo,
+                        onValueChange = {
+                            correo = it
+                        },
+                        label = {
+                            Text("Correo")
+                        }
+                    )
+                }
+            },
+
+            confirmButton = {
+
+                Button(
+                    onClick = {
+
+                        if (
+                            nombre.isNotBlank() &&
+                            correo.isNotBlank()
+                        ) {
+
+                            viewModel.agregarProveedor(
+                                nombre,
+                                correo
+                            )
+
+                            nombre = ""
+                            correo = ""
+
+                            showDialog = false
+                        }
+                    }
+                ) {
+                    Text("Guardar")
+                }
+            },
+
+            dismissButton = {
+
+                TextButton(
+                    onClick = {
+                        showDialog = false
+                    }
+                ) {
+                    Text("Cancelar")
+                }
+            }
+        )
     }
 }
 
@@ -130,7 +216,7 @@ fun ProveedorItem(proveedor: Proveedor) {
                 Spacer(modifier = Modifier.height(4.dp))
 
                 Text(
-                    proveedor.contacto,
+                    proveedor.correo,
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
