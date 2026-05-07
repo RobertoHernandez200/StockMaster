@@ -9,8 +9,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1d5ec300-3e02-4034-8c48-9ee7dc4a7a4a" name="Changes" comment="Optimizacion en la pantalla de clientes(dentro de finanzas)">
-      <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/finanzas/TendenciasScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/finanzas/TendenciasScreen.kt" afterDir="false" />
+    <list default="true" id="1d5ec300-3e02-4034-8c48-9ee7dc4a7a4a" name="Changes" comment="Optimizacion en la pantalla de tendencias(dentro de finanzas)">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/home_tienda/HomeTiendaScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/home_tienda/HomeTiendaScreen.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -294,7 +295,15 @@
       <option name="project" value="LOCAL" />
       <updated>1778123032864</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Optimizacion en la pantalla de tendencias(dentro de finanzas)">
+      <option name="closed" value="true" />
+      <created>1778123309872</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1778123309872</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -305,7 +314,8 @@
     <MESSAGE value="Creacion del apartado proveedores (en proceso)" />
     <MESSAGE value="Optimizacion en la pantalla de inventario" />
     <MESSAGE value="Optimizacion en la pantalla de clientes(dentro de finanzas)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Optimizacion en la pantalla de clientes(dentro de finanzas)" />
+    <MESSAGE value="Optimizacion en la pantalla de tendencias(dentro de finanzas)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Optimizacion en la pantalla de tendencias(dentro de finanzas)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
