@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.stockmaster.model.Informe
 import com.example.stockmaster.viewmodel.InformeViewModel
 import java.text.SimpleDateFormat
@@ -26,6 +27,7 @@ import java.util.Locale
 fun InformesListScreen(
     viewModel: InformeViewModel,
     onCrearInforme: () -> Unit,
+    onDetalleInforme: (String) -> Unit,
     onBack: () -> Unit
 ) {
 
@@ -112,7 +114,12 @@ fun InformesListScreen(
 
                         items(informes) { informe ->
 
-                            InformeCard(informe)
+                            InformeCard(
+                                informe = informe,
+                                onClick = {
+                                    onDetalleInforme(informe.id)
+                                }
+                            )
                         }
                     }
                 }
@@ -123,7 +130,8 @@ fun InformesListScreen(
 
 @Composable
 fun InformeCard(
-    informe: Informe
+    informe: Informe,
+    onClick: () -> Unit
 ) {
 
     val formatter = SimpleDateFormat(
@@ -134,7 +142,9 @@ fun InformeCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { },
+            .clickable {
+                onClick()
+            },
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
         )

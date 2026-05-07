@@ -48,5 +48,29 @@ class InformeRepository {
             }
     }
 
+    fun obtenerInformePorId(
+        id: String,
+        onSuccess: (Informe) -> Unit,
+        onError: (String) -> Unit
+    ) {
+
+        db.collection("informes")
+            .document(id)
+            .get()
+            .addOnSuccessListener { document ->
+
+                val informe = document.toObject(Informe::class.java)
+
+                if (informe != null) {
+                    onSuccess(informe)
+                } else {
+                    onError("No se encontró el informe")
+                }
+            }
+            .addOnFailureListener {
+                onError(it.message ?: "Error")
+            }
+    }
+
 
 }

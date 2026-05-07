@@ -28,6 +28,7 @@ import com.example.stockmaster.ui.screens.finanzas.InventarioStatsScreen
 import com.example.stockmaster.ui.screens.finanzas.TendenciasScreen
 import com.example.stockmaster.ui.screens.finanzas.ReabastecerStockScreen
 import com.example.stockmaster.ui.screens.finanzas.informes.CrearInformeScreen
+import com.example.stockmaster.ui.screens.finanzas.informes.DetalleInformeScreen
 import com.example.stockmaster.ui.screens.finanzas.informes.InformesListScreen
 
 // LISTAS
@@ -285,6 +286,9 @@ fun NavGraph() {
 
             InformesListScreen(
                 viewModel = viewModel,
+                onDetalleInforme = { id ->
+                    navController.navigate("detalle_informe/$id")
+                },
                 onCrearInforme = {
                     navController.navigate("crear_informe")
                 },
@@ -306,6 +310,21 @@ fun NavGraph() {
                 onSuccess = {
                     navController.popBackStack()
                 },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable("detalle_informe/{informeId}") { backStack ->
+
+            val informeId =
+                backStack.arguments?.getString("informeId") ?: ""
+
+            val viewModel: InformeViewModel = viewModel()
+
+            DetalleInformeScreen(
+                informeId = informeId,
+                viewModel = viewModel,
                 onBack = {
                     navController.popBackStack()
                 }

@@ -17,6 +17,9 @@ class InformeViewModel : ViewModel() {
     var informes by mutableStateOf<List<Informe>>(emptyList())
         private set
 
+    var informeSeleccionado by mutableStateOf<Informe?>(null)
+        private set
+
     init {
         cargarInformes()
     }
@@ -60,4 +63,26 @@ class InformeViewModel : ViewModel() {
             }
         )
     }
+
+    fun cargarInforme(
+        id: String
+    ) {
+
+        loading = true
+
+        repository.obtenerInformePorId(
+            id = id,
+            onSuccess = {
+
+                informeSeleccionado = it
+                loading = false
+            },
+            onError = {
+
+                loading = false
+            }
+        )
+    }
+
+
 }
