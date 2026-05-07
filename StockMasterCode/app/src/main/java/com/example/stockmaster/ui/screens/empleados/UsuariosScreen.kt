@@ -1,24 +1,28 @@
 package com.example.stockmaster.ui.screens.empleados
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import androidx.compose.foundation.background
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 
-// MODELO UNIFICADO
+// MODELO
 data class Usuario(
     val id: String = "",
     val nombre: String = "",
@@ -56,7 +60,6 @@ fun UsuariosScreen(
                     )
                 }
 
-                // SOLO MÍOS + YO MISMO
                 usuarios = lista
                     .filter {
                         it.createdBy == currentUserId || it.id == currentUserId
@@ -65,7 +68,6 @@ fun UsuariosScreen(
             }
     }
 
-    // BUSCADOR (NO SE BORRA)
     val filtrados = usuarios.filter {
         it.nombre.contains(searchText, ignoreCase = true) ||
                 it.email.contains(searchText, ignoreCase = true)
@@ -77,22 +79,19 @@ fun UsuariosScreen(
             .background(Color(0xFFF5F5F5))
     ) {
 
-        // HEADER (COMBINADO)
+        // HEADER
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Volver")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
                 }
 
-                Text(
-                    "Usuarios",
-                    style = MaterialTheme.typography.titleLarge
-                )
+                Text("Usuarios", fontSize = 20.sp)
             }
 
             IconButton(onClick = onAddUser) {
@@ -100,21 +99,23 @@ fun UsuariosScreen(
             }
         }
 
-        // SEARCH UI
+        // BUSCADOR
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-                .background(Color(0xFF6A5AE0))
-                .padding(12.dp)
+                .background(Color(0xFF6A5AE0), RoundedCornerShape(12.dp))
+                .padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(Icons.Default.Search, contentDescription = null, tint = Color.White)
+
             Spacer(Modifier.width(8.dp))
 
             TextField(
                 value = searchText,
                 onValueChange = { searchText = it },
-                placeholder = { Text("Buscar usuarios") },
+                placeholder = { Text("Buscar usuarios", color = Color.White) },
                 modifier = Modifier.fillMaxWidth(),
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
@@ -125,39 +126,90 @@ fun UsuariosScreen(
             )
         }
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // LISTA
-        LazyColumn {
-            items(filtrados) { usuario ->
-                UsuarioItem(
-                    usuario = usuario,
-                    onClick = {
-                        navController.navigate("detalle_usuario/${usuario.id}")
-                    }
+        // FONDO MORADO + LISTA
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF6A5AE0),
+                            Color(0xFF8E7CFF)
+                        )
+                    ),
+                    shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
                 )
+        ) {
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+            ) {
+
+                LazyColumn {
+                    items(filtrados) { usuario ->
+                        UsuarioItem(
+                            usuario = usuario,
+                            onClick = {
+                                navController.navigate("detalle_usuario/${usuario.id}")
+                            }
+                        )
+                    }
+                }
             }
         }
     }
 }
 
+// ITEM USUARIO (CARD)
 @Composable
 fun UsuarioItem(
     usuario: Usuario,
     onClick: () -> Unit
 ) {
-    Row(
+
+    Card(
+        shape = RoundedCornerShape(20.dp),
         modifier = Modifier
             .fillMaxWidth()
+            .padding(bottom = 12.dp)
             .clickable { onClick() }
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Column {
-            Text(usuario.nombre)
-            Text(usuario.email, style = MaterialTheme.typography.bodySmall)
-        }
 
-        Text(usuario.role)
+        Row(
+            modifier = Modifier
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Box(
+                modifier = Modifier
+                    .size(60.dp)
+                    .background(Color.LightGray, RoundedCornerShape(12.dp))
+            )
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+
+                Text(usuario.nombre, fontSize = 18.sp)
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Text(
+                    usuario.email,
+                    fontSize = 14.sp,
+                    color = Color.Gray
+                )
+            }
+
+            Text(
+                usuario.role,
+                color = Color.Gray
+            )
+        }
     }
 }

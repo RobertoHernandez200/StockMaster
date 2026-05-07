@@ -3,7 +3,6 @@ package com.example.stockmaster.ui.screens.auth.login
 import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -14,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.stockmaster.ui.components.LineTextField
 import com.example.stockmaster.ui.components.PrimaryButton
+import androidx.compose.foundation.layout.navigationBarsPadding
 
 @Composable
 fun LoginEmailScreen(
@@ -99,6 +99,7 @@ fun LoginEmailScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
                 .height(55.dp)
         )
     }

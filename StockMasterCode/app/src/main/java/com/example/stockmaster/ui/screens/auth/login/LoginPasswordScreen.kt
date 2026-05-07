@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.example.stockmaster.R
 import com.example.stockmaster.ui.components.LineTextField
 import com.example.stockmaster.ui.components.PrimaryButton
+import androidx.compose.foundation.layout.navigationBarsPadding
 
 @Composable
 fun LoginPasswordScreen(
@@ -140,6 +141,7 @@ fun LoginPasswordScreen(
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
                 .height(55.dp)
         )
     }

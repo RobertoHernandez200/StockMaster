@@ -1,29 +1,27 @@
 package com.example.stockmaster.ui.screens.auth.register
 
-import android.util.Patterns
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.Image
 import androidx.compose.ui.draw.clip
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.*
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.stockmaster.R
 import com.example.stockmaster.ui.components.LineTextField
 import com.example.stockmaster.ui.components.PrimaryButton
+import androidx.compose.foundation.layout.navigationBarsPadding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+
+fun generarCodigoTienda(): String {
+    return (100000..999999).random().toString()
+}
 
 @Composable
 fun RegisterScreen(
@@ -53,12 +51,10 @@ fun RegisterScreen(
             .padding(24.dp)
     ) {
 
-        // HEADER
         TextButton(onClick = onBack) {
             Text("← Crear cuenta")
         }
 
-        // CONTENIDO CENTRADO
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -77,107 +73,48 @@ fun RegisterScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "Crear cuenta",
-                fontSize = 24.sp
-            )
+            Text("Crear cuenta", fontSize = 24.sp)
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // INPUTS TIPO LÍNEA
-            LineTextField(
-                value = email,
-                onValueChange = {
-                    email = it
-                    errorMessage = ""
-                },
-                label = "Email"
-            )
+            LineTextField(email, { email = it; errorMessage = "" }, "Email")
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            LineTextField(nombre, { nombre = it; errorMessage = "" }, "Nombre")
 
             Spacer(modifier = Modifier.height(16.dp))
 
             LineTextField(
-                value = nombre,
-                onValueChange = {
-                    nombre = it
-                    errorMessage = ""
-                },
-                label = "Nombre"
-            )
+                password,
+                { password = it; errorMessage = "" },
+                "Contraseña",
+                true,
+                passwordVisible
+            ) { passwordVisible = !passwordVisible }
 
             Spacer(modifier = Modifier.height(16.dp))
 
             LineTextField(
-                value = password,
-                onValueChange = {
-                    password = it
-                    errorMessage = ""
-                },
-                label = "Contraseña",
-                isPassword = true,
-                visible = passwordVisible,
-                onToggleVisibility = { passwordVisible = !passwordVisible }
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            LineTextField(
-                value = confirmPassword,
-                onValueChange = {
-                    confirmPassword = it
-                    errorMessage = ""
-                },
-                label = "Confirmar contraseña",
-                isPassword = true,
-                visible = confirmPasswordVisible,
-                onToggleVisibility = { confirmPasswordVisible = !confirmPasswordVisible }
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text("*Mínimo 6 caracteres", fontSize = 12.sp, color = Color.Gray)
+                confirmPassword,
+                { confirmPassword = it; errorMessage = "" },
+                "Confirmar contraseña",
+                true,
+                confirmPasswordVisible
+            ) { confirmPasswordVisible = !confirmPasswordVisible }
 
             Spacer(modifier = Modifier.height(12.dp))
 
             if (errorMessage.isNotEmpty()) {
-                Text(
-                    text = errorMessage,
-                    color = MaterialTheme.colorScheme.error,
-                    fontSize = 13.sp,
-                    textAlign = TextAlign.Center
-                )
+                Text(errorMessage, color = MaterialTheme.colorScheme.error)
             }
         }
 
-        // BOTÓN
         PrimaryButton(
             text = if (loading) "Registrando..." else "Registrarse",
             onClick = {
-                when {
-                    email.isBlank() || nombre.isBlank() ||
-                            password.isBlank() || confirmPassword.isBlank() -> {
-                        errorMessage = "Todos los campos son obligatorios"
-                        return@PrimaryButton
-                    }
 
-                    !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
-                        errorMessage = "Correo inválido"
-                        return@PrimaryButton
-                    }
-
-                    password.length < 6 -> {
-                        errorMessage = "Mínimo 6 caracteres"
-                        return@PrimaryButton
-                    }
-
-                    password != confirmPassword -> {
-                        errorMessage = "Las contraseñas no coinciden"
-                        return@PrimaryButton
-                    }
-                }
-
-                loading = true
-                errorMessage = ""
+                val codigo = if (role == "tienda") generarCodigoTienda() else ""
 
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnSuccessListener { result ->
@@ -187,7 +124,8 @@ fun RegisterScreen(
                         val user = hashMapOf(
                             "email" to email,
                             "nombre" to nombre,
-                            "role" to role
+                            "role" to role,
+                            "codigo" to codigo
                         )
 
                         db.collection("usuarios")
@@ -197,18 +135,11 @@ fun RegisterScreen(
                                 loading = false
                                 onRegisterSuccess()
                             }
-                            .addOnFailureListener {
-                                loading = false
-                                errorMessage = "Error guardando datos"
-                            }
-                    }
-                    .addOnFailureListener {
-                        loading = false
-                        errorMessage = "Error: ${it.message}"
                     }
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
                 .height(55.dp)
         )
     }
