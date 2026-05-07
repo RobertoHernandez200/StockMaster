@@ -8,6 +8,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,8 +42,6 @@ fun InventarioStatsScreen(navController: NavController) {
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    // ===== FLECHA ATRAS =====
-
                     IconButton(
                         onClick = {
                             navController.popBackStack()
@@ -57,8 +57,6 @@ fun InventarioStatsScreen(navController: NavController) {
 
                     Spacer(modifier = Modifier.width(8.dp))
 
-                    // ===== TITULO =====
-
                     Text(
                         text = "Movimiento de Inventario",
                         fontSize = 24.sp,
@@ -67,10 +65,8 @@ fun InventarioStatsScreen(navController: NavController) {
                         modifier = Modifier.weight(1f)
                     )
 
-                    // ===== BOTON REFRESH =====
-
                     IconButton(
-                        onClick = { /* Refresh data */ }
+                        onClick = { }
                     ) {
 
                         Icon(
@@ -142,8 +138,6 @@ fun InventarioStatsScreen(navController: NavController) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                // ===== PIE CHART =====
-
                 Box(
                     modifier = Modifier
                         .size(140.dp)
@@ -197,7 +191,7 @@ fun InventarioStatsScreen(navController: NavController) {
 
                 items = listOf(
                     "Smartphones" to "120",
-                    "Equipos de sonido" to "60",
+                    "Equipos de Sonido" to "60",
                     "Audifonos" to "28",
                     "Portatiles" to "24"
                 ),
@@ -254,7 +248,14 @@ fun InventarioStatsScreen(navController: NavController) {
 
             // ==================== RECOMENDACION ====================
 
-            RecomendacionCard()
+            RecomendacionCard(
+                onReabastecerClick = {
+
+                    navController.navigate(
+                        "reabastecer/Equipos de Sonido"
+                    )
+                }
+            )
 
             Spacer(
                 modifier = Modifier.height(32.dp)
@@ -477,7 +478,9 @@ fun AlertRow(
 // ==================== RECOMENDACION ====================
 
 @Composable
-fun RecomendacionCard() {
+fun RecomendacionCard(
+    onReabastecerClick: () -> Unit
+) {
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -536,7 +539,9 @@ fun RecomendacionCard() {
             )
 
             Button(
-                onClick = { /* Acción */ },
+                onClick = {
+                    onReabastecerClick()
+                },
 
                 colors = ButtonDefaults.buttonColors(
                     containerColor = PrincipalPurple

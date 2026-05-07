@@ -9,9 +9,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1d5ec300-3e02-4034-8c48-9ee7dc4a7a4a" name="Changes" comment="Optimizacion en la pantalla de tendencias(dentro de finanzas)">
+    <list default="true" id="1d5ec300-3e02-4034-8c48-9ee7dc4a7a4a" name="Changes" comment="creacion de la pantalla de ReabastecerStock, tambien se le dio la funcionalidad al boton de agregar stock en la pantala de tendencias">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/home_tienda/HomeTiendaScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/home_tienda/HomeTiendaScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/finanzas/InventarioStatsScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/finanzas/InventarioStatsScreen.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,8 +30,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Kotlin File" />
         <option value="Kotlin Class" />
+        <option value="Kotlin File" />
       </list>
     </option>
   </component>
@@ -303,7 +303,31 @@
       <option name="project" value="LOCAL" />
       <updated>1778123309872</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Actualizacion: scroll de la pantalla de tiendas arreglado">
+      <option name="closed" value="true" />
+      <created>1778124065104</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1778124065104</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Actualizacion: los productos se muestran en tiempo real en la firebase, se actualizan y eliminan en tiempo  real">
+      <option name="closed" value="true" />
+      <created>1778178079341</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1778178079341</updated>
+    </task>
+    <task id="LOCAL-00012" summary="creacion de la pantalla de ReabastecerStock, tambien se le dio la funcionalidad al boton de agregar stock en la pantala de tendencias">
+      <option name="closed" value="true" />
+      <created>1778179527555</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1778179527555</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -315,7 +339,10 @@
     <MESSAGE value="Optimizacion en la pantalla de inventario" />
     <MESSAGE value="Optimizacion en la pantalla de clientes(dentro de finanzas)" />
     <MESSAGE value="Optimizacion en la pantalla de tendencias(dentro de finanzas)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Optimizacion en la pantalla de tendencias(dentro de finanzas)" />
+    <MESSAGE value="Actualizacion: scroll de la pantalla de tiendas arreglado" />
+    <MESSAGE value="Actualizacion: los productos se muestran en tiempo real en la firebase, se actualizan y eliminan en tiempo  real" />
+    <MESSAGE value="creacion de la pantalla de ReabastecerStock, tambien se le dio la funcionalidad al boton de agregar stock en la pantala de tendencias" />
+    <option name="LAST_COMMIT_MESSAGE" value="creacion de la pantalla de ReabastecerStock, tambien se le dio la funcionalidad al boton de agregar stock en la pantala de tendencias" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

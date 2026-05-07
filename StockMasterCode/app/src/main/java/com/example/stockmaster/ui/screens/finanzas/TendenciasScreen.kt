@@ -2,7 +2,6 @@ package com.example.stockmaster.ui.screens.finanzas
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -40,8 +39,6 @@ fun TendenciasScreen(navController: NavController) {
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-
-            // ===== FLECHA ATRAS =====
 
             IconButton(
                 onClick = {
@@ -313,7 +310,9 @@ fun TendenciasScreen(navController: NavController) {
 
         // ==================== RECOMENDACION ====================
 
-        RecommendationActionCard()
+        RecommendationActionCard(
+            navController = navController
+        )
 
         Spacer(
             modifier = Modifier.height(40.dp)
@@ -502,7 +501,9 @@ fun ComparisonCard(
 }
 
 @Composable
-fun RecommendationActionCard() {
+fun RecommendationActionCard(
+    navController: NavController
+) {
 
     Card(
         modifier = Modifier.fillMaxWidth(),
@@ -560,7 +561,12 @@ fun RecommendationActionCard() {
             )
 
             Button(
-                onClick = { },
+                onClick = {
+
+                    navController.navigate(
+                        "reabastecer/Smartphone"
+                    )
+                },
 
                 colors = ButtonDefaults.buttonColors(
                     containerColor = PrincipalPurple
