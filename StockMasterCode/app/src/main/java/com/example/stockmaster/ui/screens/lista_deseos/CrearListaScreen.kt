@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import com.example.stockmaster.ui.components.LineTextField
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
@@ -52,12 +53,12 @@ fun CrearListaScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(40.dp))
 
         // 📝 INPUT
-        OutlinedTextField(
+        LineTextField(
             value = nombreLista,
-            onValueChange = { nombreLista = it },
-            label = { Text("Nombre de lista") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            onValueChange = {
+                nombreLista = it
+            },
+            label = "Nombre de lista"
         )
 
         Spacer(modifier = Modifier.weight(1f))
