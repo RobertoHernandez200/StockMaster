@@ -9,10 +9,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1d5ec300-3e02-4034-8c48-9ee7dc4a7a4a" name="Changes" comment="Creacion del apartado proveedores (en proceso)">
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
+    <list default="true" id="1d5ec300-3e02-4034-8c48-9ee7dc4a7a4a" name="Changes" comment="Optimizacion en la pantalla de inventario">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/finanzas/InventarioStatsScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/finanzas/InventarioStatsScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/finanzas/ClientesStatsScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/StockMasterCode/app/src/main/java/com/example/stockmaster/ui/screens/finanzas/ClientesStatsScreen.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -280,7 +279,15 @@
       <option name="project" value="LOCAL" />
       <updated>1777502629574</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Optimizacion en la pantalla de inventario">
+      <option name="closed" value="true" />
+      <created>1778122429389</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1778122429389</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -289,7 +296,8 @@
     <MESSAGE value="Diseño terminado de apartados productos y usuarios" />
     <MESSAGE value="Diseño terminado de apartado de productos y usuarios" />
     <MESSAGE value="Creacion del apartado proveedores (en proceso)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Creacion del apartado proveedores (en proceso)" />
+    <MESSAGE value="Optimizacion en la pantalla de inventario" />
+    <option name="LAST_COMMIT_MESSAGE" value="Optimizacion en la pantalla de inventario" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
