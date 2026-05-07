@@ -22,29 +22,70 @@ val BackgroundGray = Color(0xFFF5F5F5)
 
 @Composable
 fun InventarioStatsScreen(navController: NavController) {
+
     val scrollState = rememberScrollState()
 
     Scaffold(
+
+        // ==================== TOP BAR ====================
+
         topBar = {
-            Column(modifier = Modifier.padding(16.dp)) {
+
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+
+                    // ===== FLECHA ATRAS =====
+
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                        }
+                    ) {
+
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = PrincipalPurple
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    // ===== TITULO =====
+
                     Text(
                         text = "Movimiento de Inventario",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
-                        color = PrincipalPurple
+                        color = PrincipalPurple,
+                        modifier = Modifier.weight(1f)
                     )
-                    IconButton(onClick = { /* Refresh data */ }) {
-                        Icon(Icons.Default.Refresh, contentDescription = null, tint = PrincipalPurple, modifier = Modifier.size(30.dp))
+
+                    // ===== BOTON REFRESH =====
+
+                    IconButton(
+                        onClick = { /* Refresh data */ }
+                    ) {
+
+                        Icon(
+                            Icons.Default.Refresh,
+                            contentDescription = null,
+                            tint = PrincipalPurple,
+                            modifier = Modifier.size(30.dp)
+                        )
                     }
                 }
             }
         }
+
     ) { paddingValues ->
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -52,113 +93,213 @@ fun InventarioStatsScreen(navController: NavController) {
                 .verticalScroll(scrollState)
                 .padding(horizontal = 16.dp)
         ) {
-            // --- 1. GRÁFICO DE FLUJO SEMANAL ---
+
+            // ==================== GRAFICO ====================
+
             Text(
-                "Flujo de Inventario Semanal",
+                text = "Flujo de Inventario Semanal",
                 fontSize = 12.sp,
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 fontWeight = FontWeight.Bold,
                 color = Color.DarkGray
             )
+
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp)
                     .padding(vertical = 8.dp)
-                    .background(BackgroundGray, RoundedCornerShape(8.dp)),
+                    .background(
+                        BackgroundGray,
+                        RoundedCornerShape(8.dp)
+                    ),
+
                 contentAlignment = Alignment.Center
             ) {
-                // Aquí se integraría la librería de gráficos (ej. Vico o MPAndroidChart)
-                Text("Espacio para Gráfico de Líneas", color = Color.Gray)
+
+                Text(
+                    "Espacio para Gráfico de Líneas",
+                    color = Color.Gray
+                )
             }
 
-            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 12.dp)
+            )
 
-            // --- 2. DISTRIBUCIÓN POR CATEGORÍA ---
-            HeaderSection("Distribucion por Categoria", Icons.Default.Public)
+            // ==================== DISTRIBUCION ====================
+
+            HeaderSection(
+                "Distribucion por Categoria",
+                Icons.Default.Public
+            )
+
             Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Representación visual del Pie Chart
+
+                // ===== PIE CHART =====
+
                 Box(
                     modifier = Modifier
                         .size(140.dp)
-                        .background(LightPurple, CircleShape),
+                        .background(
+                            LightPurple,
+                            CircleShape
+                        ),
+
                     contentAlignment = Alignment.Center
                 ) {
-                    Canvas(modifier = Modifier.size(140.dp)) {
-                        // Simulación de divisiones del gráfico de pastel
-                        drawArc(color = PrincipalPurple, startAngle = 0f, sweepAngle = 180f, useCenter = true)
-                        drawArc(color = Color(0xFF8E87FF), startAngle = 180f, sweepAngle = 90f, useCenter = true)
+
+                    Canvas(
+                        modifier = Modifier.size(140.dp)
+                    ) {
+
+                        drawArc(
+                            color = PrincipalPurple,
+                            startAngle = 0f,
+                            sweepAngle = 180f,
+                            useCenter = true
+                        )
+
+                        drawArc(
+                            color = Color(0xFF8E87FF),
+                            startAngle = 180f,
+                            sweepAngle = 90f,
+                            useCenter = true
+                        )
                     }
                 }
 
-                Column(modifier = Modifier.padding(start = 24.dp)) {
-                    CategoryLabel("Smarphones 50%")
+                Column(
+                    modifier = Modifier.padding(start = 24.dp)
+                ) {
+
+                    CategoryLabel("Smartphones 50%")
                     CategoryLabel("Equipos de Sonido 25%")
                     CategoryLabel("Audifonos 15%")
                     CategoryLabel("Portatiles 10%")
                 }
             }
 
-            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 12.dp)
+            )
 
-            // --- 3. STOCK MOVIDO ---
+            // ==================== STOCK MOVIDO ====================
+
             RankingSection(
                 title = "Stock Movido",
+
                 items = listOf(
                     "Smartphones" to "120",
                     "Equipos de sonido" to "60",
                     "Audifonos" to "28",
                     "Portatiles" to "24"
                 ),
+
                 icon = Icons.Default.Inventory2
             )
 
-            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 12.dp)
+            )
 
-            // --- 4. STOCK LENTO ---
+            // ==================== STOCK LENTO ====================
+
             RankingSection(
                 title = "Stock Lento",
+
                 items = listOf(
                     "Fundas" to "5",
                     "Cargadores" to "8"
                 ),
+
                 icon = Icons.Default.ThumbDown
             )
 
-            HorizontalDivider(modifier = Modifier.padding(vertical = 12.dp))
+            HorizontalDivider(
+                modifier = Modifier.padding(vertical = 12.dp)
+            )
 
-            // --- 5. ALERTAS DE DEMANDA Y STOCK ---
-            AlertRow(Icons.Default.LocalFireDepartment, "Alta demanda:", "Smartphone", "120 Und", Color(0xFFFF5722))
-            Spacer(modifier = Modifier.height(12.dp))
-            AlertRow(Icons.Default.Warning, "Bajo stock:", "Equipos de Sonido", "10 Und", Color(0xFFFFC107))
+            // ==================== ALERTAS ====================
 
-            Spacer(modifier = Modifier.height(24.dp))
+            AlertRow(
+                Icons.Default.LocalFireDepartment,
+                "Alta demanda:",
+                "Smartphone",
+                "120 Und",
+                Color(0xFFFF5722)
+            )
 
-            // --- 6. TARJETA DE RECOMENDACIÓN ---
+            Spacer(
+                modifier = Modifier.height(12.dp)
+            )
+
+            AlertRow(
+                Icons.Default.Warning,
+                "Bajo stock:",
+                "Equipos de Sonido",
+                "10 Und",
+                Color(0xFFFFC107)
+            )
+
+            Spacer(
+                modifier = Modifier.height(24.dp)
+            )
+
+            // ==================== RECOMENDACION ====================
+
             RecomendacionCard()
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(
+                modifier = Modifier.height(32.dp)
+            )
         }
     }
 }
 
+// ==================== HEADER ====================
+
 @Composable
-fun HeaderSection(title: String, icon: ImageVector) {
+fun HeaderSection(
+    title: String,
+    icon: ImageVector
+) {
+
     Row(
         modifier = Modifier.fillMaxWidth(),
+
         horizontalArrangement = Arrangement.SpaceBetween,
+
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = title, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = PrincipalPurple)
-        Icon(icon, contentDescription = null, tint = PrincipalPurple, modifier = Modifier.size(28.dp))
+
+        Text(
+            text = title,
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+            color = PrincipalPurple
+        )
+
+        Icon(
+            icon,
+            contentDescription = null,
+            tint = PrincipalPurple,
+            modifier = Modifier.size(28.dp)
+        )
     }
 }
 
+// ==================== CATEGORY LABEL ====================
+
 @Composable
 fun CategoryLabel(text: String) {
+
     Text(
         text = text,
         fontSize = 15.sp,
@@ -168,32 +309,76 @@ fun CategoryLabel(text: String) {
     )
 }
 
+// ==================== RANKING SECTION ====================
+
 @Composable
-fun RankingSection(title: String, items: List<Pair<String, String>>, icon: ImageVector) {
-    Text(text = title, fontSize = 22.sp, fontWeight = FontWeight.Bold, color = PrincipalPurple)
+fun RankingSection(
+    title: String,
+    items: List<Pair<String, String>>,
+    icon: ImageVector
+) {
+
+    Text(
+        text = title,
+        fontSize = 22.sp,
+        fontWeight = FontWeight.Bold,
+        color = PrincipalPurple
+    )
+
     Row(
-        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 8.dp),
+
         verticalAlignment = Alignment.CenterVertically
     ) {
+
         Card(
-            colors = CardDefaults.cardColors(containerColor = LightPurple),
+            colors = CardDefaults.cardColors(
+                containerColor = LightPurple
+            ),
+
             modifier = Modifier.weight(1f),
+
             elevation = CardDefaults.cardElevation(6.dp),
+
             shape = RoundedCornerShape(12.dp)
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
+
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+
                 items.forEachIndexed { index, item ->
+
                     Row(
-                        modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 2.dp),
+
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Text(text = "${index + 1}. ${item.first}", color = Color.White, fontWeight = FontWeight.Medium)
-                        Text(text = item.second, color = Color.White, fontWeight = FontWeight.Bold)
+
+                        Text(
+                            text = "${index + 1}. ${item.first}",
+                            color = Color.White,
+                            fontWeight = FontWeight.Medium
+                        )
+
+                        Text(
+                            text = item.second,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }
         }
-        Spacer(modifier = Modifier.width(16.dp))
+
+        Spacer(
+            modifier = Modifier.width(16.dp)
+        )
+
         Icon(
             icon,
             contentDescription = null,
@@ -203,51 +388,126 @@ fun RankingSection(title: String, items: List<Pair<String, String>>, icon: Image
     }
 }
 
+// ==================== ALERT ROW ====================
+
 @Composable
-fun AlertRow(icon: ImageVector, label: String, product: String, amount: String, iconColor: Color) {
+fun AlertRow(
+    icon: ImageVector,
+    label: String,
+    product: String,
+    amount: String,
+    iconColor: Color
+) {
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Icono de producto (Placeholder)
+
         Box(
             modifier = Modifier
                 .size(50.dp)
-                .border(2.dp, PrincipalPurple, RoundedCornerShape(8.dp)),
+                .border(
+                    2.dp,
+                    PrincipalPurple,
+                    RoundedCornerShape(8.dp)
+                ),
+
             contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Default.PhoneAndroid, contentDescription = null, tint = PrincipalPurple)
+
+            Icon(
+                Icons.Default.PhoneAndroid,
+                contentDescription = null,
+                tint = PrincipalPurple
+            )
         }
 
-        Spacer(modifier = Modifier.width(12.dp))
+        Spacer(
+            modifier = Modifier.width(12.dp)
+        )
 
-        Column(modifier = Modifier.weight(1f)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(icon, contentDescription = null, tint = iconColor, modifier = Modifier.size(18.dp))
-                Text(text = " $label", color = PrincipalPurple, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    tint = iconColor,
+                    modifier = Modifier.size(18.dp)
+                )
+
+                Text(
+                    text = " $label",
+                    color = PrincipalPurple,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
             }
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
+
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = product, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = TextPurple)
-                Text(text = amount, fontSize = 20.sp, fontWeight = FontWeight.Bold, color = TextPurple)
+
+                Text(
+                    text = product,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPurple
+                )
+
+                Text(
+                    text = amount,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPurple
+                )
             }
         }
     }
 }
 
+// ==================== RECOMENDACION ====================
+
 @Composable
 fun RecomendacionCard() {
+
     Card(
         modifier = Modifier.fillMaxWidth(),
+
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, Color.LightGray),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+
+        border = BorderStroke(
+            1.dp,
+            Color.LightGray
+        ),
+
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        )
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Info, contentDescription = null, tint = PrincipalPurple)
+
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                Icon(
+                    Icons.Default.Info,
+                    contentDescription = null,
+                    tint = PrincipalPurple
+                )
+
                 Text(
                     text = " Recomendacion!",
                     modifier = Modifier.padding(start = 8.dp),
@@ -255,23 +515,47 @@ fun RecomendacionCard() {
                     color = PrincipalPurple,
                     fontSize = 16.sp
                 )
-                Spacer(modifier = Modifier.weight(1f))
-                Icon(Icons.Default.Close, contentDescription = null, tint = Color.Gray, modifier = Modifier.size(20.dp))
+
+                Spacer(
+                    modifier = Modifier.weight(1f)
+                )
+
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = null,
+                    tint = Color.Gray,
+                    modifier = Modifier.size(20.dp)
+                )
             }
+
             Text(
                 text = "Reabastécete de Equipos de Sonido",
                 color = TextPurple,
                 fontSize = 15.sp,
                 modifier = Modifier.padding(vertical = 12.dp)
             )
+
             Button(
                 onClick = { /* Acción */ },
-                colors = ButtonDefaults.buttonColors(containerColor = PrincipalPurple),
+
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = PrincipalPurple
+                ),
+
                 shape = RoundedCornerShape(8.dp),
+
                 modifier = Modifier.height(36.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp)
+
+                contentPadding = PaddingValues(
+                    horizontal = 16.dp,
+                    vertical = 0.dp
+                )
             ) {
-                Text("SI!!!", fontWeight = FontWeight.Bold)
+
+                Text(
+                    "SI!!!",
+                    fontWeight = FontWeight.Bold
+                )
             }
         }
     }
