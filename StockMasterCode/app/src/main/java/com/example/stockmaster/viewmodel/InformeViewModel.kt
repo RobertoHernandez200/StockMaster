@@ -84,5 +84,20 @@ class InformeViewModel : ViewModel() {
         )
     }
 
+    fun eliminarInforme(informeId: String) {
+
+        repository.eliminarInforme(
+            informeId = informeId,
+
+            onSuccess = {
+                cargarInformes()
+            },
+
+            onError = {
+
+            }
+        )
+    }
+
 
 }

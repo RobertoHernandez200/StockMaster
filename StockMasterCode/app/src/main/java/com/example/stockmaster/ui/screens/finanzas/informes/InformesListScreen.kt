@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -16,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.example.stockmaster.model.Informe
 import com.example.stockmaster.viewmodel.InformeViewModel
 import java.text.SimpleDateFormat
@@ -45,6 +45,7 @@ fun InformesListScreen(
             FloatingActionButton(
                 onClick = onCrearInforme
             ) {
+
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null
@@ -64,7 +65,10 @@ fun InformesListScreen(
 
             // HEADER
 
-            TextButton(onClick = onBack) {
+            TextButton(
+                onClick = onBack
+            ) {
+
                 Text("← Volver")
             }
 
@@ -86,6 +90,7 @@ fun InformesListScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
+
                     CircularProgressIndicator()
                 }
 
@@ -116,8 +121,13 @@ fun InformesListScreen(
 
                             InformeCard(
                                 informe = informe,
+
                                 onClick = {
                                     onDetalleInforme(informe.id)
+                                },
+
+                                onDelete = {
+                                    viewModel.eliminarInforme(informe.id)
                                 }
                             )
                         }
@@ -131,7 +141,8 @@ fun InformesListScreen(
 @Composable
 fun InformeCard(
     informe: Informe,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onDelete: () -> Unit
 ) {
 
     val formatter = SimpleDateFormat(
@@ -145,15 +156,24 @@ fun InformeCard(
             .clickable {
                 onClick()
             },
+
+        shape = MaterialTheme.shapes.medium,
+
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
+        ),
+
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
         )
     ) {
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(16.dp),
+
+            verticalAlignment = Alignment.CenterVertically
         ) {
 
             Icon(
@@ -188,6 +208,17 @@ fun InformeCard(
                     text = formatter.format(Date(informe.fecha)),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
+                )
+            }
+
+            IconButton(
+                onClick = onDelete
+            ) {
+
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Eliminar",
+                    tint = Color.Red
                 )
             }
         }

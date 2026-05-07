@@ -36,6 +36,7 @@ import com.example.stockmaster.ui.screens.lista_deseos.*
 import com.example.stockmaster.viewmodel.EmpleadoViewModel
 import com.example.stockmaster.viewmodel.ClienteViewModel
 import com.example.stockmaster.viewmodel.InformeViewModel
+import com.example.stockmaster.viewmodel.InventarioStatsViewModel
 
 @Composable
 fun NavGraph() {
@@ -330,8 +331,14 @@ fun NavGraph() {
                 }
             )
         }
-        composable("inventarioStats"){
-            InventarioStatsScreen(navController)
+        composable(route = "inventarioStats") {
+
+            val viewModel: InventarioStatsViewModel = viewModel()
+
+            InventarioStatsScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
 
         // CLIENTES
@@ -344,7 +351,7 @@ fun NavGraph() {
             TendenciasScreen(navController)
         }
 
-        // 🔥 NUEVA PANTALLA REABASTECER
+        // NUEVA PANTALLA REABASTECER
         composable("reabastecer/{producto}") { backStack ->
 
             val producto =
