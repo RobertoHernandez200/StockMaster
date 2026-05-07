@@ -11,6 +11,7 @@ import androidx.compose.ui.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.navigation.NavController
 
 @Composable
@@ -61,7 +62,7 @@ fun CrearListaScreen(navController: NavController) {
 
         Spacer(modifier = Modifier.weight(1f))
 
-        // 🔘 BOTÓN
+        // BOTÓN
         Button(
             onClick = {
                 if (nombreLista.isNotBlank()) {
@@ -70,6 +71,8 @@ fun CrearListaScreen(navController: NavController) {
             },
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
+                .offset(y = 10.dp)
                 .height(55.dp),
             shape = MaterialTheme.shapes.large,
             colors = ButtonDefaults.buttonColors(

@@ -23,6 +23,26 @@ fun WishlistScreen(navController: NavController) {
 
     var expandedId by remember { mutableStateOf<String?>(null) }
 
+    var showEditDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var nombreEditado by remember {
+        mutableStateOf("")
+    }
+
+    var listaSeleccionada by remember {
+        mutableStateOf("")
+    }
+
+    var showDeleteDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var listaEliminar by remember {
+        mutableStateOf("")
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -91,7 +111,10 @@ fun WishlistScreen(navController: NavController) {
                                 DropdownMenuItem(
                                     text = { Text("Editar") },
                                     onClick = {
-                                        // puedes abrir dialog aquí
+                                        listaSeleccionada = id
+                                        nombreEditado = nombre
+
+                                        showEditDialog = true
                                         expandedId = null
                                     }
                                 )
@@ -99,7 +122,10 @@ fun WishlistScreen(navController: NavController) {
                                 DropdownMenuItem(
                                     text = { Text("Eliminar") },
                                     onClick = {
-                                        viewModel.eliminarLista(id)
+
+                                        listaEliminar = id
+                                        showDeleteDialog = true
+
                                         expandedId = null
                                     }
                                 )
@@ -108,6 +134,107 @@ fun WishlistScreen(navController: NavController) {
                     }
                 }
             }
+        }
+
+        if (showEditDialog) {
+
+            AlertDialog(
+                onDismissRequest = {
+                    showEditDialog = false
+                },
+
+                title = {
+                    Text("Editar lista")
+                },
+
+                text = {
+
+                    OutlinedTextField(
+                        value = nombreEditado,
+                        onValueChange = {
+                            nombreEditado = it
+                        },
+                        singleLine = true
+                    )
+                },
+
+                confirmButton = {
+
+                    Button(
+                        onClick = {
+
+                            if (nombreEditado.isNotBlank()) {
+
+                                viewModel.editarNombreLista(
+                                    listaSeleccionada,
+                                    nombreEditado.trim()
+                                )
+
+                                showEditDialog = false
+                            }
+
+                            showEditDialog = false
+                        }
+                    ) {
+                        Text("Guardar")
+                    }
+                },
+
+                dismissButton = {
+
+                    TextButton(
+                        onClick = {
+                            showEditDialog = false
+                        }
+                    ) {
+                        Text("Cancelar")
+                    }
+                }
+            )
+        }
+
+        if (showDeleteDialog) {
+
+            AlertDialog(
+                onDismissRequest = {
+                    showDeleteDialog = false
+                },
+
+                title = {
+                    Text("Eliminar lista")
+                },
+
+                text = {
+                    Text(
+                        "¿Seguro que deseas eliminar esta lista?"
+                    )
+                },
+
+                confirmButton = {
+
+                    Button(
+                        onClick = {
+
+                            viewModel.eliminarLista(listaEliminar)
+
+                            showDeleteDialog = false
+                        }
+                    ) {
+                        Text("Eliminar")
+                    }
+                },
+
+                dismissButton = {
+
+                    TextButton(
+                        onClick = {
+                            showDeleteDialog = false
+                        }
+                    ) {
+                        Text("Cancelar")
+                    }
+                }
+            )
         }
     }
 }

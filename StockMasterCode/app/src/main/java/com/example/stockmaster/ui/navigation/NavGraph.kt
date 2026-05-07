@@ -468,18 +468,15 @@ fun NavGraph() {
             )
         }
 
-        composable("seleccionar_productos/{tiendaId}/{nombreLista}") { backStack ->
+        composable("seleccionar_productos/{listaId}/{tiendaId}/{nombreLista}") { backStack ->
 
-            val tiendaId =
-                backStack.arguments?.getString("tiendaId")
-                    ?: ""
-
-            val nombreLista =
-                backStack.arguments?.getString("nombreLista")
-                    ?: ""
+            val listaId = backStack.arguments?.getString("listaId")
+            val tiendaId = backStack.arguments?.getString("tiendaId") ?: ""
+            val nombreLista = backStack.arguments?.getString("nombreLista") ?: ""
 
             SeleccionarProductosScreen(
                 navController = navController,
+                listaId = listaId,
                 tiendaId = tiendaId,
                 nombreLista = nombreLista
             )

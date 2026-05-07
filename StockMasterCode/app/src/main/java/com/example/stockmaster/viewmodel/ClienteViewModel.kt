@@ -106,6 +106,61 @@ class ClienteViewModel : ViewModel() {
         }
     }
 
+    fun editarNombreLista(
+        listaId: String,
+        nuevoNombre: String
+    ) {
+
+        viewModelScope.launch {
+
+            val userId = auth.currentUser?.uid ?: return@launch
+
+            val listaActual = _listas.value.find {
+                it["id"] == listaId
+            } ?: return@launch
+
+            val nuevaLista = listaActual.toMutableMap()
+
+            nuevaLista["nombre"] = nuevoNombre
+
+            firestore.actualizarLista(
+                userId,
+                listaId,
+                nuevaLista
+            )
+
+            cargarListas()
+        }
+    }
+
+    fun actualizarProductosLista(
+        listaId: String,
+        productos: List<String>
+    ) {
+
+        viewModelScope.launch {
+
+            val userId = auth.currentUser?.uid ?: return@launch
+
+            val listaActual = _listas.value.find {
+                it["id"] == listaId
+            } ?: return@launch
+
+            val nuevaLista = listaActual.toMutableMap()
+
+            nuevaLista["productos"] =
+                productos.joinToString(",")
+
+            firestore.actualizarLista(
+                userId,
+                listaId,
+                nuevaLista
+            )
+
+            cargarListas()
+        }
+    }
+
     fun eliminarLista(listaId: String) {
         viewModelScope.launch {
             val userId = auth.currentUser?.uid ?: return@launch

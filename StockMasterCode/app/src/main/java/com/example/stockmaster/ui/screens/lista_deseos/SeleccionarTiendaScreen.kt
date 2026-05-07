@@ -82,9 +82,9 @@ fun SeleccionarTiendaScreen(
                         .fillMaxWidth()
                         .clickable {
 
-                            // 🔥 AQUÍ VAS A PRODUCTOS
+                            // AQUÍ ESTAN PRODUCTOS
                             navController.navigate(
-                                "seleccionar_productos/${tienda.id}/$nombreLista"
+                                "seleccionar_productos/null/${tienda.id}/$nombreLista"
                             )
                         }
                         .padding(16.dp),

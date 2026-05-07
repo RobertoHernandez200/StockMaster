@@ -22,6 +22,7 @@ import com.example.stockmaster.viewmodel.ClienteViewModel
 import com.example.stockmaster.ui.components.DialogCodigo
 import com.example.stockmaster.ui.components.DialogConfirmarTienda
 import com.example.stockmaster.ui.components.MenuDrawer
+import androidx.compose.foundation.layout.statusBarsPadding
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -110,11 +111,12 @@ fun HomeClienteScreen(navController: NavController) {
                 .background(Color(0xFFF2F2F2))
         ) {
 
-            // HEADER CON MENÚ REAL
+            // HEADER CON MENU
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .statusBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 2.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
 

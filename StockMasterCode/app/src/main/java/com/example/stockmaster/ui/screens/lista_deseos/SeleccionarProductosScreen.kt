@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.stockmaster.viewmodel.ProductosViewModel
 import com.example.stockmaster.viewmodel.ClienteViewModel
@@ -19,6 +20,7 @@ import com.example.stockmaster.viewmodel.ClienteViewModel
 @Composable
 fun SeleccionarProductosScreen(
     navController: NavController,
+    listaId: String?,
     tiendaId: String,
     nombreLista: String
 ) {
@@ -28,10 +30,28 @@ fun SeleccionarProductosScreen(
 
     val productos by productosViewModel.productos.collectAsState()
 
-    // 🔥 AHORA GUARDAMOS NOMBRES (NO IDs)
+    // GUARDADO CON NOMBRE
     var seleccionados by remember { mutableStateOf(setOf<String>()) }
 
-    // 🔥 CARGAR PRODUCTOS DE LA TIENDA
+    LaunchedEffect(listaId) {
+
+        if (listaId != null && listaId != "null") {
+
+            val lista = clienteViewModel.listas.value.find {
+                it["id"] == listaId
+            }
+
+            val productosGuardados = lista?.get("productos")
+                ?.split(",")
+                ?.filter { it.isNotBlank() }
+                ?.toSet()
+                ?: emptySet()
+
+            seleccionados = productosGuardados
+        }
+    }
+
+    // CARGA DE PRODUCTOS DE TIENDA
     LaunchedEffect(Unit) {
         productosViewModel.cargarProductosDeTienda(tiendaId)
     }
@@ -104,11 +124,21 @@ fun SeleccionarProductosScreen(
         Button(
             onClick = {
 
-                clienteViewModel.guardarLista(
-                    nombreLista,
-                    tiendaId,
-                    seleccionados.toList() // 🔥 YA SON NOMBRES
-                )
+                if (listaId == null || listaId == "null") {
+
+                    clienteViewModel.guardarLista(
+                        nombreLista,
+                        tiendaId,
+                        seleccionados.toList()
+                    )
+
+                } else {
+
+                    clienteViewModel.actualizarProductosLista(
+                        listaId,
+                        seleccionados.toList()
+                    )
+                }
 
                 navController.navigate("wishlist") {
                     popUpTo("wishlist") { inclusive = true }
@@ -117,6 +147,8 @@ fun SeleccionarProductosScreen(
             enabled = seleccionados.isNotEmpty(),
             modifier = Modifier
                 .fillMaxWidth()
+                .navigationBarsPadding()
+                .offset(y = 10.dp)
                 .height(55.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Color(0xFF6A5AE0)
