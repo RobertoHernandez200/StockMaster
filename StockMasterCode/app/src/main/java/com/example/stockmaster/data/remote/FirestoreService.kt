@@ -37,7 +37,7 @@ class FirestoreService {
         }
     }
 
-    // 🔥 GUARDAR TIENDA
+    //  GUARDAR TIENDA
     suspend fun guardarTiendaCliente(userId: String, tienda: Tienda) {
 
         db.collection("clientes")
@@ -48,7 +48,7 @@ class FirestoreService {
             .await()
     }
 
-    // 🔥 VALIDAR SI YA EXISTE
+    //  VALIDAR SI YA EXISTE
     suspend fun tiendaYaExiste(userId: String, tiendaId: String): Boolean {
 
         val doc = db.collection("clientes")
@@ -61,7 +61,7 @@ class FirestoreService {
         return doc.exists()
     }
 
-    // 🔥 OBTENER TIENDAS
+    //  OBTENER TIENDAS
     suspend fun obtenerTiendasCliente(userId: String): List<Tienda> {
 
         val result = db.collection("clientes")
@@ -79,7 +79,7 @@ class FirestoreService {
         }
     }
 
-    // 🔥 ELIMINAR TIENDA
+    //  ELIMINAR TIENDA
     suspend fun eliminarTiendaCliente(userId: String, tiendaId: String) {
 
         db.collection("clientes")
@@ -158,10 +158,10 @@ class FirestoreService {
     }
 
     // =========================================
-    // 🔥 LISTAS DE DESEOS
+    //  LISTAS DE DESEOS
     // =========================================
 
-    // 🔥 GUARDAR LISTA
+    //  GUARDAR LISTA
     suspend fun guardarListaDeseos(
         userId: String,
         lista: Map<String, String>
@@ -173,7 +173,7 @@ class FirestoreService {
             .await()
     }
 
-    // 🔥 OBTENER LISTAS
+    //  OBTENER LISTAS (ARREGLADO)
     suspend fun obtenerListasDeseos(userId: String): List<Map<String, String>> {
 
         val result = db.collection("clientes")
@@ -186,7 +186,7 @@ class FirestoreService {
 
             val data = it.data ?: emptyMap()
 
-            // 🔥 AQUÍ ESTÁ LA SOLUCIÓN DEL ERROR
+            //  AQUÍ ESTÁ LA SOLUCIÓN DEL ERROR
             val mapaConvertido = data.mapValues { entry ->
                 entry.value?.toString() ?: ""
             }
@@ -195,7 +195,7 @@ class FirestoreService {
         }
     }
 
-    // 🔥 ELIMINAR LISTA
+    //  ELIMINAR LISTA
     suspend fun eliminarLista(userId: String, listaId: String) {
         db.collection("clientes")
             .document(userId)
@@ -205,7 +205,7 @@ class FirestoreService {
             .await()
     }
 
-    // 🔥 ACTUALIZAR LISTA
+    //  ACTUALIZAR LISTA
     suspend fun actualizarLista(
         userId: String,
         listaId: String,

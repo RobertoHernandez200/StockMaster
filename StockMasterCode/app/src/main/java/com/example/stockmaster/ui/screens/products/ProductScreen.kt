@@ -24,9 +24,11 @@ fun ProductScreen(
 ) {
 
     val productos by viewModel.productos.collectAsState()
+
     val nombre by viewModel.nombre.collectAsState()
     val valor by viewModel.valor.collectAsState()
     val stock by viewModel.stock.collectAsState()
+    val categoria by viewModel.categoria.collectAsState()
 
     Column(
         modifier = Modifier
@@ -34,23 +36,33 @@ fun ProductScreen(
             .background(Color(0xFFF5F5F5))
     ) {
 
-        // HEADER (igual al Home)
+        // HEADER
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
+
             horizontalArrangement = Arrangement.SpaceBetween,
+
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            Text("Inventario", fontSize = 20.sp)
+            Text(
+                text = "Inventario",
+                fontSize = 20.sp
+            )
 
-            TextButton(onClick = onBack) {
+            TextButton(
+                onClick = onBack
+            ) {
+
                 Text("← Volver")
             }
         }
 
         // CONTENEDOR MORADO
+
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -61,7 +73,11 @@ fun ProductScreen(
                             Color(0xFF8E7CFF)
                         )
                     ),
-                    shape = RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)
+
+                    shape = RoundedCornerShape(
+                        topStart = 40.dp,
+                        topEnd = 40.dp
+                    )
                 )
         ) {
 
@@ -71,65 +87,126 @@ fun ProductScreen(
                     .padding(20.dp)
             ) {
 
-                // FORMULARIO EN CARD
+                // FORMULARIO
+
                 Card(
                     shape = RoundedCornerShape(20.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
 
-                        Text("Agregar producto", fontSize = 18.sp)
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                        Text(
+                            text = "Agregar producto",
+                            fontSize = 18.sp
+                        )
+
+                        Spacer(
+                            modifier = Modifier.height(10.dp)
+                        )
 
                         OutlinedTextField(
                             value = nombre,
-                            onValueChange = { viewModel.onNombreChange(it) },
-                            label = { Text("Nombre") },
+                            onValueChange = {
+                                viewModel.onNombreChange(it)
+                            },
+                            label = {
+                                Text("Nombre")
+                            },
                             modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(
+                            modifier = Modifier.height(8.dp)
+                        )
+
+                        OutlinedTextField(
+                            value = categoria,
+                            onValueChange = {
+                                viewModel.onCategoriaChange(it)
+                            },
+                            label = {
+                                Text("Categoría")
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(
+                            modifier = Modifier.height(8.dp)
                         )
 
                         OutlinedTextField(
                             value = valor,
-                            onValueChange = { viewModel.onValorChange(it) },
-                            label = { Text("Valor") },
+                            onValueChange = {
+                                viewModel.onValorChange(it)
+                            },
+                            label = {
+                                Text("Valor")
+                            },
                             modifier = Modifier.fillMaxWidth()
+                        )
+
+                        Spacer(
+                            modifier = Modifier.height(8.dp)
                         )
 
                         OutlinedTextField(
                             value = stock,
-                            onValueChange = { viewModel.onStockChange(it) },
-                            label = { Text("Stock") },
+                            onValueChange = {
+                                viewModel.onStockChange(it)
+                            },
+                            label = {
+                                Text("Stock")
+                            },
                             modifier = Modifier.fillMaxWidth()
                         )
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(
+                            modifier = Modifier.height(12.dp)
+                        )
 
                         Button(
-                            onClick = { viewModel.crearProducto() },
+                            onClick = {
+                                viewModel.crearProducto()
+                            },
+
                             shape = RoundedCornerShape(50),
+
                             modifier = Modifier.fillMaxWidth()
                         ) {
+
                             Text("+ Guardar producto")
                         }
                     }
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(
+                    modifier = Modifier.height(20.dp)
+                )
 
-                // LISTA DE PRODUCTOS
+                // LISTA PRODUCTOS
+
                 LazyColumn {
+
                     items(productos) { producto ->
+
                         ProductItem(
                             producto = producto,
+
                             onDelete = {
                                 viewModel.eliminarProducto(producto.id)
                             },
+
                             onEdit = {
                                 viewModel.cargarProducto(producto)
                             }
                         )
-                        Spacer(modifier = Modifier.height(10.dp))
+
+                        Spacer(
+                            modifier = Modifier.height(10.dp)
+                        )
                     }
                 }
             }

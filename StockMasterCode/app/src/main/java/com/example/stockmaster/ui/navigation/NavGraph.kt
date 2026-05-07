@@ -28,6 +28,7 @@ import com.example.stockmaster.ui.screens.finanzas.InventarioStatsScreen
 import com.example.stockmaster.ui.screens.finanzas.TendenciasScreen
 import com.example.stockmaster.ui.screens.finanzas.ReabastecerStockScreen
 import com.example.stockmaster.ui.screens.finanzas.informes.CrearInformeScreen
+import com.example.stockmaster.ui.screens.finanzas.informes.DetalleInformeScreen
 import com.example.stockmaster.ui.screens.finanzas.informes.InformesListScreen
 
 // LISTAS
@@ -35,6 +36,7 @@ import com.example.stockmaster.ui.screens.lista_deseos.*
 import com.example.stockmaster.viewmodel.EmpleadoViewModel
 import com.example.stockmaster.viewmodel.ClienteViewModel
 import com.example.stockmaster.viewmodel.InformeViewModel
+import com.example.stockmaster.viewmodel.InventarioStatsViewModel
 
 @Composable
 fun NavGraph() {
@@ -285,6 +287,9 @@ fun NavGraph() {
 
             InformesListScreen(
                 viewModel = viewModel,
+                onDetalleInforme = { id ->
+                    navController.navigate("detalle_informe/$id")
+                },
                 onCrearInforme = {
                     navController.navigate("crear_informe")
                 },
@@ -311,8 +316,29 @@ fun NavGraph() {
                 }
             )
         }
-        composable("inventarioStats"){
-            InventarioStatsScreen(navController)
+        composable("detalle_informe/{informeId}") { backStack ->
+
+            val informeId =
+                backStack.arguments?.getString("informeId") ?: ""
+
+            val viewModel: InformeViewModel = viewModel()
+
+            DetalleInformeScreen(
+                informeId = informeId,
+                viewModel = viewModel,
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable(route = "inventarioStats") {
+
+            val viewModel: InventarioStatsViewModel = viewModel()
+
+            InventarioStatsScreen(
+                navController = navController,
+                viewModel = viewModel
+            )
         }
 
         // CLIENTES
@@ -325,7 +351,7 @@ fun NavGraph() {
             TendenciasScreen(navController)
         }
 
-        // 🔥 NUEVA PANTALLA REABASTECER
+        // NUEVA PANTALLA REABASTECER
         composable("reabastecer/{producto}") { backStack ->
 
             val producto =

@@ -28,7 +28,12 @@ class ProductosViewModel : ViewModel() {
     private val _productos = MutableStateFlow<List<Producto>>(emptyList())
     val productos: StateFlow<List<Producto>> = _productos
 
+    private val _categoria = MutableStateFlow("")
+    val categoria: StateFlow<String> = _categoria
+
     private var productoId: String? = null
+
+
 
     init {
         cargarProductos()      // 🔥 productos del usuario (tienda)
@@ -94,6 +99,9 @@ class ProductosViewModel : ViewModel() {
     fun onStockChange(value: String) {
         _stock.value = value
     }
+    fun onCategoriaChange(value: String) {
+        _categoria.value = value
+    }
 
     // EDITAR
     fun cargarProducto(producto: Producto) {
@@ -101,6 +109,7 @@ class ProductosViewModel : ViewModel() {
         _nombre.value = producto.nombre
         _valor.value = producto.valor.toString()
         _stock.value = producto.stock.toString()
+        _categoria.value = producto.categoria
     }
 
     // CREAR / EDITAR
@@ -115,8 +124,10 @@ class ProductosViewModel : ViewModel() {
             return
         }
 
+
         val producto = hashMapOf(
             "nombre" to _nombre.value,
+            "categoria" to _categoria.value,
             "valor" to valorDouble,
             "stock" to stockInt
         )
@@ -159,5 +170,6 @@ class ProductosViewModel : ViewModel() {
         _nombre.value = ""
         _valor.value = ""
         _stock.value = ""
+        _categoria.value = ""
     }
 }
