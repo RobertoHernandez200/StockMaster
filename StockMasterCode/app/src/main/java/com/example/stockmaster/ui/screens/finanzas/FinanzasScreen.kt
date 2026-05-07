@@ -107,7 +107,7 @@ fun FinanzasScreen(
                             navController.navigate("tendencias")
                         }
                         "Informes" -> {
-
+                            navController.navigate("informes")
                         }
                     }
                 }

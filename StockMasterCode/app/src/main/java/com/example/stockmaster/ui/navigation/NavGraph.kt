@@ -24,11 +24,14 @@ import com.example.stockmaster.ui.screens.finanzas.ClientesStatsScreen
 import com.example.stockmaster.ui.screens.finanzas.FinanzasScreen
 import com.example.stockmaster.ui.screens.finanzas.InventarioStatsScreen
 import com.example.stockmaster.ui.screens.finanzas.TendenciasScreen
+import com.example.stockmaster.ui.screens.finanzas.informes.CrearInformeScreen
+import com.example.stockmaster.ui.screens.finanzas.informes.InformesListScreen
 
 // LISTAS
 import com.example.stockmaster.ui.screens.lista_deseos.*
 import com.example.stockmaster.viewmodel.EmpleadoViewModel
 import com.example.stockmaster.viewmodel.ClienteViewModel
+import com.example.stockmaster.viewmodel.InformeViewModel
 
 @Composable
 fun NavGraph() {
@@ -189,6 +192,38 @@ fun NavGraph() {
             FinanzasScreen(
                 navController = navController, // Pasamos el controlador aquí
                 onBack = { navController.popBackStack() }
+            )
+        }
+        composable("informes") {
+
+            val viewModel: InformeViewModel = viewModel()
+
+            InformesListScreen(
+                viewModel = viewModel,
+                onCrearInforme = {
+                    navController.navigate("crear_informe")
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
+            )
+        }
+        composable("crear_informe") {
+
+            val parentEntry = remember {
+                navController.getBackStackEntry("informes")
+            }
+
+            val viewModel: InformeViewModel = viewModel(parentEntry)
+
+            CrearInformeScreen(
+                viewModel = viewModel,
+                onSuccess = {
+                    navController.popBackStack()
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
             )
         }
         composable("inventarioStats"){
