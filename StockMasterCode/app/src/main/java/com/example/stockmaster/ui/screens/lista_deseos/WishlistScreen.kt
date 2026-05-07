@@ -12,6 +12,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
+import com.example.stockmaster.ui.components.MenuDrawer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.stockmaster.viewmodel.ClienteViewModel
 
@@ -20,6 +22,8 @@ fun WishlistScreen(navController: NavController) {
 
     val viewModel: ClienteViewModel = viewModel()
     val listas by viewModel.listas.collectAsState()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
 
     var expandedId by remember { mutableStateOf<String?>(null) }
 
@@ -43,18 +47,61 @@ fun WishlistScreen(navController: NavController) {
         mutableStateOf("")
     }
 
-    Column(
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+
+            MenuDrawer(
+                onInicio = {
+                    scope.launch { drawerState.close() }
+                    navController.navigate("home_cliente")
+                },
+
+                onTiendas = {
+                    scope.launch { drawerState.close() }
+                    navController.navigate("mis_tiendas")
+                },
+
+                onLista = {
+                    scope.launch { drawerState.close() }
+                }
+            )
+        }
+    ) {
+
+        Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F5F5))
             .padding(16.dp)
     ) {
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text("Listas", fontSize = 18.sp)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    Text(
+                        "☰",
+                        fontSize = 22.sp,
+                        modifier = Modifier.clickable {
+                            scope.launch {
+                                drawerState.open()
+                            }
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Text(
+                        "Listas",
+                        fontSize = 18.sp
+                    )
+                }
 
             Icon(
                 imageVector = Icons.Default.Add,
@@ -235,6 +282,7 @@ fun WishlistScreen(navController: NavController) {
                     }
                 }
             )
+        }
         }
     }
 }
