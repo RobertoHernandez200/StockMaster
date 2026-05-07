@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material.icons.filled.KeyboardDoubleArrowRight
 import androidx.compose.material.icons.filled.Menu
@@ -36,7 +37,18 @@ fun FinanzasScreen(
             TopAppBar(
                 title = { Text("Finanzas", color = TextPurple, fontSize = 28.sp) },
                 navigationIcon = {
-                    Icon(Icons.Default.Menu, contentDescription = null, tint = TextPurple, modifier = Modifier.padding(start = 8.dp))
+                    IconButton(
+                        onClick = {
+                            navController.popBackStack()
+                        }
+                    ) {
+
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = "Volver",
+                            tint = PrincipalPurple
+                        )
+                    }
                 }
             )
         }
@@ -95,7 +107,7 @@ fun FinanzasScreen(
                             navController.navigate("tendencias")
                         }
                         "Informes" -> {
-
+                            navController.navigate("informes")
                         }
                     }
                 }
