@@ -3,13 +3,16 @@ package com.example.stockmaster.ui.screens.cliente
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.tasks.await
 
 data class ProductoCliente(
     val nombre: String = "",
@@ -23,34 +26,70 @@ fun ClienteProductosScreen(
     onBack: () -> Unit
 ) {
 
-    var productos by remember { mutableStateOf<List<ProductoCliente>>(emptyList()) }
+    var productos by remember {
+        mutableStateOf<List<ProductoCliente>>(emptyList())
+    }
+
+    // ==================== FIREBASE REALTIME ====================
 
     LaunchedEffect(Unit) {
 
         val db = FirebaseFirestore.getInstance()
 
-        val result = db.collection("usuarios")
+        db.collection("usuarios")
             .document(tiendaId)
             .collection("productos")
-            .get()
-            .await()
+            .addSnapshotListener { snapshot, _ ->
 
-        productos = result.documents.map {
-            ProductoCliente(
-                nombre = it.getString("nombre") ?: "",
-                valor = it.getDouble("valor") ?: 0.0,
-                stock = (it.getLong("stock") ?: 0).toInt()
-            )
-        }
+                if (snapshot != null) {
+
+                    productos = snapshot.documents.map {
+
+                        ProductoCliente(
+                            nombre = it.getString("nombre") ?: "",
+                            valor = it.getDouble("valor") ?: 0.0,
+                            stock = (it.getLong("stock") ?: 0).toInt()
+                        )
+                    }
+                }
+            }
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    // ==================== UI ====================
 
-        TextButton(onClick = onBack) {
-            Text("← Volver")
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+
+        // ===== TOP BAR =====
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+
+            IconButton(onClick = onBack) {
+
+                Icon(
+                    Icons.Default.ArrowBack,
+                    contentDescription = "Volver"
+                )
+            }
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+            Text(
+                text = "Productos",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
 
-        Text("Productos", fontSize = 22.sp)
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // ==================== LISTA ====================
 
         LazyColumn {
 
@@ -59,16 +98,32 @@ fun ClienteProductosScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(vertical = 8.dp),
+
+                    elevation = CardDefaults.cardElevation(4.dp)
                 ) {
 
-                    Column(modifier = Modifier.padding(16.dp)) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
 
-                        Text(producto.nombre, fontSize = 18.sp)
+                        Text(
+                            text = producto.nombre,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
 
-                        Text("Precio: $${producto.valor}")
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("Stock: ${producto.stock}")
+                        Text(
+                            text = "Precio: $${producto.valor}",
+                            color = Color.Gray
+                        )
+
+                        Text(
+                            text = "Stock: ${producto.stock}",
+                            color = Color.Gray
+                        )
                     }
                 }
             }
